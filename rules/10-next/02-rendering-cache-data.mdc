@@ -1,0 +1,22 @@
+---
+description: Static-first rendering, explicit cache semantics, and future data-source integration
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Rendering, data, and cache
+
+- The landing is static-first. Local typed content and imported assets require no runtime fetch, database, global state, ISR, or custom cache layer.
+- Do not enable `cacheComponents`, add `"use cache"`, or use an experimental cache API speculatively. The current `next.config.ts` does not enable Cache Components; consult the exact Next.js 16.2.6 caching guide before changing that model.
+- When adding remote data, write down freshness, personalization, invalidation owner, failure behavior, and acceptable staleness before selecting a cache policy.
+- In the current non-Cache-Components model, `fetch` is not cached by default. Choose explicitly per request: `cache: "force-cache"` for immutable/revalidated public data, `next: { revalidate, tags }` for known freshness windows, or `cache: "no-store"` for request-specific data.
+- Never cache per-user, authorization-dependent, consent, booking, or secret-bearing responses in a shared cache.
+- Use `revalidateTag` or `revalidatePath` only after a successful mutation and only for the narrow content actually affected. Cache tags must be stable domain identifiers.
+- React `cache()` deduplicates work within a server render; it is not a persistent content cache. Do not describe or use it as one.
+- Avoid request-time APIs such as `cookies()` and `headers()` in the landing route unless required, because they make rendering dynamic and reduce CDN/static benefits.
+- Do not force dynamic rendering to solve hydration problems, stale local constants, or browser-only library imports. Fix the boundary or data source instead.
+- Do not manually set immutable cache headers on HTML/RSC responses. Let Next.js and the deployment platform manage framework assets and route payloads unless deployment documentation proves a specific override is needed.
+- Public fingerprinted static assets may receive long-lived immutable caching at the hosting layer; mutable named files, HTML, robots, sitemap, and manifests must not be treated as fingerprinted assets.
+- A future CMS integration must normalize and validate content in a server-owned adapter. UI must consume typed domain data, not raw CMS response shapes.
+- Failed remote content must not silently replace verified copy with empty sections or fabricated values. Define an intentional stale, unavailable, or editorial fallback.
+

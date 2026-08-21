@@ -1,0 +1,19 @@
+---
+description: Mandatory context gathering, research, planning, and evidence discipline
+alwaysApply: true
+---
+
+# Process and research
+
+- Read `AGENTS.md`, every applicable `.cursor/rules/**/*.mdc`, the files named by the task, and current consumers before changing code. Do not implement from an isolated snippet.
+- Start every non-trivial task with a short MCP plan: what must be inspected locally, what assumptions must be verified externally, and what will be changed. The plan must reflect the actual task, not a boilerplate checklist.
+- Use MCP tools when available: sequential reasoning for architecture or multi-file changes, Context7 for versioned library APIs, web search/fetch for current standards and official documentation, and purpose-built connectors for their domains.
+- If an MCP server or named research tool is unavailable, continue with the assistant's built-in search/browsing tools, installed package documentation, package source and type declarations, repository search, and command-line inspection. Lack of MCP is never a reason to guess or skip research.
+- For Next.js behavior, read the relevant installed guide under `node_modules/next/dist/docs/` before editing. This project uses Next.js 16.2.6 and may differ from remembered APIs.
+- Prefer primary sources in this order: installed docs and types matching the exact version, official framework/library documentation, standards and specifications, upstream source or release notes. Discussions and studio showcases may inform trade-offs but must not override primary sources.
+- Search with `rg` before creating a component, utility, token, data model, route, or dependency. Extend an existing coherent abstraction when one exists.
+- Trace all callers and imports before renaming, moving, or changing a public type. Afterward, search for stale paths, duplicate implementations, abandoned assets, and outdated terminology.
+- State material uncertainty. If a business fact, API contract, ownership right, or product requirement cannot be verified, keep it out of production claims and ask for confirmation instead of inventing a value.
+- Keep research proportional: ordinary syntax needs no web search; framework semantics, accessibility behavior, SEO claims, browser support, security, caching, and dependency choices do.
+- End implementation reports with changed files, verification performed, remaining risks or inputs, and a compact `Research & References` section listing the sources and tools that materially affected decisions.
+

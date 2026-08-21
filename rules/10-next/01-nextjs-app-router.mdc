@@ -1,0 +1,24 @@
+---
+description: Next.js 16.2.6 App Router, RSC boundaries, route conventions, and runtime rules
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Next.js 16.2.6 App Router
+
+- Treat every `page.tsx` and `layout.tsx` as a Server Component unless interaction, a browser API, state, an effect, or a client-only library requires otherwise.
+- Add `"use client"` at the smallest interactive leaf. Everything imported by that file enters the client module graph, so never mark a whole page, layout, widget, or static section client only to animate one element.
+- Pass only React-serializable props across the Server-to-Client boundary. Keep secrets, filesystem access, private environment values, and privileged data modules server-only.
+- Mark modules that contain secrets or server-only data access with `import "server-only"`. Isolate browser integrations behind client entry points.
+- Let Server Components render semantic content and pass it into client wrappers through `children` when an interactive shell is required.
+- Follow Next.js 16 async request APIs: `params`, `searchParams`, `cookies()`, `headers()`, and `draftMode()` must be handled according to the installed documentation; never copy synchronous examples from older Next.js versions.
+- Use `proxy.ts` only when request interception is genuinely required. Do not introduce legacy `middleware.ts` from old tutorials.
+- Use App Router file conventions for `loading.tsx`, `error.tsx`, `not-found.tsx`, metadata, `robots.ts`, `sitemap.ts`, and route handlers. Do not recreate these mechanisms in components.
+- Server-render all indexable copy, headings, program information, links, and primary calls to action. Search-critical content must not depend on hydration, scroll position, canvas, or client-only fetching.
+- Use `next/link` for internal route navigation and native anchors for page fragments and external destinations. Section IDs must be stable, human-readable, and unique.
+- Use `next/font` for self-hosted/subset fonts. Configure only the weights and scripts actually rendered, expose font variables, and never load render-blocking fonts via CSS `@import`.
+- Use `next/image` for raster content images. Use static imports where possible; supply meaningful `alt`, intrinsic dimensions or `fill` with a sized parent, and responsive `sizes`. In Next.js 16, `priority` is deprecated; follow the installed docs and use `loading`, `fetchPriority`, or `preload` only for the actual LCP candidate.
+- Plain `<img>` is acceptable only for formats or runtime cases where `next/image` offers no benefit and dimensions/aspect ratio are still reserved.
+- Use dynamic imports only to defer genuinely heavy non-critical client features. Do not lazy-load above-the-fold semantic content or add loading boundaries that cause layout shifts.
+- Keep environment variables server-only unless their value is explicitly safe to publish. A `NEXT_PUBLIC_` prefix means the value is bundled into client code.
+- Before using any Next.js API, read its matching file under `node_modules/next/dist/docs/`; the installed version is authoritative.

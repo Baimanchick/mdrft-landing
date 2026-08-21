@@ -1,0 +1,18 @@
+---
+description: Definition of done and proportional validation for landing changes
+alwaysApply: true
+---
+
+# Verification and definition of done
+
+- A change is complete only when its full path works: server render, hydration, interaction, error state, responsive layout, keyboard path, reduced motion, and production semantics as applicable.
+- Before reporting completion, inspect the actual diff and search for stale imports, duplicate content, unused exports, comments/TODOs, placeholder copy, debug statements, and orphaned assets.
+- Run the relevant project checks requested or permitted by the active task. Do not claim checks passed when they were skipped, unavailable, or only reasoned about.
+- For visual work, inspect representative narrow mobile, tablet, desktop, and wide layouts. Check overflow, cropping, line wrapping, sticky/fixed collisions, focus visibility, and media aspect ratios.
+- For animated work, verify native-scroll fallback, reduced motion, keyboard navigation, page find, fragment links, back/forward restoration, background-tab behavior, and cleanup after route changes/remounts.
+- For metadata or structured data, inspect rendered production HTML and validate canonical, robots, sitemap, Open Graph assets, manifest, and JSON-LD with the relevant official validators.
+- For forms, verify valid submit, every validation error, network/server failure, repeated submit, slow response, bot/rate controls, keyboard completion, screen-reader announcements, and no sensitive logging.
+- For performance-sensitive work, compare actual transferred bytes, client chunks, requests, LCP candidate, long tasks, layout shifts, and animation frame behavior before and after.
+- Preserve unrelated user changes. Do not reformat or reorganize untouched areas merely because a tool can.
+- Report exactly what changed, what was verified, what could not be verified, and which business inputs remain. Never hide an unresolved release risk behind a generic success statement.
+

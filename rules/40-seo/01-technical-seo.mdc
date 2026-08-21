@@ -1,0 +1,23 @@
+---
+description: Next.js metadata, crawlability, semantic content, canonical URLs, and local discovery
+globs: "{src/app/**/*.{ts,tsx},src/**/*metadata*.ts,src/**/*site*.ts}"
+alwaysApply: false
+---
+
+# Technical SEO
+
+- Use the Next.js Metadata API and metadata file conventions. Do not hand-write duplicate head tags or install a client-side SEO library.
+- Centralize verified site name, production origin, default title/description, locale, contact facts, and social image references in one server-safe configuration.
+- Set `metadataBase` to the verified production origin. Use absolute canonical URLs and ensure preview/staging deployments cannot accidentally become canonical.
+- Root metadata must include a concise Russian default title/description, a title template for future routes, canonical alternates, Open Graph, Twitter card, icons, and applicable robots directives. Do not repeat keywords or exceed copy simply to target search engines.
+- Export viewport/theme-color through the current Next.js viewport API, not legacy metadata copied from older examples.
+- Implement `robots.ts`, `sitemap.ts`, `manifest.ts`, and static/dynamic OG assets through App Router conventions. Keep robots and sitemap URLs aligned with the same production origin.
+- A one-page landing should have one canonical indexable URL. Fragment navigation does not create separate pages. Do not generate thin routes solely to capture keyword variants.
+- Render all essential content, program names, prices/qualifiers, headings, and internal links in server HTML. Do not gate indexable copy behind client rendering, canvas, hover, or user interaction.
+- Write for the user's intent: premium drift training and BMW M control/ownership competence. Keep titles, headings, copy, URLs, and anchors descriptive and natural; do not add hidden text, doorway content, or keyword lists.
+- Maintain semantic heading order, descriptive link text, meaningful image alt text, and unique metadata for every real future route.
+- Canonical URLs must exclude analytics parameters, fragments, and accidental trailing/query variants. Redirect duplicate public origins/protocols at deployment level once the final domain is known.
+- `robots.txt` is crawl guidance, not access control. Never expose secret, staging-only, or personal URLs and assume disallowing them provides security.
+- Submit and monitor the final sitemap in the relevant webmaster tools after launch; investigate indexing and structured-data issues rather than masking them with more markup.
+- Do not add FAQ, review, rating, event, course, or offer SEO markup only for a perceived rich-result benefit. The visible content and Google's current eligibility rules must justify it.
+

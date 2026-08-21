@@ -1,0 +1,24 @@
+---
+description: Aggressive premium visual language, Tailwind CSS 4 tokens, and responsive composition
+globs: "{src/**/*.tsx,src/**/*.css}"
+alwaysApply: false
+---
+
+# Design system and responsive UI
+
+- Express the aggressive drift identity through composition, scale, contrast, motion, photography, texture, and disciplined asymmetry. Do not sacrifice reading order, controls, or conversion clarity for spectacle.
+- Establish semantic design tokens before section styling: canvas/surface/text/muted/accent/danger colors, type scale, spacing, container widths, radii, borders, shadows, and motion durations/easings.
+- With Tailwind CSS 4, define stable theme values in the CSS-first theme layer and consume utilities from those tokens. Do not scatter arbitrary hex colors, z-indexes, shadows, and near-identical spacing values through JSX.
+- Use CSS custom properties for values shared with Motion or runtime code. Keep a single source of truth rather than maintaining matching TypeScript and CSS constants manually.
+- Keep global CSS limited to imports, tokens, resets/base behavior, typography defaults, accessibility defaults, and truly global utilities. Section-specific styling belongs with the owning component.
+- Do not construct Tailwind class names dynamically from string fragments. Use complete statically discoverable class strings or an explicit variant map.
+- Design mobile-first from narrow content outward. Validate at content-driven widths, not only named devices. The layout must remain usable at 320 CSS px, zoomed desktop, tall/narrow phones, tablets, and wide screens.
+- Use fluid sizing with `clamp()` where it improves continuity, but cap line lengths and display type. Body copy should remain comfortably readable; headings must not cause horizontal overflow.
+- Use shared container and section-spacing primitives so alignment is deliberate across hero, program grid, manifesto, club, and contact sections.
+- Reserve aspect ratio and space for all media, carousels, videos, and animated elements. Responsive changes must not reorder content into a confusing keyboard or screen-reader sequence.
+- Avoid viewport-height traps. Prefer modern dynamic/small viewport units where a full-height hero is intended, and preserve room for browser chrome and safe-area insets.
+- Treat hover as enhancement. Every action and disclosure must work with touch, keyboard, and without hover. Use capability media queries when hover-specific visuals are substantial.
+- Keep stacking contexts local and documented through tokens/structure. Do not solve overlap by escalating arbitrary `z-[9999]` values.
+- Use real text for headings, prices, program names, and CTAs. Do not bake essential copy into raster images, canvas, video, or pseudo-elements.
+- Decorative grit, noise, gradients, and masks must be lightweight, non-interactive, hidden from accessibility APIs, and unable to reduce text contrast.
+

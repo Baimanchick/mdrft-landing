@@ -1,0 +1,24 @@
+---
+description: Secure lead forms, server validation, abuse controls, secrets, consent, and personal data
+globs: "{src/**/*.{ts,tsx},next.config.ts,.env*}"
+alwaysApply: false
+---
+
+# Security, forms, and privacy
+
+- Treat all form fields, query parameters, headers, cookies, CMS data, webhook payloads, and third-party responses as untrusted. Validate and normalize on the server even when client validation exists.
+- Prefer a minimal Server Action or Route Handler for booking/lead submission. Keep privileged API keys and CRM/webhook credentials in server-only modules and non-public environment variables.
+- Never expose secrets through `NEXT_PUBLIC_*`, client props, rendered HTML, source maps, logs, analytics events, JSON-LD, error messages, or repository files.
+- Accept only documented fields with length, format, and character constraints. Reject unknown/oversized payloads and unexpected content types; normalize phone/email deliberately rather than trusting display formatting.
+- Escape by context and render user text as text. Do not use `dangerouslySetInnerHTML` for CMS or form content. The narrowly controlled sanitized JSON-LD serializer is the only expected raw-script injection path.
+- Add server-side rate limiting and abuse protection appropriate to deployment before exposing a public lead endpoint. Honeypots may supplement but not replace server controls.
+- Prevent duplicate submissions with idempotency or a deterministic server strategy when the downstream CRM/payment-like action can be repeated. UI disabling alone is not protection.
+- Do not reveal whether arbitrary contacts already exist. Return bounded user-safe errors while retaining actionable server diagnostics without personal values or secrets.
+- Collect only information necessary to answer or book the lead. Explain the purpose, controller/contact path, retention/sharing, and required consent in an approved privacy notice before launch.
+- Consent must be specific, informed, unbundled where required, and not pre-checked. Marketing consent must not be silently inferred from a booking request.
+- Load nonessential analytics/marketing technologies only according to the applicable consent and legal policy. Do not send phone, email, free-form messages, or other personal data to analytics.
+- Define retention and deletion handling for submissions and third-party destinations. Do not persist lead data in browser storage for convenience.
+- External links opened in a new tab need safe relationship attributes and must communicate the behavior when it is not obvious. Validate redirect targets and never forward user-controlled URLs unchecked.
+- Configure security headers at the hosting/Next.js layer after inventorying required origins. A CSP must be tested and narrow; do not adopt `unsafe-eval` or unrestricted wildcards to make third-party scripts work.
+- Keep error and not-found pages free of stack traces, environment details, internal paths, request dumps, and secret-bearing upstream responses.
+

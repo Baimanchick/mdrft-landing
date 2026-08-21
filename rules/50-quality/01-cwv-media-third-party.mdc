@@ -1,0 +1,24 @@
+---
+description: Core Web Vitals budgets, image/video policy, client JavaScript, fonts, and third parties
+globs: "{src/**/*.{ts,tsx,css},public/**/*,next.config.ts}"
+alwaysApply: false
+---
+
+# Core Web Vitals, media, and budgets
+
+- Optimize for real-user p75 targets: LCP at most 2.5 s, INP at most 200 ms, and CLS at most 0.1. Lab scores guide diagnosis; they do not replace field data.
+- Identify the intended LCP element at each major breakpoint. Prioritize exactly that image/font/resource; do not mark every hero asset or below-the-fold image high priority.
+- Prefer AVIF/WebP for photographic media with an intentional quality/size trade-off. Use SVG for simple vectors when trusted and optimized; do not embed huge base64 media in source or CSS.
+- Supply responsive source sizing through `next/image` and a truthful `sizes` attribute. Never ship a desktop-resolution car photo to every narrow phone by default.
+- Reserve media geometry with dimensions/aspect ratio. Overlays, font swaps, consent UI, sticky navigation, async content, and entrance animations must not move already-rendered content.
+- Do not lazy-load the LCP image. Lazy-load below-the-fold media and defer video sources/posters intelligently, while keeping meaningful content discoverable without waiting for an intersection observer.
+- A hero video must have a small poster fallback, muted inline playback, responsive encodes, and a measured business benefit. Do not download large video on constrained devices or reduced-data preference when a poster provides the experience.
+- Limit font families and weights, subset Cyrillic/Latin as actually used, and choose fallback metrics to minimize shift. Never use icon fonts.
+- Keep client JavaScript proportional. Static sections remain server-rendered; audit every `"use client"`, third-party package, animation observer, and global provider for shipped bytes and main-thread work.
+- Break up long event/animation tasks, throttle or avoid high-frequency scroll/pointer handlers, and use passive listeners where no cancellation is required. Never set React state every animation frame for purely visual motion.
+- Avoid heavy above-the-fold CSS effects, huge composited layers, full-screen filters, continuous noise canvases, and multiple simultaneous videos. Measure paint, memory, and GPU cost on mobile.
+- Third-party analytics, maps, chat, pixels, embeds, and booking widgets require an explicit owner, privacy decision, failure fallback, loading strategy, and performance budget. Defer them until consent/interaction when applicable.
+- Do not block first render on analytics, a CRM, social SDKs, remote availability, or nonessential fonts. The primary CTA and contact path must work when third-party scripts fail.
+- Use browser caching/CDN behavior appropriate to asset immutability and Next.js output. Do not add a service worker or custom preloading strategy without a concrete offline requirement and invalidation plan.
+- Before release, inspect mobile and desktop production builds with Lighthouse/WebPageTest and browser Performance/Network tools, then verify field data after traffic exists. Record regressions by route, device class, and release.
+

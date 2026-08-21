@@ -1,0 +1,23 @@
+---
+description: Readable production code with no comments, placeholders, duplication, or repository debris
+globs: "{src,public}/**/*"
+alwaysApply: false
+---
+
+# Code quality and repository hygiene
+
+- Write TypeScript for source code. Keep strict types; do not introduce `any`, unsafe casts, non-null assertions, or unvalidated `unknown` to silence the compiler.
+- Use names and module boundaries to explain intent. Do not add inline comments, block comments, commented-out code, generated AI explanations, or narration inside source files.
+- Do not leave `TODO`, `FIXME`, `HACK`, placeholders, fake reviews, demo counters, lorem ipsum, temporary fallbacks, dead branches, console logging, or debug UI.
+- Framework-mandated directives such as `"use client"` and tooling configuration are not comments and remain allowed. License notices are allowed only when legally required.
+- Prefer small cohesive functions and components. Extract when a unit has a distinct responsibility, is reused, or is independently complex; do not fragment simple markup into meaningless one-line wrappers.
+- Keep rendering declarative. Move stable data and complex derived values out of JSX. Do not hide ordinary rendering behind premature configuration-driven factories.
+- Prefer named exports for project modules. Next.js file-convention defaults such as `page.tsx`, `layout.tsx`, `error.tsx`, and `not-found.tsx` are required exceptions.
+- Props must be explicit and narrow. Prefer discriminated unions for variants; avoid bags of optional booleans and passing entire domain objects when a component needs two fields.
+- Keep functions pure by default and isolate browser, network, storage, analytics, and timer side effects behind clear boundaries.
+- Handle expected failure states visibly and accessibly. Never swallow exceptions with an empty `catch`, return fabricated success, or expose raw server errors to users.
+- Apply DRY only to stable concepts. Small coincidental duplication is safer than a shared abstraction with unrelated flags.
+- Delete superseded modules, styles, assets, exports, dependencies, and directories in the same change once their consumers are migrated. Do not keep `old`, `backup`, `v2`, or `copy` files.
+- Do not commit generated output, local caches, recordings, browser screenshots, `.DS_Store`, editor state, environment secrets, or experimental scratch files.
+- Add assets only at production quality and with a real consumer. Use deterministic descriptive lowercase filenames; avoid `image1`, UUID names, and duplicated encodings.
+

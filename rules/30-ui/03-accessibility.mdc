@@ -1,0 +1,25 @@
+---
+description: WCAG 2.2 AA semantics, keyboard, focus, motion, media, and forms
+globs: "{src/**/*.tsx,src/**/*.css}"
+alwaysApply: false
+---
+
+# Accessibility
+
+- Target WCAG 2.2 AA. Accessibility is a release requirement and must survive all breakpoints, animation states, loading states, and error states.
+- Use one descriptive page `h1` and a logical heading hierarchy. Landmarks must include header/navigation when present, one `main`, and footer. Use sections only when they have an accessible heading.
+- Add a visible-on-focus skip link to `main`. Keyboard focus must follow DOM order and remain visible; never remove outlines without an equally clear `:focus-visible` replacement.
+- Use native `button`, `a`, form controls, lists, details/summary, and dialog semantics before ARIA. ARIA supplements correct HTML; it does not repair a clickable `div`.
+- Every interactive control needs an accessible name and clear state. Icon-only controls require a localized label; decorative SVGs/images are hidden from assistive technology.
+- Meaningful images need concise purpose-based Russian alt text. Decorative imagery uses empty alt. Do not repeat adjacent captions or stuff keywords into alt text.
+- Maintain at least AA text and UI-component contrast in every normal, hover, focus, active, disabled, image-overlay, and animated state. Never communicate program level, status, or validation by color alone.
+- Touch/click targets should meet WCAG 2.2 target-size expectations and have enough spacing to avoid accidental activation.
+- Menus, accordions, carousels, tabs, dialogs, and disclosures need complete keyboard behavior, programmatic state, and focus management. Prefer simpler static content when the interaction adds no user value.
+- Do not autoplay carousels. If rotating content is approved, provide pause/stop controls, pause on focus/hover, expose item position, and avoid unexpected focus changes.
+- Forms require persistent labels, appropriate input types and autocomplete tokens, instructions before input, and errors linked with `aria-describedby`. Do not rely on placeholder text as the label.
+- On submit failure, preserve entered values, move or announce focus to an error summary when appropriate, and identify each invalid field in text. On success, announce the result without unexpected navigation.
+- Use `aria-live` only for genuine asynchronous status. Avoid chatty announcements during scroll, animation, hover, or every keystroke.
+- Prevent horizontal scrolling at 320 CSS px and at 400% zoom except for genuinely two-dimensional content. Text must reflow without clipping.
+- Honor `prefers-reduced-motion`; also ensure flashing never exceeds safe thresholds. Animated background effects must not impair reading or vestibular comfort.
+- Test the complete conversion path with keyboard only, browser zoom, reduced motion, forced colors/high contrast where supported, and at least one screen-reader smoke pass before release.
+

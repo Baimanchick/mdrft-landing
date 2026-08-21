@@ -1,0 +1,21 @@
+---
+description: Typed, sanitized, truthful JSON-LD for organization, location, services, and offers
+globs: "{src/app/**/*.tsx,src/**/*json-ld*.{ts,tsx},src/**/*schema*.{ts,tsx}}"
+alwaysApply: false
+---
+
+# JSON-LD and structured data
+
+- Structured data must describe visible, verified page content. It is not a place to publish draft company facts, unsupported rankings, hidden products, inferred ratings, or marketing guarantees.
+- Select the most specific valid Schema.org types only after checking current Google documentation and Schema.org definitions. Do not assume `LocalBusiness`, `EducationalOrganization`, `SportsActivityLocation`, `Course`, or `Product` eligibility from the brand description alone.
+- Type payloads with the installed `schema-dts` package and `WithContext<...>`. Keep builders in a server-safe shared/domain module and derive program/price fields from the same typed source as the visible UI.
+- Give the organization a stable canonical `@id` based on the verified production origin and reuse it when relating the website, organization, place, services, and offers. Do not mint conflicting identities per component.
+- Include address, telephone, opening hours, geo, `sameAs`, logos, images, price/availability, and track/location relationships only when each value is verified and publicly visible where appropriate.
+- Starting prices must retain their qualifier in visible copy. Structured `Offer` values must use numeric `price` and ISO `priceCurrency`; do not encode `от 30 000 ₽` as an arbitrary price string or imply a final checkout price.
+- Render JSON-LD with a native `<script type="application/ld+json">` in a Server Component. `next/script` is for executable scripts and is not needed for JSON-LD.
+- Serialize through one safe helper that uses `JSON.stringify(payload).replace(/</g, "\\u003c")` so content cannot terminate the script tag. Never interpolate raw strings into JSON-LD markup.
+- Do not accept user-provided or CMS HTML directly into JSON-LD. Validate/normalize external content at ingestion and still apply the safe serializer.
+- Emit each entity once per page and compose a graph when relationships matter. Avoid duplicate organization blocks from layout, footer, and page components.
+- JSON-LD must not create hydration work. It belongs in the server-rendered route/layout and must not be updated through effects.
+- Validate final production markup with Schema Markup Validator and Google's Rich Results Test where the selected type is supported. Treat warnings according to the actual type; fix all factual or syntactic errors.
+

@@ -1,0 +1,227 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-black: #000000;
+    --bg-card: #050507;
+    --border-grid: rgba(255, 255, 255, 0.12);
+    --border-hover: rgba(255, 255, 255, 0.35);
+    
+    /* Brand Red Linear Gradient: #6A0A17 0% -> #EA4043 52% -> #6A0A17 100% */
+    --accent-red-dark: #6a0a17;
+    --accent-red-bright: #ea4043;
+    --gradient-red: linear-gradient(90deg, #6a0a17 0%, #ea4043 52%, #6a0a17 100%);
+    --gradient-red-diag: linear-gradient(135deg, #6a0a17 0%, #ea4043 52%, #6a0a17 100%);
+    
+    --accent-m-blue: #0099ff;
+    --accent-m-darkblue: #003399;
+    --text-main: #ffffff;
+    --text-muted: #8e8e93;
+    --text-ghost: #2a2a30;
+    
+    --font-inter: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", "Helvetica Neue", sans-serif;
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    background-color: var(--bg-black);
+    color: var(--text-main);
+    font-family: var(--font-inter);
+    font-size: 16px;
+    letter-spacing: -0.02em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
+    scrollbar-gutter: stable;
+  }
+
+  body {
+    background-color: var(--bg-black);
+    color: var(--text-main);
+    overflow-x: hidden;
+    margin: 0;
+  }
+
+  ::selection {
+    background: #ea4043;
+    color: #ffffff;
+  }
+}
+
+/* Red Gradient Utility Classes */
+.bg-gradient-red {
+  background: linear-gradient(90deg, #6a0a17 0%, #ea4043 52%, #6a0a17 100%);
+}
+
+.bg-gradient-red-diag {
+  background: linear-gradient(135deg, #6a0a17 0%, #ea4043 52%, #6a0a17 100%);
+}
+
+.text-gradient-red {
+  background: linear-gradient(90deg, #6a0a17 0%, #ea4043 52%, #6a0a17 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.border-gradient-red {
+  border-color: #ea4043;
+}
+
+/* Swiss 3-Column Grid Borders */
+.grid-border-x {
+  border-left: 1px solid var(--border-grid);
+  border-right: 1px solid var(--border-grid);
+}
+
+.grid-border-b {
+  border-bottom: 1px solid var(--border-grid);
+}
+
+.grid-border-t {
+  border-top: 1px solid var(--border-grid);
+}
+
+.grid-cell {
+  border-right: 1px solid var(--border-grid);
+  border-bottom: 1px solid var(--border-grid);
+  transition: background-color 0.2s ease;
+}
+
+.grid-cell:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* =========================================================================
+   BUTTON SYSTEM WITH EXACT #6A0A17 -> #EA4043 -> #6A0A17 GRADIENT HOVER
+   ========================================================================= */
+
+/* 1. Primary Action Button */
+.btn-swiss-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  background-color: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-inter);
+  font-size: 0.8125rem; /* 13px */
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-swiss-primary:hover {
+  background: linear-gradient(90deg, #6a0a17 0%, #ea4043 52%, #6a0a17 100%);
+  color: #ffffff;
+  border-color: #ea4043;
+  box-shadow: 0 4px 20px rgba(234, 64, 67, 0.25);
+}
+
+/* 2. Secondary Ghost Outline Tag Button */
+.btn-swiss-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  background-color: transparent;
+  color: #a0a0a8;
+  padding: 0.75rem 1.5rem;
+  font-family: var(--font-inter);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-swiss-outline:hover {
+  background: linear-gradient(90deg, #6a0a17 0%, #ea4043 52%, #6a0a17 100%);
+  color: #ffffff;
+  border-color: #ea4043;
+}
+
+/* 3. Card Action Button */
+.btn-card-swiss {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  white-space: nowrap;
+  background-color: rgba(255, 255, 255, 0.03);
+  color: #d0d0d8;
+  padding: 0.8rem 1.25rem;
+  font-family: var(--font-inter);
+  font-size: 0.8125rem; /* 13px */
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-card-swiss:hover {
+  background: linear-gradient(90deg, #6a0a17 0%, #ea4043 52%, #6a0a17 100%);
+  color: #ffffff;
+  border-color: #ea4043;
+  box-shadow: 0 4px 20px rgba(234, 64, 67, 0.25);
+}
+
+/* 4. Card Action Button for White / Inverted Cards */
+.btn-card-swiss-dark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  width: 100%;
+  background-color: #000000;
+  color: #ffffff;
+  padding: 0.8rem 1.25rem;
+  font-family: var(--font-inter);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid #000000;
+  border-radius: 4px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-card-swiss-dark:hover {
+  background: linear-gradient(90deg, #6a0a17 0%, #ea4043 52%, #6a0a17 100%);
+  color: #ffffff;
+  border-color: #ea4043;
+}
+
+/* Hide scrollbars completely across browsers for modals and clean UI */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}

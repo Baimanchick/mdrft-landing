@@ -1,0 +1,26 @@
+---
+description: Motion 13, Lenis, CSS scroll animation, progressive enhancement, and animation performance
+globs: src/**/*.{ts,tsx,css}
+alwaysApply: false
+---
+
+# Motion and smooth scrolling
+
+- Motion must reinforce hierarchy, feedback, spatial continuity, and the controlled/aggressive brand character. Every animation needs a purpose, trigger, completion state, and reduced-motion behavior.
+- Use CSS transitions/keyframes for simple state changes and CSS scroll-driven animation for simple progressive scroll effects when browser support and fallback are acceptable. Use Motion 13 from `motion/react` for React-managed choreography, gestures, layout transitions, and viewport orchestration.
+- Do not add GSAP, ScrollTrigger, a second smooth-scroll engine, or overlapping animation runtime while Motion and Lenis satisfy the requirement. A new engine requires a measured capability gap and bundle/runtime review.
+- Keep static semantic markup in Server Components. Create narrow client animation wrappers that accept server-rendered children or serializable data instead of turning entire widgets into Client Components.
+- Animate compositor-friendly `transform` and `opacity` by default. Avoid scroll-driven `top`, `left`, `width`, `height`, large blur/filter, box-shadow, background-position, or complex clip-path animation unless profiling proves the target devices sustain it.
+- Do not apply permanent `will-change` broadly. Add it narrowly near an active animation and remove it when no longer needed where practical.
+- Never read layout and write styles repeatedly in the same animation frame. Batch measurements, use observers/animation values, and prevent forced synchronous layout.
+- Use viewport animations sparingly; do not attach an observer and spring to every word, icon, and card. Stagger bounded groups and keep the total main-thread/paint cost measurable.
+- Content must be visible and usable when JavaScript fails, hydration is delayed, observers are unavailable, or animation initialization throws. Initial server HTML must not leave primary content at `opacity: 0`.
+- Instantiate Lenis once in one deep client provider. Integrate it with one animation-frame owner, cleanly cancel the frame and call `destroy()` on unmount, and avoid per-section instances.
+- Lenis is progressive enhancement, not routing or layout infrastructure. Native scrolling, fragment links, keyboard scrolling, browser find, focus movement, history restoration, and back/forward navigation must remain correct.
+- Exclude nested scroll areas, dialogs, textareas, maps, and other intentional native-scroll regions from Lenis interception. Do not smooth or lock scroll inside modal focus traps.
+- Do not use scroll-jacking: no forced snap between long sections, delayed wheel response, artificial scroll duration, hidden native scrollbar, or horizontal page movement driven by vertical input for essential content.
+- Respect `prefers-reduced-motion: reduce` from first render. Disable Lenis smoothing and parallax; replace large travel, rotation, scale, looping, and scroll-linked effects with immediate state or a subtle non-motion transition.
+- Autoplaying decorative video must be muted, inline, nonessential, and paused when offscreen or when the page is hidden. Meaningful video requires controls and an accessible equivalent.
+- Ensure animation never delays the primary CTA, changes DOM reading order, steals focus, causes layout shift, or blocks interaction during entrance sequences.
+- Profile representative low/mid-tier mobile hardware. If a visual effect compromises responsiveness, reduce layer size/count and paint complexity before lowering semantic quality or accessibility.
+

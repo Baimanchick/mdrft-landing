@@ -1,0 +1,22 @@
+---
+description: TypeScript 5 and React 19 component, state, and effect conventions
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# TypeScript and React
+
+- Model domain data with `type` aliases, readonly fields/arrays, literal unions, and `satisfies` where it preserves inference. Avoid TypeScript `enum`; use `as const` maps or arrays.
+- Type public function inputs and outputs when inference does not make the contract obvious. Do not redundantly annotate local primitives.
+- Validate all untrusted runtime data at the boundary before narrowing it. Type assertions do not validate network, form, query-string, storage, or CMS data.
+- Use functional components. Do not use `React.FC`; type props directly. Keep component names, filenames, and exports aligned.
+- Derive values during render instead of mirroring props in state. Use state only for user-driven mutable UI; prefer local state over context and context over a global store when scope requires it.
+- Effects are for synchronizing with external systems, not for calculating render data, copying props, or sequencing ordinary state changes.
+- Every effect that subscribes, observes, starts animation frames, registers events, or creates a Lenis instance must return complete cleanup and tolerate React development remounting.
+- Use refs for DOM integration and mutable values that do not affect rendering. Do not query global DOM nodes when a ref can define ownership.
+- Preserve native element semantics. Do not replace links and buttons with clickable `div` elements or implement browser behavior from scratch.
+- Avoid `useMemo` and `useCallback` without a measured render or identity requirement. They are not default style or semantic guarantees.
+- Use React keys from stable identities, never array indices for reorderable/domain collections and never random values.
+- Do not store React elements inside domain data. Store typed data and choose presentation in UI modules.
+- Use `className` composition through the established helper (`clsx`) for conditional classes. Keep long repeated class sets in owned variants or components, not global string constants detached from markup.
+

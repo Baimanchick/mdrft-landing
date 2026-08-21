@@ -1,0 +1,22 @@
+---
+description: Dependency governance, supply chain, analytics, deployment, and operational ownership
+globs: "{package.json,yarn.lock,.yarnrc.yml,next.config.ts,src/**/*.{ts,tsx}}"
+alwaysApply: false
+---
+
+# Dependencies and operations
+
+- Use the existing Yarn 4 package manager and preserve the lockfile. Do not mix npm/pnpm lockfiles or change package-manager configuration incidentally.
+- Current core stack is Next.js 16.2.6, React/React DOM 19.2.4, Tailwind CSS 4, Motion 13, Lenis 1.3, clsx, TypeScript 5, and schema-dts. Verify exact installed docs/types rather than relying on older examples.
+- Before adding a package, prove that the platform, React, CSS, Motion, Lenis, or a small owned utility cannot meet the requirement clearly. Record purpose, client/server placement, size/runtime cost, maintenance health, license, security posture, and removal path.
+- Do not add overlapping animation, smooth-scroll, SEO, styling, state, validation, icon, carousel, or utility libraries for convenience. One capability should have one clear owner.
+- Avoid wildcard/latest ranges and unreviewed major upgrades. Keep framework peer versions compatible and inspect release notes/migrations before upgrades.
+- Never import an entire package when a documented subpath/tree-shakable entry exists. Keep server-only packages out of client boundaries and browser-only packages out of Server Components.
+- Dependencies must not fetch or execute remote code at runtime, inject undocumented trackers, require broad CSP exceptions, or access more data than their purpose needs.
+- Review advisories and transitive dependency changes before release. Do not blindly apply force-upgrade/autofix commands that introduce incompatible majors.
+- Analytics must have a named product question and minimal event schema. Use stable event names, avoid duplicate page views, exclude personal data, and verify consent, ad blockers, retries, and SPA/App Router navigation behavior.
+- Define production, preview, and local environment configuration explicitly. Preview/staging must not be indexable, canonicalized as production, or send real leads/analytics unless intentionally configured.
+- Keep final domain, redirects, HTTPS, headers, caching, image optimization, environment secrets, monitoring, and rollback ownership in deployment configuration, not scattered through UI components.
+- Add monitoring only for actionable failures and Core Web Vitals. Do not record form contents, session-replay sensitive fields, or excessive client logs.
+- Remove a dependency in the same change when its last consumer is removed; update lockfile and configuration together. Do not leave compatibility shims or abandoned setup files.
+

@@ -1,0 +1,23 @@
+---
+description: M Drift source-of-truth, program data, claim verification, and editorial integrity
+globs: "{src,public}/**/*"
+alwaysApply: false
+---
+
+# Company content and domain truth
+
+- Before changing company copy, program data, structured data, or metadata, read `/Users/baimurat/Downloads/Дрифт школа.docx` and inspect the current typed content modules. The document is the supplied brief, not proof of every public claim.
+- Preserve the product architecture: `M Drift` is the core emotion/skill experience; `M Ownership` is the broader premium ownership competence product; the long-term positioning is a BMW M competence center and community.
+- Model the six supplied programs once as typed data: First Touch, Asphalt Start, Pro Progress, Mastery / Max Control, ADM Race Track Experience, and M-Owner Elite Program. Cards, detail views, metadata, and structured data must derive from that source rather than duplicate strings.
+- Preserve qualifiers exactly: prices are `от`, durations may be `от`, ADM participation requires instructor approval, and Pro Progress pricing is explicitly marked in the brief as adjustable. Do not turn a starting price or draft figure into a guaranteed fixed offer.
+- Treat domain, legal entity, address, telephone, social accounts, opening hours, current prices, track availability, instructor details, vehicle availability, and booking terms as publish-time inputs owned by the implementer. Verify them with the business before launch.
+- Treat `№1 в России`, `100% безопасность`, superlatives, accident-prevention guarantees, and claims about having the country's richest or largest offering as substantiation-required marketing claims. Do not strengthen, paraphrase into fact, or place them in metadata/JSON-LD until evidence and approval exist.
+- Do not imply affiliation, authorization, sponsorship, certification, or partnership with BMW, BMW M, or ADM Raceway unless written permission and the precise approved wording are supplied.
+- Confirm rights and brand guidelines before using BMW/M names, badges, vehicle photography, track marks, logos, instructor likenesses, testimonials, or user-generated media. Never recreate a protected logo with text/CSS as a workaround.
+- Keep safety copy responsible: professional instruction, controlled conditions, eligibility, and individual limits may be explained; guaranteed safety, public-road encouragement, and reckless-driving glamorization may not.
+- Do not invent testimonials, ratings, review counts, graduate counts, event dates, instructor credentials, service partners, model compatibility, availability, discounts, or urgency.
+- Keep all visible content in polished Russian unless an approved brand phrase is intentionally English. Provide Russian accessible labels for English program names and technical abbreviations where comprehension requires it.
+- Centralize verified organization/contact facts in one server-safe site configuration so footer, contacts, metadata, sitemap, and JSON-LD cannot drift.
+- Store money as numeric amount plus ISO currency and a separate `priceFrom`/qualifier field. Store durations in structured units plus display copy when ranges are needed; do not parse business logic from prose.
+- If a required business value is unverified during development, represent that state explicitly in the content model or omit the public field. Never publish conspicuous `TBD`, fake contact data, or an invented Moscow address.
+

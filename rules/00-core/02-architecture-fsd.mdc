@@ -1,0 +1,35 @@
+---
+description: Next.js App Router architecture and adapted Feature-Sliced Design boundaries
+globs: src/**/*.{ts,tsx}
+alwaysApply: false
+---
+
+# Architecture and FSD
+
+## Layers
+
+- Use the adapted dependency direction `app -> widgets -> features -> entities -> shared`.
+- `src/app` is the Next.js App Router and the composition root. It owns routes, layouts, metadata files, global providers, route handlers, error/loading/not-found boundaries, and route-level assembly.
+- Do not create `src/pages`. That name activates the Next.js Pages Router and conflicts with this App Router architecture.
+- `widgets` contains large autonomous landing sections or repeated page blocks: hero, programs, advantages, club, contact, footer.
+- `features` contains user-valued interactions: program filtering, booking submission, mobile navigation, media controls. A static visual section is not a feature.
+- `entities` contains stable domain concepts and their data/UI: program, instructor, location, testimonial. Do not create an entity for every noun in copy.
+- `shared` contains domain-neutral UI primitives, utilities, configuration, assets, server/client adapters, and design foundations.
+
+## Dependency boundaries
+
+- Imports flow only downward. Same-layer slices do not import one another. Move genuinely shared behavior down a layer or compose slices in a higher layer.
+- Import another slice only through its root public API, for example `@/widgets/hero` or `@/entities/program`. Never deep-import another slice's `ui`, `model`, or `lib` internals.
+- Within a slice, relative imports are allowed and preferred. Across slices and layers, use the `@/*` alias.
+- Export only the minimal stable public API with named exports. Do not create layer-wide barrels such as `@/widgets`; they hide ownership and enlarge dependency graphs.
+- Avoid circular re-exports and barrel chains. A slice `index.ts` must not export implementation details used only inside that slice.
+- `shared` may contain app-wide brand and deployment configuration such as the public site name, locale, production origin, and design assets. Program rules, BMW M product knowledge, prices, instructors, and booking policy belong in an entity or feature.
+
+## Placement decisions
+
+- Keep `src/app/page.tsx` a Server Component and thin composition file. It should arrange widgets and route-level SEO, not contain the full landing implementation.
+- A component used once may remain local to its owning widget. Promote it only after a real second consumer or when it is a true design-system primitive.
+- Colocate slice files by responsibility: `ui/` for presentation, `model/` for types/state/constants, `lib/` for pure helpers, `api/` for external I/O, and `assets/` for slice-owned media.
+- Put immutable editorial data in typed server-safe modules owned by the relevant entity. Do not duplicate tariff copy across JSX, metadata, cards, and JSON-LD.
+- Global providers must be as deep as possible. Do not wrap the whole app in a client provider merely to support one animated section.
+- Architecture abstractions must solve a current need. Do not add repositories, service classes, global stores, dependency injection, or generic section engines to a static landing without a concrete consumer.
