@@ -49,7 +49,7 @@ export function AudioPlayer() {
   const currentPeaksRef = useRef<number[]>(Array(NUM_BARS).fill(12));
   const barRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const miniBarRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const frequencyDataRef = useRef<Uint8Array | null>(null);
+  const frequencyDataRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
 
   const track = TRACKS[currentTrackIdx];
 
