@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
 
 interface HeaderProps {
@@ -15,31 +16,36 @@ export function Header({ onOpenBooking }: HeaderProps) {
     const handleScroll = () => {
       setScrolled(window.scrollY > 30);
     };
-    window.addEventListener("scroll", handleScroll);
+    handleScroll();
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${
         scrolled
-          ? "bg-black/90 backdrop-blur-xl py-4 sm:py-5 border-b border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
-          : "bg-gradient-to-b from-black/80 via-black/40 to-transparent py-6 sm:py-7"
+          ? "bg-black/90 backdrop-blur-xl py-4 sm:py-5 border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
+          : "bg-gradient-to-b from-black/80 via-black/40 to-transparent py-6 sm:py-7 border-transparent"
       }`}
     >
-      <div className="w-full max-w-[1920px] mx-auto px-6 sm:px-12 lg:px-16 xl:px-20 relative flex items-center justify-between">
+      <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-12 lg:px-16 xl:px-20 relative flex items-center justify-between gap-2">
         {/* Left: Brand Logo Image */}
         <a href="#hero" className="flex items-center group shrink-0 z-10">
-          <img
+          <Image
             src="/images/logo.webp"
             alt="M-DRIFT"
-            className="h-6 sm:h-7 md:h-7.5 w-auto object-contain transition-transform group-hover:scale-105 duration-200"
+            width={1540}
+            height={172}
+            loading="eager"
+            fetchPriority="high"
+            className="h-5 sm:h-7 md:h-7.5 w-auto object-contain transition-transform group-hover:scale-105 duration-200"
           />
         </a>
 
         {/* Center: Perfectly Centered Navigation Menu */}
         <nav className="hidden lg:flex items-center gap-7 xl:gap-10 text-xs sm:text-[13px] font-bold tracking-wider text-[#8e8e93] uppercase absolute left-1/2 -translate-x-1/2">
-          <a href="#garage" className="hover:text-white transition-colors duration-200">
+          <a href="#hero" className="hover:text-white transition-colors duration-200">
             {t.header.nav.garage}
           </a>
           <a href="#about" className="hover:text-white transition-colors duration-200">
@@ -60,7 +66,7 @@ export function Header({ onOpenBooking }: HeaderProps) {
         </nav>
 
         {/* Right: Unified Height Language Switcher + CTA Button */}
-        <div className="flex items-center gap-3 sm:gap-4 shrink-0 z-10">
+        <div className="flex items-center gap-2 sm:gap-4 shrink-0 z-10">
           {/* Language Switcher */}
           <div className="h-[42px] sm:h-[44px] inline-flex items-center bg-white/[0.06] border border-white/20 rounded-[6px] p-[3px] text-xs uppercase tracking-wider backdrop-blur-md">
             <button
@@ -90,12 +96,14 @@ export function Header({ onOpenBooking }: HeaderProps) {
           </div>
 
           {/* CTA Button */}
-          <button
-            onClick={onOpenBooking}
-            className="btn-swiss-primary h-[42px] sm:h-[44px] text-xs sm:text-sm px-5 sm:px-6"
-          >
-            <span>{t.header.bookBtn}</span>
-          </button>
+          <div className="hidden sm:block">
+            <button
+              onClick={onOpenBooking}
+              className="btn-swiss-primary h-[42px] sm:h-[44px] text-xs sm:text-sm px-5 sm:px-6"
+            >
+              <span>{t.header.bookBtn}</span>
+            </button>
+          </div>
         </div>
       </div>
     </header>

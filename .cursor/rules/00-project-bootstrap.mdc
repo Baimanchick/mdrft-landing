@@ -1,0 +1,10 @@
+---
+description: Mandatory project rule bootstrap
+alwaysApply: true
+---
+
+# Project rule bootstrap
+
+Before analyzing or changing the project, read `AGENTS.md` and every applicable file in `rules/**/*.mdc` completely. Treat those files as the source of truth for architecture, Next.js, performance, animation, accessibility, SEO, media, security, and deployment decisions.
+
+For Next.js behavior, also read the relevant installed guide under `node_modules/next/dist/docs/` before writing code. Do not rely on remembered framework behavior.

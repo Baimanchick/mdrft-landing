@@ -7,7 +7,7 @@ alwaysApply: false
 # Rendering, data, and cache
 
 - The landing is static-first. Local typed content and imported assets require no runtime fetch, database, global state, ISR, or custom cache layer.
-- Do not enable `cacheComponents`, add `"use cache"`, or use an experimental cache API speculatively. The current `next.config.ts` does not enable Cache Components; consult the exact Next.js 16.2.6 caching guide before changing that model.
+- Do not enable `cacheComponents`, add `"use cache"`, or use an experimental cache API speculatively. The current `next.config.ts` does not enable Cache Components; consult the exact Next.js 16.2.11 caching guide before changing that model.
 - When adding remote data, write down freshness, personalization, invalidation owner, failure behavior, and acceptable staleness before selecting a cache policy.
 - In the current non-Cache-Components model, `fetch` is not cached by default. Choose explicitly per request: `cache: "force-cache"` for immutable/revalidated public data, `next: { revalidate, tags }` for known freshness windows, or `cache: "no-store"` for request-specific data.
 - Never cache per-user, authorization-dependent, consent, booking, or secret-bearing responses in a shared cache.
@@ -19,4 +19,3 @@ alwaysApply: false
 - Public fingerprinted static assets may receive long-lived immutable caching at the hosting layer; mutable named files, HTML, robots, sitemap, and manifests must not be treated as fingerprinted assets.
 - A future CMS integration must normalize and validate content in a server-owned adapter. UI must consume typed domain data, not raw CMS response shapes.
 - Failed remote content must not silently replace verified copy with empty sections or fabricated values. Define an intentional stale, unavailable, or editorial fallback.
-

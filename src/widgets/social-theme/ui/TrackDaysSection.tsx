@@ -1,12 +1,14 @@
 "use client";
 
-import React, { useRef, useState } from "react";
 import { motion } from "motion/react";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
+import { AmbientVideo } from "@/shared/ui/video";
 
 interface TrackDaysSectionProps {
   onOpenClub: () => void;
 }
+
+const TRACK_DAYS_CLIPS = ["/videos/block-5.webm"];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -38,29 +40,17 @@ const itemVariants = {
 
 export function TrackDaysSection({ onOpenClub }: TrackDaysSectionProps) {
   const { t } = useLanguage();
-  const [isMuted, setIsMuted] = useState(true);
-  const videoRef = useRef<HTMLVideoElement | null>(null);
-
-  const toggleSound = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !videoRef.current.muted;
-      setIsMuted(videoRef.current.muted);
-    }
-  };
 
   return (
     <section id="track-days" className="relative w-full bg-black text-white border-b border-white/10 overflow-hidden font-sans">
       <div className="max-w-[1820px] mx-auto border-l border-r border-white/10 relative min-h-[500px] sm:min-h-[560px] lg:min-h-[600px] flex flex-col justify-between overflow-hidden">
         {/* Background Fullscreen High-Speed Video */}
         <div className="absolute inset-0 z-0 overflow-hidden bg-black pointer-events-none">
-          <video
-            ref={videoRef}
-            src="/videos/block-5.webm"
-            autoPlay
-            loop
-            muted={isMuted}
-            playsInline
-            className="w-full h-full object-cover select-none"
+          <AmbientVideo
+            clips={TRACK_DAYS_CLIPS}
+            className="absolute inset-0 w-full h-full object-cover select-none"
+            activeClassName="opacity-100"
+            inactiveClassName="opacity-0"
           />
 
           {/* Deep Left Gradient Overlay: 96% -> 85% on the left, fading to 0% transparent on the right */}

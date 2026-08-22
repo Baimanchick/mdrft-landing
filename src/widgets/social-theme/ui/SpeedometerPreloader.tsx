@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect, useId } from "react";
+import React, { useState, useEffect, useId, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useScrollLock } from "@/shared/ui/smooth-scroll";
 
 interface SpeedometerPreloaderProps {
   onComplete?: () => void;
@@ -23,6 +24,10 @@ export function SpeedometerPreloader({ onComplete }: SpeedometerPreloaderProps) 
   const [ignitionStage, setIgnitionStage] = useState(0);
 
   const filterId = useId().replace(/:/g, "_");
+
+  const exitFadeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useScrollLock(visible);
 
   useEffect(() => {
     // Real time formatted as H:MM AM/PM
@@ -137,19 +142,14 @@ export function SpeedometerPreloader({ onComplete }: SpeedometerPreloaderProps) 
     return () => {
       cancelAnimationFrame(animFrame);
       clearTimeout(exitTimer);
-      if (typeof document !== "undefined") {
-        document.body.style.overflow = "";
-      }
+      if (exitFadeTimerRef.current) clearTimeout(exitFadeTimerRef.current);
     };
   }, []);
 
   const triggerSequentialExit = () => {
     setIsExiting(true);
-    setTimeout(() => {
+    exitFadeTimerRef.current = setTimeout(() => {
       setVisible(false);
-      if (typeof document !== "undefined") {
-        document.body.style.overflow = "";
-      }
       if (onComplete) onComplete();
     }, 800);
   };

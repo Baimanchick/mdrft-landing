@@ -1,12 +1,8 @@
 "use client";
 
-import React from "react";
+import Image from "next/image";
 import { motion } from "motion/react";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
-
-interface MClubSectionProps {
-  onOpenBooking?: () => void;
-}
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -36,7 +32,7 @@ const itemVariants = {
   },
 };
 
-export function MClubSection({ onOpenBooking }: MClubSectionProps) {
+export function MClubSection() {
   const { t } = useLanguage();
 
   return (
@@ -52,9 +48,11 @@ export function MClubSection({ onOpenBooking }: MClubSectionProps) {
         >
           {/* Background Photo in top half of block */}
           <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-            <img
+            <Image
               src="/images/teach.webp"
-              alt="BMW M Track Community & Training"
+              alt=""
+              fill
+              sizes="100vw"
               style={{ opacity: 0.42 }}
               className="w-full h-full object-cover object-[center_50%] select-none scale-105"
             />

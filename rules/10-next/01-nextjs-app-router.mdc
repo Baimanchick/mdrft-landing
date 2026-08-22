@@ -1,10 +1,10 @@
 ---
-description: Next.js 16.2.6 App Router, RSC boundaries, route conventions, and runtime rules
+description: Next.js 16.2.11 App Router, RSC boundaries, route conventions, and runtime rules
 globs: src/**/*.{ts,tsx}
 alwaysApply: false
 ---
 
-# Next.js 16.2.6 App Router
+# Next.js 16.2.11 App Router
 
 - Treat every `page.tsx` and `layout.tsx` as a Server Component unless interaction, a browser API, state, an effect, or a client-only library requires otherwise.
 - Add `"use client"` at the smallest interactive leaf. Everything imported by that file enters the client module graph, so never mark a whole page, layout, widget, or static section client only to animate one element.

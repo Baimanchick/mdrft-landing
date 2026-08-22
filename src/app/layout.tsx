@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import { absoluteUrl, siteConfig } from "@/shared/config/site";
 import "./globals.css";
 
 const inter = Inter({
@@ -8,25 +9,39 @@ const inter = Inter({
   display: "swap",
 });
 
+const canonicalUrl = absoluteUrl("/");
+
 export const metadata: Metadata = {
-  title: "M-Drift School | №1 Дрифт-школа BMW M-серии в России",
-  description:
-    "Чистый контроль. Баварский характер. Уличный бэкграунд. Обучение дрифту исключительно на BMW M2, M3, M4, M5, M8 без гидроручников — только инерция, масса и газ. Автодром ADM Raceway.",
+  metadataBase: siteConfig.url ? new URL(siteConfig.url) : undefined,
+  title: {
+    default: siteConfig.title,
+    template: `%s | ${siteConfig.name}`,
+  },
+  description: siteConfig.description,
   keywords: [
     "дрифт школа",
     "BMW M drift",
-    "BMW M3 drift",
-    "BMW M4 drift",
-    "ADM Raceway дрифт",
-    "контраварийная подготовка BMW",
-    "M-Club Russia",
+    "обучение дрифту",
+    "контраварийная подготовка",
+    "трековая подготовка",
   ],
+  alternates: canonicalUrl ? { canonical: canonicalUrl } : undefined,
   openGraph: {
-    title: "M-Drift School | №1 Дрифт-школа BMW M-серии",
-    description: "Чистый контроль. Баварский характер. Уличный бэкграунд.",
+    title: siteConfig.title,
+    description: siteConfig.description,
     type: "website",
-    locale: "ru_RU",
+    locale: siteConfig.locale,
+    siteName: siteConfig.name,
+    url: canonicalUrl ?? undefined,
   },
+  twitter: {
+    card: "summary_large_image",
+    title: siteConfig.title,
+    description: siteConfig.description,
+  },
+  robots: canonicalUrl
+    ? { index: true, follow: true }
+    : { index: false, follow: false, noarchive: true },
 };
 
 export const viewport: Viewport = {

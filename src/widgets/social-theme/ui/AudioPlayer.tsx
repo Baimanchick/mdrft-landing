@@ -17,6 +17,14 @@ const TRACKS: SoundTrack[] = [
   },
 ];
 
+const MINI_BAR_SOURCES = [
+  { barIndex: 2, minHeight: 25, idleHeight: 35 },
+  { barIndex: 8, minHeight: 35, idleHeight: 65 },
+  { barIndex: 15, minHeight: 20, idleHeight: 30 },
+] as const;
+
+const IDLE_BAR_HEIGHT = 12;
+
 const NUM_BARS = 24;
 
 // Individual unique frequency band curves & variations for each bar
@@ -31,9 +39,6 @@ export function AudioPlayer() {
   const [currentTrackIdx, setCurrentTrackIdx] = useState(0);
   const [currentTimeSec, setCurrentTimeSec] = useState(0);
   const [volume, setVolume] = useState(0.8);
-  const [barHeights, setBarHeights] = useState<number[]>(
-    Array(NUM_BARS).fill(12)
-  );
 
   const containerRef = useRef<HTMLDivElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -42,6 +47,9 @@ export function AudioPlayer() {
   const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
   const animFrameRef = useRef<number | null>(null);
   const currentPeaksRef = useRef<number[]>(Array(NUM_BARS).fill(12));
+  const barRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const miniBarRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const frequencyDataRef = useRef<Uint8Array | null>(null);
 
   const track = TRACKS[currentTrackIdx];
 
@@ -99,11 +107,31 @@ export function AudioPlayer() {
     }
   };
 
-  // Sharp Peak & Gravity Drop Audio Spectrum Physics (Every bar has a distinct height)
+  const paintBars = (heights: number[]) => {
+    for (let i = 0; i < heights.length; i += 1) {
+      const bar = barRefs.current[i];
+      if (bar) bar.style.height = `${heights[i]}%`;
+    }
+    MINI_BAR_SOURCES.forEach((source, idx) => {
+      const mini = miniBarRefs.current[idx];
+      if (mini) mini.style.height = `${Math.max(source.minHeight, heights[source.barIndex])}%`;
+    });
+  };
+
+  const resetBars = () => {
+    for (const bar of barRefs.current) {
+      if (bar) bar.style.height = `${IDLE_BAR_HEIGHT}%`;
+    }
+    MINI_BAR_SOURCES.forEach((source, idx) => {
+      const mini = miniBarRefs.current[idx];
+      if (mini) mini.style.height = `${source.idleHeight}%`;
+    });
+  };
+
   useEffect(() => {
     if (!isPlaying) {
-      setBarHeights(Array(NUM_BARS).fill(12));
-      currentPeaksRef.current = Array(NUM_BARS).fill(12);
+      currentPeaksRef.current = Array(NUM_BARS).fill(IDLE_BAR_HEIGHT);
+      resetBars();
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
       return;
     }
@@ -112,12 +140,14 @@ export function AudioPlayer() {
     const renderSpectrum = () => {
       t += 0.2;
       const prevHeights = currentPeaksRef.current;
-      const dataArray = analyserRef.current
-        ? new Uint8Array(analyserRef.current.frequencyBinCount)
-        : null;
+      const analyser = analyserRef.current;
+      if (analyser && frequencyDataRef.current?.length !== analyser.frequencyBinCount) {
+        frequencyDataRef.current = new Uint8Array(analyser.frequencyBinCount);
+      }
+      const dataArray = analyser ? frequencyDataRef.current : null;
 
-      if (analyserRef.current && dataArray) {
-        analyserRef.current.getByteFrequencyData(dataArray);
+      if (analyser && dataArray) {
+        analyser.getByteFrequencyData(dataArray);
       }
 
       const nextHeights = prevHeights.map((prevH, i) => {
@@ -157,7 +187,7 @@ export function AudioPlayer() {
       });
 
       currentPeaksRef.current = nextHeights;
-      setBarHeights(nextHeights);
+      paintBars(nextHeights);
 
       animFrameRef.current = requestAnimationFrame(renderSpectrum);
     };
@@ -168,6 +198,17 @@ export function AudioPlayer() {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
   }, [isPlaying]);
+
+  useEffect(() => {
+    return () => {
+      sourceNodeRef.current?.disconnect();
+      analyserRef.current?.disconnect();
+      audioCtxRef.current?.close().catch(() => {});
+      sourceNodeRef.current = null;
+      analyserRef.current = null;
+      audioCtxRef.current = null;
+    };
+  }, []);
 
   // Audio Play / Pause handler
   const togglePlayback = async () => {
@@ -243,15 +284,24 @@ export function AudioPlayer() {
             {/* Animated 3-bar voice memo icon */}
             <div className="flex items-end justify-center gap-1 h-6 w-6">
               <span
-                style={{ height: isPlaying ? `${Math.max(25, barHeights[2])}%` : "35%" }}
+                ref={(element) => {
+                  miniBarRefs.current[0] = element;
+                }}
+                style={{ height: "35%" }}
                 className="w-1 bg-[#ea4043] rounded-full transition-none"
               />
               <span
-                style={{ height: isPlaying ? `${Math.max(35, barHeights[8])}%` : "65%" }}
+                ref={(element) => {
+                  miniBarRefs.current[1] = element;
+                }}
+                style={{ height: "65%" }}
                 className="w-1 bg-white rounded-full transition-none"
               />
               <span
-                style={{ height: isPlaying ? `${Math.max(20, barHeights[15])}%` : "30%" }}
+                ref={(element) => {
+                  miniBarRefs.current[2] = element;
+                }}
+                style={{ height: "30%" }}
                 className="w-1 bg-[#0099ff] rounded-full transition-none"
               />
             </div>
@@ -275,10 +325,13 @@ export function AudioPlayer() {
               >
                 {/* Top Area: 3-Color Bouncing M-Equalizer Spectrum (Distinct Height Per Bar) */}
                 <div className="relative h-14 flex items-end justify-between px-1 gap-1 overflow-hidden pt-2">
-                  {barHeights.map((height, idx) => (
+                  {BAR_WEIGHTS.map((_, idx) => (
                     <span
                       key={idx}
-                      style={{ height: `${height}%` }}
+                      ref={(element) => {
+                        barRefs.current[idx] = element;
+                      }}
+                      style={{ height: `${IDLE_BAR_HEIGHT}%` }}
                       className={`w-full rounded-xs transition-none ${
                         idx < 8
                           ? "bg-[#0099ff]"

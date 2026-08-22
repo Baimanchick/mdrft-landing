@@ -40,6 +40,15 @@
     scrollbar-gutter: stable;
   }
 
+  html.lenis {
+    scroll-behavior: auto;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent-red-bright);
+    outline-offset: 2px;
+  }
+
   body {
     background-color: var(--bg-black);
     color: var(--text-main);
@@ -51,6 +60,30 @@
     background: #ea4043;
     color: #ffffff;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+.bg-radial-vignette {
+  background: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 0) 35%,
+    rgba(0, 0, 0, 0.55) 78%,
+    rgba(0, 0, 0, 0.85) 100%
+  );
 }
 
 /* Red Gradient Utility Classes */

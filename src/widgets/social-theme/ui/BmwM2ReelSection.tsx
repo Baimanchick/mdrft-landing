@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
 import { motion } from "motion/react";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
+import { AmbientVideo } from "@/shared/ui/video";
 
 const M2_VIDEOS = [
   "/videos/bmwm2-1.webm",
@@ -22,48 +22,17 @@ export function BmwM2ReelSection({
   onOpenClub,
   onOpenPartnership,
 }: BmwM2ReelSectionProps) {
-  const [currentIdx, setCurrentIdx] = useState(0);
-  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
   const { lang } = useLanguage();
   const isRu = lang === "ru";
 
-  const handleEnded = (idx: number) => {
-    const nextIdx = (idx + 1) % M2_VIDEOS.length;
-    const nextVideo = videoRefs.current[nextIdx];
-    if (nextVideo) {
-      nextVideo.currentTime = 0;
-      nextVideo.play().catch(() => {});
-    }
-    setCurrentIdx(nextIdx);
-  };
-
-  useEffect(() => {
-    const activeVid = videoRefs.current[currentIdx];
-    if (activeVid) {
-      activeVid.play().catch(() => {});
-    }
-  }, [currentIdx]);
-
   return (
     <section className="relative w-full min-h-[560px] sm:min-h-[620px] lg:min-h-[680px] py-16 sm:py-20 bg-black border-b border-white/10 overflow-hidden flex items-center justify-center font-sans">
-      {/* 2 Preloaded instant seamless video layers */}
-      {M2_VIDEOS.map((src, idx) => (
-        <video
-          key={src}
-          ref={(el) => {
-            videoRefs.current[idx] = el;
-          }}
-          autoPlay={idx === 0}
-          muted
-          playsInline
-          preload="auto"
-          onEnded={() => handleEnded(idx)}
-          className={`absolute inset-0 w-full h-full object-cover scale-105 ${
-            idx === currentIdx ? "opacity-100 z-1" : "opacity-0 z-0 pointer-events-none"
-          }`}
-          src={src}
-        />
-      ))}
+      <AmbientVideo
+        clips={M2_VIDEOS}
+        className="absolute inset-0 w-full h-full object-cover scale-105"
+        activeClassName="opacity-100 z-1"
+        inactiveClassName="opacity-0 z-0 pointer-events-none"
+      />
 
       {/* Cinematic Contrast Vignette Overlays */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/45 to-black/85 z-2 pointer-events-none" />

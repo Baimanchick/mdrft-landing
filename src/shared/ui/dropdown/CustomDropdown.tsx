@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useId } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
 export interface DropdownOption {
@@ -25,6 +25,10 @@ export function CustomDropdown({
 }: CustomDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const fieldId = useId();
+  const labelId = `${fieldId}-label`;
+  const listId = `${fieldId}-list`;
 
   const selectedOption = options.find((opt) => opt.id === value);
 
@@ -48,6 +52,7 @@ export function CustomDropdown({
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setIsOpen(false);
+        triggerRef.current?.focus();
       }
     }
     if (isOpen) {
@@ -85,14 +90,22 @@ export function CustomDropdown({
   return (
     <div className={`relative w-full ${isOpen ? "z-50" : "z-10"}`} ref={dropdownRef}>
       {label && (
-        <label className="block text-xs uppercase tracking-wider text-[#8e8e93] font-semibold mb-2">
+        <span
+          id={labelId}
+          className="block text-xs uppercase tracking-wider text-[#8e8e93] font-semibold mb-2"
+        >
           {label}
-        </label>
+        </span>
       )}
 
       {/* Trigger Button */}
       <button
+        ref={triggerRef}
         type="button"
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-controls={isOpen ? listId : undefined}
+        aria-labelledby={label ? `${labelId} ${fieldId}-value` : undefined}
         onClick={() => setIsOpen(!isOpen)}
         className={`w-full flex items-center justify-between bg-white/[0.04] hover:bg-white/[0.07] border rounded-lg px-4.5 py-3.5 text-white text-sm text-left transition-all duration-200 cursor-pointer ${
           isOpen
@@ -100,7 +113,7 @@ export function CustomDropdown({
             : "border-white/15 hover:border-white/30"
         }`}
       >
-        <div className="w-full pr-2">
+        <div id={`${fieldId}-value`} className="w-full pr-2">
           {selectedOption ? (
             renderOptionContent(selectedOption.label, false)
           ) : (
@@ -124,6 +137,9 @@ export function CustomDropdown({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.98 }}
             transition={{ duration: 0.16, ease: [0.16, 1, 0.3, 1] }}
+            id={listId}
+            role="listbox"
+            aria-labelledby={labelId}
             data-lenis-prevent="true"
             onWheel={(e) => e.stopPropagation()}
             onTouchMove={(e) => e.stopPropagation()}
@@ -135,9 +151,12 @@ export function CustomDropdown({
                 <button
                   key={opt.id}
                   type="button"
+                  role="option"
+                  aria-selected={isSelected}
                   onClick={() => {
                     onChange(opt.id);
                     setIsOpen(false);
+                    triggerRef.current?.focus();
                   }}
                   className={`w-full px-3.5 py-3 rounded-lg text-sm text-left flex items-center justify-between cursor-pointer transition-all duration-150 group ${
                     isSelected

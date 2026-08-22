@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React from "react";
 import { motion } from "motion/react";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
@@ -52,9 +53,11 @@ export function ServicesSection({ onOpenBooking }: ServicesSectionProps) {
         >
           {/* Background Photo in top half of block */}
           <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-            <img
+            <Image
               src="/images/services-telemetry-bg.webp"
-              alt="BMW M Telemetry & Engineering"
+              alt=""
+              fill
+              sizes="100vw"
               style={{ opacity: 0.42 }}
               className="w-full h-full object-cover object-[center_45%] select-none scale-105"
             />

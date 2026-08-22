@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "motion/react";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
+import { AmbientVideo } from "@/shared/ui/video";
 
 interface HeroSectionProps {
   isLoaded?: boolean;
@@ -55,67 +56,28 @@ export function HeroSection({
 }: HeroSectionProps) {
   const { t, lang } = useLanguage();
   const isRu = lang === "ru";
-  const [currentIdx, setCurrentIdx] = useState(0);
   const [isCentered, setIsCentered] = useState(false);
-  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
 
-  // Start video 1 only after website loading is complete
   useEffect(() => {
-    if (isLoaded) {
-      const firstVid = videoRefs.current[0];
-      if (firstVid) {
-        firstVid.currentTime = 0;
-        firstVid.play().catch(() => {});
-      }
+    if (!isLoaded) return;
 
-      // After 5 seconds post-load, smoothly slide headline & description to the vertical center
-      const centerTimer = setTimeout(() => {
-        setIsCentered(true);
-      }, 5000);
+    const centerTimer = setTimeout(() => {
+      setIsCentered(true);
+    }, 5000);
 
-      return () => clearTimeout(centerTimer);
-    }
+    return () => clearTimeout(centerTimer);
   }, [isLoaded]);
-
-  const handleEnded = (idx: number) => {
-    const nextIdx = (idx + 1) % HERO_VIDEOS.length;
-    const nextVideo = videoRefs.current[nextIdx];
-    if (nextVideo) {
-      nextVideo.currentTime = 0;
-      nextVideo.play().catch(() => {});
-    }
-    setCurrentIdx(nextIdx);
-  };
-
-  useEffect(() => {
-    if (isLoaded) {
-      const activeVid = videoRefs.current[currentIdx];
-      if (activeVid) {
-        activeVid.play().catch(() => {});
-      }
-    }
-  }, [currentIdx, isLoaded]);
 
   return (
     <section id="hero" className="relative min-h-screen w-full bg-black text-white overflow-hidden flex flex-col justify-start items-center border-b border-white/10 font-sans">
-      {/* 5 Seamless Preloaded Sequential Videos (Instant Cut, Starts on Load) */}
       <div className="absolute inset-0 w-full h-full z-0 overflow-hidden bg-black pointer-events-none">
-        {HERO_VIDEOS.map((src, idx) => (
-          <video
-            key={src}
-            ref={(el) => {
-              videoRefs.current[idx] = el;
-            }}
-            muted
-            playsInline
-            preload="auto"
-            onEnded={() => handleEnded(idx)}
-            className={`absolute inset-0 w-full h-full object-cover scale-105 ${
-              idx === currentIdx ? "opacity-100 z-1" : "opacity-0 z-0 pointer-events-none"
-            }`}
-            src={src}
-          />
-        ))}
+        <AmbientVideo
+          clips={HERO_VIDEOS}
+          isEnabled={isLoaded}
+          className="absolute inset-0 w-full h-full object-cover scale-105"
+          activeClassName="opacity-100 z-1"
+          inactiveClassName="opacity-0 z-0 pointer-events-none"
+        />
 
         {/* Crisp Lighting & Contrast Overlays for clear typography */}
         <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/35 to-black/85 z-2" />

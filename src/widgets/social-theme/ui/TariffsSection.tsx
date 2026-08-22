@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import Image from "next/image";
 import { motion } from "motion/react";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
 
@@ -37,10 +37,7 @@ const itemVariants = {
 };
 
 export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
-  const [activeModuleTab, setActiveModuleTab] = useState(0);
   const { t } = useLanguage();
-
-  const flagshipModules = t.tariffs.flagship.modules;
 
   return (
     <section id="tariffs" className="relative w-full bg-black text-white border-b border-white/10 overflow-hidden font-sans">
@@ -55,9 +52,11 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
         >
           {/* Background Photo in top half of block */}
           <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-            <img
+            <Image
               src="/images/tariffs-instructor-m2.webp"
-              alt="BMW M Drift Training"
+              alt=""
+              fill
+              sizes="100vw"
               style={{ opacity: 0.42 }}
               className="w-full h-full object-cover object-[center_45%] select-none scale-105"
             />
@@ -112,9 +111,11 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
           >
             {/* Background Image: Deep dark idle -> Brighter on hover */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-              <img
+              <Image
                 src="/images/tariff-1-first-touch.webp"
-                alt="First Touch Drift"
+                alt=""
+                fill
+                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                 className="w-full h-full object-cover opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 ease-out select-none"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30 group-hover:via-black/40 group-hover:to-black/10 transition-colors duration-500" />
@@ -155,9 +156,11 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
           >
             {/* Background Image: Deep dark idle -> Brighter on hover */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-              <img
+              <Image
                 src="/images/tariff-2-asphalt-start.webp"
-                alt="Asphalt Start Drift"
+                alt=""
+                fill
+                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                 className="w-full h-full object-cover opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 ease-out select-none"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30 group-hover:via-black/40 group-hover:to-black/10 transition-colors duration-500" />
@@ -198,9 +201,11 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
           >
             {/* Background Image: Deep dark idle -> Brighter on hover */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-              <img
+              <Image
                 src="/images/tariff-3-pro-progress.webp"
-                alt="Pro Progress Drift"
+                alt=""
+                fill
+                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                 className="w-full h-full object-cover opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 ease-out select-none"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30 group-hover:via-black/40 group-hover:to-black/10 transition-colors duration-500" />
@@ -250,9 +255,11 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
           >
             {/* Background Image: Deep dark idle -> Brighter on hover */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-              <img
+              <Image
                 src="/images/tariff-4-mastery-control.webp"
-                alt="Mastery Control Drift"
+                alt=""
+                fill
+                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                 className="w-full h-full object-cover opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 ease-out select-none"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30 group-hover:via-black/40 group-hover:to-black/10 transition-colors duration-500" />
@@ -296,9 +303,11 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
           >
             {/* Background Image: Deep dark idle -> Brighter on hover */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-              <img
+              <Image
                 src="/images/tariff-5-adm-raceway.webp"
-                alt="ADM Raceway Circuit"
+                alt=""
+                fill
+                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                 className="w-full h-full object-cover opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 ease-out select-none"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30 group-hover:via-black/40 group-hover:to-black/10 transition-colors duration-500" />
@@ -342,9 +351,11 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
           >
             {/* Background Image: Deep dark idle -> Brighter on hover */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-              <img
+              <Image
                 src="/images/tariff-6-own-car.webp"
-                alt="Own BMW M Coaching"
+                alt=""
+                fill
+                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                 className="w-full h-full object-cover opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 ease-out select-none"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30 group-hover:via-black/40 group-hover:to-black/10 transition-colors duration-500" />

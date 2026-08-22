@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import React from "react";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
 
@@ -13,10 +14,12 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8 pb-12 border-b border-white/10 text-sm">
           {/* Brand Col with Official Logo */}
           <div className="md:col-span-5 space-y-4">
-            <a href="#" className="flex items-center">
-              <img
+            <a href="#hero" className="flex items-center">
+              <Image
                 src="/images/logo.webp"
                 alt="M-DRIFT"
+                width={1540}
+                height={172}
                 className="h-8 sm:h-9 w-auto object-contain"
               />
             </a>

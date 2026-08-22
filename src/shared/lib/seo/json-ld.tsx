@@ -1,10 +1,18 @@
-import type { Thing, WithContext } from "schema-dts";
+type JsonLdPrimitive = boolean | number | string | null;
 
-type JsonLdProps = {
-  value: WithContext<Thing>;
+type JsonLdValue = JsonLdPrimitive | JsonLdValue[] | JsonLdDocument;
+
+export type JsonLdDocument = {
+  "@context": string;
+  "@type": string;
+  [key: string]: JsonLdValue | undefined;
 };
 
-export const serializeJsonLd = (value: WithContext<Thing>): string =>
+type JsonLdProps = {
+  value: JsonLdDocument;
+};
+
+export const serializeJsonLd = (value: JsonLdDocument): string =>
   JSON.stringify(value).replace(/</g, "\\u003c");
 
 export function JsonLd({ value }: JsonLdProps) {

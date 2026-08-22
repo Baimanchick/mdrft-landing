@@ -1,8 +1,7 @@
-import type { WebSite, WithContext } from "schema-dts";
-
 import { absoluteUrl, siteConfig } from "@/shared/config/site";
+import type { JsonLdDocument } from "./json-ld";
 
-export const buildWebsiteJsonLd = (): WithContext<WebSite> | null => {
+export const buildWebsiteJsonLd = (): JsonLdDocument | null => {
   if (!siteConfig.url) {
     return null;
   }

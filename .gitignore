@@ -47,3 +47,17 @@ ffmpeg.exe
 *.mov
 /Videos/
 /imgcar/
+
+# Local AI tooling
+/.claude/
+/.agents/skills-main/
+
+# Local media processing tools
+/concat_bmw5.mjs
+/download_and_process.mjs
+/download_cars.mjs
+/process_video.mjs
+/reencode_loop.mjs
+/run_ffmpeg.mjs
+/scripts/convert-images.js
+/scripts/convert_videos.py
