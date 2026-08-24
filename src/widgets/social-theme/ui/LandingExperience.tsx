@@ -15,7 +15,7 @@ import { HeroSection } from "@/widgets/social-theme/ui/HeroSection";
 import { MClubSection } from "@/widgets/social-theme/ui/MClubSection";
 import { MOwnerEliteSection } from "@/widgets/social-theme/ui/MOwnerEliteSection";
 import { ServicesSection } from "@/widgets/social-theme/ui/ServicesSection";
-import { SpeedometerPreloader } from "@/widgets/social-theme/ui/SpeedometerPreloader";
+import { SpeedometerPreloader } from "@/widgets/speedometer-preloader";
 import { TariffsSection } from "@/widgets/social-theme/ui/TariffsSection";
 import { TrackDaysSection } from "@/widgets/social-theme/ui/TrackDaysSection";
 import { VideoPlaceholderBlock } from "@/widgets/social-theme/ui/VideoPlaceholderBlock";
