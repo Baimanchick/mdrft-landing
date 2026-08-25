@@ -1,111 +1,232 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
+import type { Language } from "@/shared/lib/i18n/types";
 
-interface HeaderProps {
+type HeaderProps = {
   onOpenBooking: () => void;
+};
+
+type LanguageSwitcherProps = {
+  activeLanguage: Language;
+  label: string;
+  onChange: (language: Language) => void;
+};
+
+const NAV_ITEMS = [
+  { href: "#hero", label: "garage" },
+  { href: "#about", label: "about" },
+  { href: "#services", label: "services" },
+  { href: "#club", label: "club" },
+  { href: "#tariffs", label: "tariffs" },
+  { href: "#flagship", label: "flagship" },
+] as const;
+
+const WIDE_NAV_QUERY = "(min-width: 112rem)";
+
+function LanguageSwitcher({
+  activeLanguage,
+  label,
+  onChange,
+}: LanguageSwitcherProps) {
+  return (
+    <div
+      role="group"
+      aria-label={label}
+      className="inline-flex h-10 items-center rounded-md border border-white/15 bg-white/[0.05] p-[3px] text-xs uppercase tracking-wider backdrop-blur-md lg:h-11"
+    >
+      {(["ru", "en"] as const).map((language) => {
+        const isActive = activeLanguage === language;
+
+        return (
+          <button
+            key={language}
+            type="button"
+            onClick={() => onChange(language)}
+            aria-pressed={isActive}
+            className={`flex h-full min-w-10 cursor-pointer items-center justify-center rounded-[4px] border px-2.5 text-xs font-bold tracking-wider transition-colors duration-200 lg:min-w-11 ${
+              isActive
+                ? "border-white/20 bg-white/15 text-white"
+                : "border-transparent text-[#8e8e93] hover:text-white"
+            }`}
+          >
+            {language.toUpperCase()}
+          </button>
+        );
+      })}
+    </div>
+  );
 }
 
 export function Header({ onOpenBooking }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const { lang, setLanguage, t } = useLanguage();
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 30);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 30);
+
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const wideNavigation = window.matchMedia(WIDE_NAV_QUERY);
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setMenuOpen(false);
+        menuButtonRef.current?.focus();
+      }
+    };
+    const handleBreakpointChange = (event: MediaQueryListEvent) => {
+      if (event.matches) setMenuOpen(false);
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    wideNavigation.addEventListener("change", handleBreakpointChange);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      wideNavigation.removeEventListener("change", handleBreakpointChange);
+    };
+  }, [menuOpen]);
+
+  const handleBooking = () => {
+    setMenuOpen(false);
+    onOpenBooking();
+  };
+
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-300 ${
-        scrolled
-          ? "bg-black/90 backdrop-blur-xl py-4 sm:py-5 border-white/10 shadow-[0_10px_30px_rgba(0,0,0,0.8)]"
-          : "bg-gradient-to-b from-black/80 via-black/40 to-transparent py-6 sm:py-7 border-transparent"
+      className={`fixed inset-x-0 top-0 z-50 border-b transition-[padding,background-color,border-color,box-shadow] duration-300 ${
+        scrolled || menuOpen
+          ? "border-white/10 bg-black/90 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.7)] backdrop-blur-xl sm:py-3.5"
+          : "border-transparent bg-gradient-to-b from-black/85 via-black/45 to-transparent py-4 sm:py-5"
       }`}
     >
-      <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-12 lg:px-16 xl:px-20 relative flex items-center justify-between gap-2">
-        {/* Left: Brand Logo Image */}
-        <a href="#hero" className="flex items-center group shrink-0 z-10">
+      <div className="relative mx-auto grid w-full max-w-[1920px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 sm:gap-5 sm:px-6 lg:px-10 xl:px-12">
+        <a href="#hero" className="group relative z-10 flex shrink-0 items-center">
           <Image
             src="/images/logo.webp"
-            alt="M-DRIFT"
+            alt="M Drift School"
             width={1540}
             height={172}
-            loading="eager"
-            fetchPriority="high"
-            className="h-5 sm:h-7 md:h-7.5 w-auto object-contain transition-transform group-hover:scale-105 duration-200"
+            className="h-[18px] w-auto object-contain transition-transform duration-200 group-hover:scale-[1.03] sm:h-[22px] lg:h-[26px]"
           />
         </a>
 
-        {/* Center: Perfectly Centered Navigation Menu */}
-        <nav className="hidden lg:flex items-center gap-7 xl:gap-10 text-xs sm:text-[13px] font-bold tracking-wider text-[#8e8e93] uppercase absolute left-1/2 -translate-x-1/2">
-          <a href="#hero" className="hover:text-white transition-colors duration-200">
-            {t.header.nav.garage}
-          </a>
-          <a href="#about" className="hover:text-white transition-colors duration-200">
-            {t.header.nav.about}
-          </a>
-          <a href="#services" className="hover:text-white transition-colors duration-200">
-            {t.header.nav.services}
-          </a>
-          <a href="#club" className="hover:text-white transition-colors duration-200">
-            {t.header.nav.club}
-          </a>
-          <a href="#tariffs" className="hover:text-white transition-colors duration-200">
-            {t.header.nav.tariffs}
-          </a>
-          <a href="#flagship" className="hover:text-white transition-colors duration-200">
-            {t.header.nav.flagship}
-          </a>
+        <nav aria-label={t.header.navLabel} className="hidden min-[112rem]:block">
+          <ul className="flex items-center justify-center gap-5 min-[120rem]:gap-7">
+            {NAV_ITEMS.map((item) => (
+              <li key={item.href}>
+                <a
+                  href={item.href}
+                  className="whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.08em] text-[#8e8e93] transition-colors duration-200 hover:text-white"
+                >
+                  {t.header.nav[item.label]}
+                </a>
+              </li>
+            ))}
+          </ul>
         </nav>
 
-        {/* Right: Unified Height Language Switcher + CTA Button */}
-        <div className="flex items-center gap-2 sm:gap-4 shrink-0 z-10">
-          {/* Language Switcher */}
-          <div className="h-[42px] sm:h-[44px] inline-flex items-center bg-white/[0.06] border border-white/20 rounded-[6px] p-[3px] text-xs uppercase tracking-wider backdrop-blur-md">
-            <button
-              type="button"
-              onClick={() => setLanguage("ru")}
-              aria-label="Русский язык"
-              className={`h-full px-3 sm:px-3.5 flex items-center justify-center rounded-[4px] text-xs font-bold tracking-wider transition-all duration-200 cursor-pointer ${
-                lang === "ru"
-                  ? "bg-white/20 text-white border border-white/25 shadow-sm"
-                  : "text-[#8e8e93] hover:text-white border border-transparent"
-              }`}
-            >
-              RU
-            </button>
-            <button
-              type="button"
-              onClick={() => setLanguage("en")}
-              aria-label="English language"
-              className={`h-full px-3 sm:px-3.5 flex items-center justify-center rounded-[4px] text-xs font-bold tracking-wider transition-all duration-200 cursor-pointer ${
-                lang === "en"
-                  ? "bg-white/20 text-white border border-white/25 shadow-sm"
-                  : "text-[#8e8e93] hover:text-white border border-transparent"
-              }`}
-            >
-              EN
-            </button>
+        <div className="col-start-3 flex shrink-0 items-center justify-end gap-2 sm:gap-3">
+          <div className="hidden sm:block">
+            <LanguageSwitcher
+              activeLanguage={lang}
+              label={t.header.languageLabel}
+              onChange={setLanguage}
+            />
           </div>
 
-          {/* CTA Button */}
-          <div className="hidden sm:block">
-            <button
-              onClick={onOpenBooking}
-              className="btn-swiss-primary h-[42px] sm:h-[44px] text-xs sm:text-sm px-5 sm:px-6"
+          <button
+            ref={menuButtonRef}
+            type="button"
+            onClick={handleBooking}
+            className="btn-swiss-primary hidden h-10 whitespace-nowrap px-4 text-xs lg:inline-flex lg:h-11 lg:px-5"
+          >
+            <span>{t.header.bookBtn}</span>
+          </button>
+
+          <button
+            type="button"
+            aria-expanded={menuOpen}
+            aria-controls="primary-navigation-menu"
+            aria-label={menuOpen ? t.header.menuClose : t.header.menuOpen}
+            onClick={() => setMenuOpen((isOpen) => !isOpen)}
+            className="flex size-10 cursor-pointer items-center justify-center rounded-md border border-white/15 bg-white/[0.05] text-white transition-colors duration-200 hover:border-white/35 hover:bg-white/10 lg:size-11 min-[112rem]:hidden"
+          >
+            <svg
+              aria-hidden="true"
+              viewBox="0 0 24 24"
+              className="size-5"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.7"
+              strokeLinecap="square"
             >
-              <span>{t.header.bookBtn}</span>
-            </button>
-          </div>
+              {menuOpen ? (
+                <path d="M6 6 18 18M18 6 6 18" />
+              ) : (
+                <path d="M4 7h16M4 12h16M4 17h16" />
+              )}
+            </svg>
+          </button>
         </div>
       </div>
+
+      {menuOpen ? (
+        <div
+          id="primary-navigation-menu"
+          className="absolute inset-x-0 top-full max-h-[calc(100svh-4rem)] overflow-y-auto border-b border-white/10 bg-black/95 shadow-[0_24px_60px_rgba(0,0,0,0.65)] backdrop-blur-xl min-[112rem]:hidden"
+        >
+          <div className="mx-auto w-full max-w-[1920px] px-4 py-4 sm:px-6 sm:py-5 lg:px-10 xl:px-12">
+            <nav aria-label={t.header.navLabel}>
+              <ul className="grid gap-px overflow-hidden rounded-md border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
+                {NAV_ITEMS.map((item) => (
+                  <li key={item.href} className="bg-[#08090b]">
+                    <a
+                      href={item.href}
+                      onClick={() => setMenuOpen(false)}
+                      className="flex min-h-14 items-center justify-between px-4 text-xs font-bold uppercase tracking-[0.08em] text-[#b4b4ba] transition-colors duration-200 hover:bg-white/[0.04] hover:text-white sm:px-5"
+                    >
+                      <span>{t.header.nav[item.label]}</span>
+                      <span aria-hidden="true" className="text-[#ea4043]">
+                        ↗
+                      </span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
+            <div className="mt-3 flex items-stretch gap-2 lg:hidden">
+              <div className="sm:hidden">
+                <LanguageSwitcher
+                  activeLanguage={lang}
+                  label={t.header.languageLabel}
+                  onChange={setLanguage}
+                />
+              </div>
+              <button
+                type="button"
+                onClick={handleBooking}
+                className="btn-swiss-primary min-h-10 flex-1 px-4 text-xs"
+              >
+                <span>{t.header.bookBtn}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      ) : null}
     </header>
   );
 }

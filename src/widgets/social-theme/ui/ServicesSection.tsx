@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import React from "react";
 import { motion } from "motion/react";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
 
@@ -49,7 +48,7 @@ export function ServicesSection({ onOpenBooking }: ServicesSectionProps) {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.25, margin: "-40px" }}
-          className="grid grid-cols-1 lg:grid-cols-12 border-b border-white/10 relative overflow-hidden bg-black"
+          className="grid min-h-[430px] grid-cols-1 lg:min-h-[600px] lg:grid-cols-12 border-b border-white/10 relative overflow-hidden bg-black"
         >
           {/* Background Photo in top half of block */}
           <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -57,37 +56,37 @@ export function ServicesSection({ onOpenBooking }: ServicesSectionProps) {
               src="/images/services-telemetry-bg.webp"
               alt=""
               fill
-              sizes="100vw"
+              sizes="(min-width: 1820px) 1820px, 100vw"
               style={{ opacity: 0.42 }}
-              className="w-full h-full object-cover object-[center_45%] select-none scale-105"
+              className="w-full h-full object-cover object-[58%_45%] sm:object-[center_45%] select-none lg:scale-105"
             />
             {/* Soft atmospheric gradient only to preserve text contrast on the right */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-black/30 to-black/75" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/30 lg:bg-gradient-to-r lg:from-black/20 lg:via-black/30 lg:to-black/75" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
           </div>
 
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-3 p-8 sm:p-14 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between relative z-10"
+            className="lg:col-span-3 p-5 sm:p-10 lg:p-14 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between relative z-10"
           >
             <div className="text-3xl sm:text-5xl font-bold text-white flex items-baseline">
               <span>(02)</span>
               <span className="text-gradient-red">.</span>
             </div>
-            <div className="text-sm text-[#8e8e93] uppercase tracking-widest mt-12 font-medium">
+            <div className="text-xs sm:text-sm text-[#b5b5bd] lg:text-[#8e8e93] uppercase tracking-widest mt-6 sm:mt-10 lg:mt-12 font-medium">
               {t.services.category}
             </div>
           </motion.div>
 
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-9 p-8 sm:p-14 lg:p-20 flex flex-col justify-end relative z-10"
+            className="lg:col-span-9 p-5 sm:p-10 lg:p-20 flex flex-col justify-end relative z-10"
           >
-            <div className="text-right">
+            <div className="text-left lg:text-right">
               <span className="text-sm text-[#ea4043] tracking-widest uppercase mb-4 inline-block font-semibold">
                 {t.services.subheading}
               </span>
-              <h2 className="text-4xl sm:text-6xl md:text-7xl lg:text-[5.5rem] xl:text-[6.5rem] font-bold uppercase tracking-tighter text-white leading-[1.05]">
+              <h2 className="text-[clamp(2.25rem,11vw,4.5rem)] sm:text-6xl md:text-7xl lg:text-[5.5rem] xl:text-[6.5rem] font-bold uppercase tracking-tighter text-white leading-[1.05] break-words">
                 {t.services.titleMain}
                 <br />
                 <span className="text-[#3a3a42] hover:text-white transition-colors">{t.services.titleHighlight}</span>
@@ -108,7 +107,7 @@ export function ServicesSection({ onOpenBooking }: ServicesSectionProps) {
           {/* Pillar 01 (Span 5 - Widened) */}
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-5 p-8 sm:p-12 lg:p-14 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between min-h-[420px] hover:bg-white/[0.02] transition-colors group"
+            className="lg:col-span-5 p-5 sm:p-10 lg:p-14 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between min-h-[320px] sm:min-h-[380px] lg:min-h-[420px] hover:bg-white/[0.02] transition-colors group"
           >
             <div className="flex items-center justify-between">
               <div className="text-3xl font-bold text-white">01<span className="text-gradient-red">.</span></div>
@@ -131,7 +130,7 @@ export function ServicesSection({ onOpenBooking }: ServicesSectionProps) {
           {/* Pillar 02: Architectural Card (Span 7) */}
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-7 p-8 sm:p-14 lg:p-16 flex flex-col justify-between min-h-[420px] bg-[#050508] hover:bg-white/[0.02] transition-colors group"
+            className="lg:col-span-7 p-5 sm:p-10 lg:p-16 flex flex-col justify-between min-h-[320px] sm:min-h-[380px] lg:min-h-[420px] bg-[#050508] hover:bg-white/[0.02] transition-colors group"
           >
             <div className="flex items-center justify-between">
               <div className="text-3xl font-bold text-white">02<span className="text-gradient-red">.</span></div>
@@ -164,7 +163,7 @@ export function ServicesSection({ onOpenBooking }: ServicesSectionProps) {
           {/* Pillar 03: Wide Format (Span 7) */}
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-7 p-8 sm:p-14 lg:p-16 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between min-h-[420px] hover:bg-white/[0.02] transition-colors group"
+            className="lg:col-span-7 p-5 sm:p-10 lg:p-16 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between min-h-[320px] sm:min-h-[380px] lg:min-h-[420px] hover:bg-white/[0.02] transition-colors group"
           >
             <div className="flex items-center justify-between">
               <div className="text-3xl font-bold text-white">03<span className="text-gradient-red">.</span></div>
@@ -187,7 +186,7 @@ export function ServicesSection({ onOpenBooking }: ServicesSectionProps) {
           {/* Pillar 04: Format (Span 5) */}
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-5 p-8 sm:p-12 lg:p-14 flex flex-col justify-between min-h-[420px] bg-black"
+            className="lg:col-span-5 p-5 sm:p-10 lg:p-14 flex flex-col justify-between min-h-[320px] sm:min-h-[380px] lg:min-h-[420px] bg-black"
           >
             <div className="flex items-center justify-between">
               <div className="text-3xl font-bold text-white">04<span className="text-gradient-red">.</span></div>

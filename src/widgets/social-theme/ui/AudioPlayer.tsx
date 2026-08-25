@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 
 interface SoundTrack {
@@ -36,7 +36,7 @@ const BAR_WEIGHTS = [
 export function AudioPlayer() {
   const [isExpanded, setIsExpanded] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTrackIdx, setCurrentTrackIdx] = useState(0);
+  const [currentTrackIdx] = useState(0);
   const [currentTimeSec, setCurrentTimeSec] = useState(0);
   const [volume, setVolume] = useState(0.8);
 
@@ -254,7 +254,7 @@ export function AudioPlayer() {
 
   return (
     /* Grid-Aligned Fixed Wrapper matching site max-w-[1820px] and vertical grid borders */
-    <div className="fixed bottom-6 inset-x-0 z-40 pointer-events-none">
+    <div className="fixed [bottom:max(1rem,env(safe-area-inset-bottom))] sm:bottom-6 inset-x-0 z-40 pointer-events-none">
       <div className="max-w-[1820px] mx-auto px-4 sm:px-6 2xl:px-0 flex justify-end">
         {/* Local Anchor container for zero-shift position stability flush on the grid line */}
         <div ref={containerRef} className="relative pointer-events-auto font-sans flex items-end justify-end">
@@ -262,7 +262,7 @@ export function AudioPlayer() {
           <audio
             ref={audioRef}
             src={track.src}
-            preload="metadata"
+            preload="none"
             onTimeUpdate={(e) => setCurrentTimeSec(e.currentTarget.currentTime)}
             onEnded={() => setIsPlaying(false)}
             onPlay={() => setIsPlaying(true)}
@@ -321,7 +321,7 @@ export function AudioPlayer() {
                 transition={{ duration: 0.18, ease: "easeOut" }}
                 data-lenis-prevent="true"
                 onWheel={(e) => e.stopPropagation()}
-                className="absolute bottom-0 right-0 w-[280px] sm:w-[310px] bg-[#09090c]/98 border border-white/15 rounded-xl p-5 sm:p-6 shadow-[0_25px_60px_rgba(0,0,0,0.95)] backdrop-blur-2xl text-white space-y-5 select-none"
+                className="absolute bottom-0 right-0 w-[min(280px,calc(100vw-2rem))] sm:w-[310px] bg-[#09090c]/98 border border-white/15 rounded-xl p-5 sm:p-6 shadow-[0_25px_60px_rgba(0,0,0,0.95)] backdrop-blur-2xl text-white space-y-5 select-none"
               >
                 {/* Top Area: 3-Color Bouncing M-Equalizer Spectrum (Distinct Height Per Bar) */}
                 <div className="relative h-14 flex items-end justify-between px-1 gap-1 overflow-hidden pt-2">

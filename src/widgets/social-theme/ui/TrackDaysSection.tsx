@@ -8,7 +8,7 @@ interface TrackDaysSectionProps {
   onOpenClub: () => void;
 }
 
-const TRACK_DAYS_CLIPS = ["/videos/for212block.mp4"];
+const TRACK_DAYS_CLIPS = [{ webm: "/videos/for212block.webm" }] as const;
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -43,25 +43,21 @@ export function TrackDaysSection({ onOpenClub }: TrackDaysSectionProps) {
 
   return (
     <section id="track-days" className="relative w-full bg-black text-white border-b border-white/10 overflow-hidden font-sans">
-      <div className="max-w-[1820px] mx-auto border-l border-r border-white/10 relative min-h-[500px] sm:min-h-[560px] lg:min-h-[600px] flex flex-col justify-between overflow-hidden">
+      <div className="max-w-[1820px] mx-auto border-l border-r border-white/10 relative min-h-[540px] sm:min-h-[560px] lg:min-h-[600px] flex flex-col justify-between overflow-hidden">
         <div className="absolute inset-0 z-0 overflow-hidden bg-black pointer-events-none">
           <AmbientVideo
             clips={TRACK_DAYS_CLIPS}
-            className="absolute inset-0 w-full h-full object-cover select-none"
+            poster="/images/club-track-sunset.webp"
+            posterClassName="object-cover object-[62%_center] sm:object-center"
+            className="absolute inset-0 w-full h-full object-cover object-[62%_center] sm:object-center select-none"
             activeClassName="opacity-100"
             inactiveClassName="opacity-0"
           />
 
-          <div
-            className="absolute inset-0 z-1 pointer-events-none"
-            style={{
-              background:
-                "linear-gradient(90deg, rgba(0, 0, 0, 0.96) 0%, rgba(0, 0, 0, 0.85) 32%, rgba(0, 0, 0, 0.45) 55%, rgba(0, 0, 0, 0) 80%)",
-            }}
-          />
+          <div className="absolute inset-0 z-1 pointer-events-none bg-[linear-gradient(0deg,rgba(0,0,0,0.96)_0%,rgba(0,0,0,0.72)_48%,rgba(0,0,0,0.2)_100%)] sm:bg-[linear-gradient(90deg,rgba(0,0,0,0.96)_0%,rgba(0,0,0,0.85)_32%,rgba(0,0,0,0.45)_55%,rgba(0,0,0,0)_80%)]" />
         </div>
 
-        <div className="relative z-10 w-full py-16 sm:py-20 lg:py-24 px-8 sm:px-14 lg:px-20 flex flex-col justify-center flex-1 pointer-events-auto">
+        <div className="relative z-10 w-full py-14 sm:py-20 lg:py-24 px-5 sm:px-14 lg:px-20 flex flex-col justify-end sm:justify-center flex-1 pointer-events-auto">
           <motion.div
             variants={containerVariants}
             initial="hidden"
@@ -73,7 +69,7 @@ export function TrackDaysSection({ onOpenClub }: TrackDaysSectionProps) {
               <div className="text-xs sm:text-sm uppercase tracking-widest text-[#ea4043] font-bold drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                 {t.club.bannerBadge}
               </div>
-              <h2 className="text-3xl sm:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white leading-[1.05] drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
+              <h2 className="text-[clamp(2rem,10vw,3rem)] sm:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white leading-[1.05] drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
                 {t.club.bannerTitle}
               </h2>
               <p className="text-base sm:text-lg lg:text-xl text-[#d1d1d6] leading-relaxed font-light drop-shadow-[0_2px_10px_rgba(0,0,0,0.95)] max-w-2xl">
@@ -83,7 +79,7 @@ export function TrackDaysSection({ onOpenClub }: TrackDaysSectionProps) {
               <div className="pt-2">
                 <button
                   onClick={onOpenClub}
-                  className="px-6 py-3 bg-black/60 hover:bg-white text-white hover:text-black font-semibold uppercase tracking-[0.12em] text-xs border border-white/30 hover:border-white rounded transition-all duration-300 backdrop-blur-md cursor-pointer select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
+                  className="w-full sm:w-auto px-6 py-3 bg-black/60 hover:bg-white text-white hover:text-black font-semibold uppercase tracking-[0.12em] text-xs border border-white/30 hover:border-white rounded transition-all duration-300 backdrop-blur-md cursor-pointer select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
                 >
                   {t.club.bannerBtn}
                 </button>

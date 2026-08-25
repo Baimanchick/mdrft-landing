@@ -48,7 +48,7 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.25, margin: "-40px" }}
-          className="grid grid-cols-1 lg:grid-cols-12 border-b border-white/10 relative overflow-hidden bg-black"
+          className="grid min-h-[430px] grid-cols-1 lg:min-h-[600px] lg:grid-cols-12 border-b border-white/10 relative overflow-hidden bg-black"
         >
           {/* Background Photo in top half of block */}
           <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
@@ -56,37 +56,37 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
               src="/images/tariffs-instructor-m2.webp"
               alt=""
               fill
-              sizes="100vw"
+              sizes="(min-width: 1820px) 1820px, 100vw"
               style={{ opacity: 0.42 }}
-              className="w-full h-full object-cover object-[center_45%] select-none scale-105"
+              className="w-full h-full object-cover object-[58%_45%] sm:object-[center_45%] select-none lg:scale-105"
             />
             {/* Soft atmospheric gradient only to preserve text contrast on the right */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-black/30 to-black/75" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/30 lg:bg-gradient-to-r lg:from-black/20 lg:via-black/30 lg:to-black/75" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/30" />
           </div>
 
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-3 p-8 sm:p-14 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between relative z-10"
+            className="lg:col-span-3 p-5 sm:p-10 lg:p-14 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between relative z-10"
           >
             <div className="text-3xl sm:text-5xl font-bold text-white flex items-baseline">
               <span>(04)</span>
               <span className="text-gradient-red">.</span>
             </div>
-            <div className="text-sm text-[#8e8e93] uppercase tracking-widest mt-12 font-medium">
+            <div className="text-xs sm:text-sm text-[#b5b5bd] lg:text-[#8e8e93] uppercase tracking-widest mt-6 sm:mt-10 lg:mt-12 font-medium">
               {t.tariffs.category}
             </div>
           </motion.div>
 
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-9 p-8 sm:p-14 lg:p-20 flex flex-col justify-end relative z-10"
+            className="lg:col-span-9 p-5 sm:p-10 lg:p-20 flex flex-col justify-end relative z-10"
           >
             <div className="space-y-2">
               <span className="text-sm text-[#ea4043] tracking-widest uppercase block font-semibold">
                 {t.tariffs.subheading}
               </span>
-              <h2 className="text-4xl sm:text-6xl md:text-7xl lg:text-[5.5rem] xl:text-[6.5rem] font-bold uppercase tracking-tighter text-white leading-[1.05]">
+              <h2 className="text-[clamp(2.25rem,11vw,4.5rem)] sm:text-6xl md:text-7xl lg:text-[5.5rem] xl:text-[6.5rem] font-bold uppercase tracking-tighter text-white leading-[1.05] break-words">
                 {t.tariffs.titleMain}
                 <br />
                 <span className="text-[#3a3a42] hover:text-white transition-colors">{t.tariffs.titleHighlight}</span>
@@ -107,7 +107,7 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
           {/* Card 01: First Touch (Plastic Skidpad) */}
           <motion.div
             variants={itemVariants}
-            className="md:col-span-6 lg:col-span-4 p-8 sm:p-12 lg:p-14 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between min-h-[480px] bg-black relative overflow-hidden group cursor-pointer"
+            className="md:col-span-6 lg:col-span-4 p-5 sm:p-10 lg:p-14 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between min-h-[430px] sm:min-h-[460px] lg:min-h-[480px] bg-black relative overflow-hidden group cursor-pointer"
           >
             {/* Background Image: Deep dark idle -> Brighter on hover */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -115,13 +115,13 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
                 src="/images/tariff-1-first-touch.webp"
                 alt=""
                 fill
-                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                sizes="(min-width: 1820px) 607px, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                 className="w-full h-full object-cover opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 ease-out select-none"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30 group-hover:via-black/40 group-hover:to-black/10 transition-colors duration-500" />
             </div>
 
-            <div className="relative z-10 flex items-center justify-between">
+            <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
               <div className="text-3xl font-bold text-white">01<span className="text-gradient-red">.</span></div>
               <span className="text-sm px-3.5 py-1 bg-white/5 border border-white/10 text-[#a0a0a8] font-semibold tracking-wider backdrop-blur-md">
                 {t.tariffs.card1.badge}
@@ -152,7 +152,7 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
           {/* Card 02: Asphalt Start (Tarmac Drift) */}
           <motion.div
             variants={itemVariants}
-            className="md:col-span-6 lg:col-span-4 p-8 sm:p-12 lg:p-14 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between min-h-[480px] bg-[#050508] relative overflow-hidden group cursor-pointer"
+            className="md:col-span-6 lg:col-span-4 p-5 sm:p-10 lg:p-14 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between min-h-[430px] sm:min-h-[460px] lg:min-h-[480px] bg-[#050508] relative overflow-hidden group cursor-pointer"
           >
             {/* Background Image: Deep dark idle -> Brighter on hover */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -160,13 +160,13 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
                 src="/images/tariff-2-asphalt-start.webp"
                 alt=""
                 fill
-                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                sizes="(min-width: 1820px) 607px, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                 className="w-full h-full object-cover opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 ease-out select-none"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30 group-hover:via-black/40 group-hover:to-black/10 transition-colors duration-500" />
             </div>
 
-            <div className="relative z-10 flex items-center justify-between">
+            <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
               <div className="text-3xl font-bold text-white">02<span className="text-gradient-red">.</span></div>
               <span className="text-sm px-3.5 py-1 bg-white/5 border border-white/10 text-[#a0a0a8] font-semibold tracking-wider backdrop-blur-md">
                 {t.tariffs.card2.badge}
@@ -197,7 +197,7 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
           {/* Card 03: Pro Progress (Intensive Course) */}
           <motion.div
             variants={itemVariants}
-            className="md:col-span-12 lg:col-span-4 p-8 sm:p-12 lg:p-14 flex flex-col justify-between min-h-[480px] bg-[#07070a] relative overflow-hidden group cursor-pointer"
+            className="md:col-span-12 lg:col-span-4 p-5 sm:p-10 lg:p-14 flex flex-col justify-between min-h-[430px] sm:min-h-[460px] lg:min-h-[480px] bg-[#07070a] relative overflow-hidden group cursor-pointer"
           >
             {/* Background Image: Deep dark idle -> Brighter on hover */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -205,13 +205,13 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
                 src="/images/tariff-3-pro-progress.webp"
                 alt=""
                 fill
-                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                sizes="(min-width: 1820px) 607px, (min-width: 1024px) 33vw, 100vw"
                 className="w-full h-full object-cover opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 ease-out select-none"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30 group-hover:via-black/40 group-hover:to-black/10 transition-colors duration-500" />
             </div>
 
-            <div className="relative z-10 flex items-center justify-between">
+            <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
               <div className="text-3xl font-bold text-white">03<span className="text-gradient-red">.</span></div>
               <span className="text-sm px-3 py-1 bg-[#ea4043] text-white font-bold tracking-wider rounded-sm shadow-[0_0_15px_rgba(234,64,67,0.4)]">
                 {t.tariffs.card3.badge}
@@ -251,7 +251,7 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
           {/* Card 04: Mastery Control (Deep Drift Entry) */}
           <motion.div
             variants={itemVariants}
-            className="md:col-span-6 lg:col-span-4 p-8 sm:p-12 lg:p-14 border-b md:border-b-0 md:border-r border-white/10 flex flex-col justify-between min-h-[480px] bg-black relative overflow-hidden group cursor-pointer"
+            className="md:col-span-6 lg:col-span-4 p-5 sm:p-10 lg:p-14 border-b md:border-b-0 md:border-r border-white/10 flex flex-col justify-between min-h-[430px] sm:min-h-[460px] lg:min-h-[480px] bg-black relative overflow-hidden group cursor-pointer"
           >
             {/* Background Image: Deep dark idle -> Brighter on hover */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -259,13 +259,13 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
                 src="/images/tariff-4-mastery-control.webp"
                 alt=""
                 fill
-                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                sizes="(min-width: 1820px) 607px, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                 className="w-full h-full object-cover opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 ease-out select-none"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30 group-hover:via-black/40 group-hover:to-black/10 transition-colors duration-500" />
             </div>
 
-            <div className="relative z-10 flex items-center justify-between">
+            <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
               <div className="text-3xl font-bold text-white">04<span className="text-gradient-red">.</span></div>
               <span className="text-sm px-3.5 py-1 bg-white/5 border border-white/10 text-[#a0a0a8] font-semibold tracking-wider backdrop-blur-md">
                 {t.tariffs.card4.badge}
@@ -290,7 +290,7 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
                 onClick={() => onOpenBooking("mastery-control")}
                 className="btn-card-swiss"
               >
-                <span className="whitespace-nowrap">{t.tariffs.card4.btn}</span>
+                <span className="text-left">{t.tariffs.card4.btn}</span>
                 <span>→</span>
               </button>
             </div>
@@ -299,7 +299,7 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
           {/* Card 05: ADM Race Track Experience */}
           <motion.div
             variants={itemVariants}
-            className="md:col-span-6 lg:col-span-4 p-8 sm:p-12 lg:p-14 border-b md:border-b-0 lg:border-r border-white/10 flex flex-col justify-between min-h-[480px] bg-[#07070a] relative overflow-hidden group cursor-pointer"
+            className="md:col-span-6 lg:col-span-4 p-5 sm:p-10 lg:p-14 border-b md:border-b-0 lg:border-r border-white/10 flex flex-col justify-between min-h-[430px] sm:min-h-[460px] lg:min-h-[480px] bg-[#07070a] relative overflow-hidden group cursor-pointer"
           >
             {/* Background Image: Deep dark idle -> Brighter on hover */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -307,13 +307,13 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
                 src="/images/tariff-5-adm-raceway.webp"
                 alt=""
                 fill
-                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                sizes="(min-width: 1820px) 607px, (min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
                 className="w-full h-full object-cover opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 ease-out select-none"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30 group-hover:via-black/40 group-hover:to-black/10 transition-colors duration-500" />
             </div>
 
-            <div className="relative z-10 flex items-center justify-between">
+            <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
               <div className="text-3xl font-bold text-white">05<span className="text-gradient-red">.</span></div>
               <span className="text-sm px-3.5 py-1 bg-[#ea4043]/15 text-[#ea4043] border border-[#ea4043]/30 font-bold tracking-wider backdrop-blur-md">
                 {t.tariffs.card5.badge}
@@ -338,7 +338,7 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
                 onClick={() => onOpenBooking("adm-raceway")}
                 className="btn-card-swiss"
               >
-                <span className="whitespace-nowrap">{t.tariffs.card5.btn}</span>
+                <span className="text-left">{t.tariffs.card5.btn}</span>
                 <span>→</span>
               </button>
             </div>
@@ -347,7 +347,7 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
           {/* Card 06: Own BMW M Car */}
           <motion.div
             variants={itemVariants}
-            className="md:col-span-12 lg:col-span-4 p-8 sm:p-12 lg:p-14 flex flex-col justify-between min-h-[480px] bg-black relative overflow-hidden group cursor-pointer"
+            className="md:col-span-12 lg:col-span-4 p-5 sm:p-10 lg:p-14 flex flex-col justify-between min-h-[430px] sm:min-h-[460px] lg:min-h-[480px] bg-black relative overflow-hidden group cursor-pointer"
           >
             {/* Background Image: Deep dark idle -> Brighter on hover */}
             <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -355,13 +355,13 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
                 src="/images/tariff-6-own-car.webp"
                 alt=""
                 fill
-                sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
+                sizes="(min-width: 1820px) 607px, (min-width: 1024px) 33vw, 100vw"
                 className="w-full h-full object-cover opacity-50 group-hover:opacity-75 group-hover:scale-105 transition-all duration-500 ease-out select-none"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/60 to-black/30 group-hover:via-black/40 group-hover:to-black/10 transition-colors duration-500" />
             </div>
 
-            <div className="relative z-10 flex items-center justify-between">
+            <div className="relative z-10 flex flex-wrap items-center justify-between gap-3">
               <div className="text-3xl font-bold text-white">06<span className="text-gradient-red">.</span></div>
               <span className="text-sm px-3.5 py-1 bg-white/5 border border-white/10 text-white font-semibold tracking-wider backdrop-blur-md">
                 {t.tariffs.card6.badge}

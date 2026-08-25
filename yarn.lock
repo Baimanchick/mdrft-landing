@@ -3344,6 +3344,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lucide-react@npm:^1.33.0":
+  version: 1.33.0
+  resolution: "lucide-react@npm:1.33.0"
+  peerDependencies:
+    react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/b0aae7a46611211251748da141cc0cd8c3107e49e1c26833962d54779b60e0c8f97e21a6a71e658aadc5131551d9c08f7721dc22d7abee779d057e794d277451
+  languageName: node
+  linkType: hard
+
 "m-drift-school@workspace:.":
   version: 0.0.0-use.local
   resolution: "m-drift-school@workspace:."
@@ -3356,6 +3365,7 @@ __metadata:
     eslint-config-next: "npm:16.2.11"
     ffmpeg-static: "npm:^5.3.0"
     lenis: "npm:^1.3.26"
+    lucide-react: "npm:^1.33.0"
     motion: "npm:^13.0.0"
     next: "npm:16.2.11"
     react: "npm:19.2.4"

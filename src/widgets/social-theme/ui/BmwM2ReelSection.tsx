@@ -5,9 +5,9 @@ import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
 import { AmbientVideo } from "@/shared/ui/video";
 
 const M2_VIDEOS = [
-  "/videos/forlastblock.mp4",
-  "/videos/forlastblock2.mp4",
-];
+  { webm: "/videos/forlastblock.webm" },
+  { webm: "/videos/forlastblock2.webm" },
+] as const;
 
 interface BmwM2ReelSectionProps {
   onOpenBooking?: () => void;
@@ -26,10 +26,12 @@ export function BmwM2ReelSection({
   const isRu = lang === "ru";
 
   return (
-    <section className="relative w-full min-h-[560px] sm:min-h-[620px] lg:min-h-[680px] py-16 sm:py-20 bg-black border-b border-white/10 overflow-hidden flex items-center justify-center font-sans">
+    <section className="relative w-full min-h-[620px] sm:min-h-[640px] lg:min-h-[680px] py-14 sm:py-20 bg-black border-b border-white/10 overflow-hidden flex items-center justify-center font-sans">
       <AmbientVideo
         clips={M2_VIDEOS}
-        className="absolute inset-0 w-full h-full object-cover"
+        poster="/images/tariffs-instructor-m2.webp"
+        posterClassName="object-cover object-[58%_center] sm:object-center"
+        className="absolute inset-0 w-full h-full object-cover object-[58%_center] sm:object-center"
         activeClassName="opacity-100 z-1"
         inactiveClassName="opacity-0 z-0 pointer-events-none"
       />
@@ -37,7 +39,7 @@ export function BmwM2ReelSection({
       <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/45 to-black/85 z-2 pointer-events-none" />
       <div className="absolute inset-0 bg-radial-vignette opacity-70 z-2 pointer-events-none" />
 
-      <div className="relative z-10 max-w-[1820px] w-full h-full mx-auto border-l border-r border-white/10 flex items-center justify-center px-6 sm:px-12 pointer-events-none">
+      <div className="relative z-10 max-w-[1820px] w-full h-full mx-auto border-l border-r border-white/10 flex items-center justify-center px-5 sm:px-12 pointer-events-none">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -50,7 +52,7 @@ export function BmwM2ReelSection({
               {isRu ? "// РЕВ МОТОРА, СКОРОСТЬ, АДРЕНАЛИН, КЛУБЫ ДЫМА" : "// ENGINE ROAR • SPEED • ADRENALINE • SMOKE TRAILS"}
             </span>
 
-            <h2 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white leading-tight drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
+            <h2 className="text-[clamp(1.75rem,8.5vw,2.5rem)] sm:text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white leading-tight drop-shadow-[0_4px_20px_rgba(0,0,0,0.9)]">
               {isRu ? (
                 <>
                   ГОТОВ ПРОВЕРИТЬ СЕБЯ?
@@ -73,31 +75,31 @@ export function BmwM2ReelSection({
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-1">
+          <div className="grid w-full max-w-sm grid-cols-1 items-center justify-center gap-3 pt-1 sm:flex sm:max-w-none sm:flex-wrap sm:gap-4">
             <button
               onClick={onOpenPartnership}
-              className="px-6 sm:px-7 py-3.5 sm:py-4 bg-black/60 hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.14em] text-xs sm:text-[13px] border border-white/25 hover:border-white rounded transition-all duration-300 backdrop-blur-md cursor-pointer select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
+              className="w-full sm:w-auto px-5 sm:px-7 py-3.5 sm:py-4 bg-black/60 hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.12em] sm:tracking-[0.14em] text-xs sm:text-[13px] border border-white/25 hover:border-white rounded transition-all duration-300 backdrop-blur-md cursor-pointer select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
             >
               {isRu ? "Партнёрам" : "Partners"}
             </button>
 
             <button
               onClick={onOpenClub}
-              className="px-6 sm:px-7 py-3.5 sm:py-4 bg-black/60 hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.14em] text-xs sm:text-[13px] border border-white/25 hover:border-white rounded transition-all duration-300 backdrop-blur-md cursor-pointer select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
+              className="w-full sm:w-auto px-5 sm:px-7 py-3.5 sm:py-4 bg-black/60 hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.12em] sm:tracking-[0.14em] text-xs sm:text-[13px] border border-white/25 hover:border-white rounded transition-all duration-300 backdrop-blur-md cursor-pointer select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
             >
               {isRu ? "М-Комьюнити" : "M-Community"}
             </button>
 
             <button
               onClick={onOpenCertificate}
-              className="px-6 sm:px-7 py-3.5 sm:py-4 bg-black/60 hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.14em] text-xs sm:text-[13px] border border-white/25 hover:border-white rounded transition-all duration-300 backdrop-blur-md cursor-pointer select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
+              className="w-full sm:w-auto px-5 sm:px-7 py-3.5 sm:py-4 bg-black/60 hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.12em] sm:tracking-[0.14em] text-xs sm:text-[13px] border border-white/25 hover:border-white rounded transition-all duration-300 backdrop-blur-md cursor-pointer select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
             >
               {isRu ? "Купить сертификат" : "Gift Certificate"}
             </button>
 
             <button
               onClick={() => onOpenBooking && onOpenBooking()}
-              className="px-7 sm:px-8 py-3.5 sm:py-4 bg-[#ea4043] hover:bg-[#ff2a55] text-white font-bold uppercase tracking-[0.14em] text-xs sm:text-[13px] border border-[#ea4043] hover:border-[#ff2a55] rounded transition-all duration-300 shadow-[0_0_30px_rgba(234,64,67,0.4)] hover:shadow-[0_0_45px_rgba(234,64,67,0.65)] cursor-pointer select-none"
+              className="w-full sm:w-auto px-5 sm:px-8 py-3.5 sm:py-4 bg-[#ea4043] hover:bg-[#ff2a55] text-white font-bold uppercase tracking-[0.12em] sm:tracking-[0.14em] text-xs sm:text-[13px] border border-[#ea4043] hover:border-[#ff2a55] rounded transition-all duration-300 shadow-[0_0_30px_rgba(234,64,67,0.4)] hover:shadow-[0_0_45px_rgba(234,64,67,0.65)] cursor-pointer select-none"
             >
               {isRu ? "Записаться на тренировку" : "Book Training"}
             </button>

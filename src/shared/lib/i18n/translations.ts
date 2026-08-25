@@ -10,6 +10,10 @@ export const translations = {
         flagship: "ФЛАГМАН",
       },
       bookBtn: "Забронировать",
+      navLabel: "Основная навигация",
+      languageLabel: "Выбор языка",
+      menuOpen: "Открыть меню",
+      menuClose: "Закрыть меню",
     },
     hero: {
       headline: "M DRIFT SCHOOL",
@@ -311,6 +315,10 @@ export const translations = {
         flagship: "FLAGSHIP",
       },
       bookBtn: "Book Now",
+      navLabel: "Main navigation",
+      languageLabel: "Language selection",
+      menuOpen: "Open menu",
+      menuClose: "Close menu",
     },
     hero: {
       headline: "M DRIFT SCHOOL",
