@@ -5,8 +5,8 @@ import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
 import { AmbientVideo } from "@/shared/ui/video";
 
 const M2_VIDEOS = [
-  "/videos/bmwm2-1.webm",
-  "/videos/bmwm2-2.webm",
+  "/videos/forlastblock.mp4",
+  "/videos/forlastblock2.mp4",
 ];
 
 interface BmwM2ReelSectionProps {
@@ -29,18 +29,15 @@ export function BmwM2ReelSection({
     <section className="relative w-full min-h-[560px] sm:min-h-[620px] lg:min-h-[680px] py-16 sm:py-20 bg-black border-b border-white/10 overflow-hidden flex items-center justify-center font-sans">
       <AmbientVideo
         clips={M2_VIDEOS}
-        className="absolute inset-0 w-full h-full object-cover scale-105"
+        className="absolute inset-0 w-full h-full object-cover"
         activeClassName="opacity-100 z-1"
         inactiveClassName="opacity-0 z-0 pointer-events-none"
       />
 
-      {/* Cinematic Contrast Vignette Overlays */}
       <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/45 to-black/85 z-2 pointer-events-none" />
       <div className="absolute inset-0 bg-radial-vignette opacity-70 z-2 pointer-events-none" />
 
-      {/* Architectural Grid Line Container matching the site */}
       <div className="relative z-10 max-w-[1820px] w-full h-full mx-auto border-l border-r border-white/10 flex items-center justify-center px-6 sm:px-12 pointer-events-none">
-        {/* Dynamic CTA Text and Buttons Panel */}
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -48,7 +45,6 @@ export function BmwM2ReelSection({
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-4xl w-full mx-auto flex flex-col items-center text-center space-y-5 sm:space-y-6 pointer-events-auto"
         >
-          {/* Subheading, Headline & Description */}
           <div className="space-y-3">
             <span className="text-xs uppercase tracking-widest text-[#ea4043] font-bold block">
               {isRu ? "// РЕВ МОТОРА, СКОРОСТЬ, АДРЕНАЛИН, КЛУБЫ ДЫМА" : "// ENGINE ROAR • SPEED • ADRENALINE • SMOKE TRAILS"}
@@ -77,9 +73,7 @@ export function BmwM2ReelSection({
             </p>
           </div>
 
-          {/* The 4 Action Buttons */}
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-1">
-            {/* Button 1: ПАРТНЁРАМ */}
             <button
               onClick={onOpenPartnership}
               className="px-6 sm:px-7 py-3.5 sm:py-4 bg-black/60 hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.14em] text-xs sm:text-[13px] border border-white/25 hover:border-white rounded transition-all duration-300 backdrop-blur-md cursor-pointer select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
@@ -87,7 +81,6 @@ export function BmwM2ReelSection({
               {isRu ? "Партнёрам" : "Partners"}
             </button>
 
-            {/* Button 2: М-КОМЬЮНИТИ */}
             <button
               onClick={onOpenClub}
               className="px-6 sm:px-7 py-3.5 sm:py-4 bg-black/60 hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.14em] text-xs sm:text-[13px] border border-white/25 hover:border-white rounded transition-all duration-300 backdrop-blur-md cursor-pointer select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
@@ -95,7 +88,6 @@ export function BmwM2ReelSection({
               {isRu ? "М-Комьюнити" : "M-Community"}
             </button>
 
-            {/* Button 3: КУПИТЬ СЕРТИФИКАТ */}
             <button
               onClick={onOpenCertificate}
               className="px-6 sm:px-7 py-3.5 sm:py-4 bg-black/60 hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.14em] text-xs sm:text-[13px] border border-white/25 hover:border-white rounded transition-all duration-300 backdrop-blur-md cursor-pointer select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
@@ -103,7 +95,6 @@ export function BmwM2ReelSection({
               {isRu ? "Купить сертификат" : "Gift Certificate"}
             </button>
 
-            {/* Button 4: ЗАПИСАТЬСЯ НА ТРЕНИРОВКУ (Primary CTA) */}
             <button
               onClick={() => onOpenBooking && onOpenBooking()}
               className="px-7 sm:px-8 py-3.5 sm:py-4 bg-[#ea4043] hover:bg-[#ff2a55] text-white font-bold uppercase tracking-[0.14em] text-xs sm:text-[13px] border border-[#ea4043] hover:border-[#ff2a55] rounded transition-all duration-300 shadow-[0_0_30px_rgba(234,64,67,0.4)] hover:shadow-[0_0_45px_rgba(234,64,67,0.65)] cursor-pointer select-none"

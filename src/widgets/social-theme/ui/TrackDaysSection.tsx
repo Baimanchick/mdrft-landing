@@ -8,7 +8,7 @@ interface TrackDaysSectionProps {
   onOpenClub: () => void;
 }
 
-const TRACK_DAYS_CLIPS = ["/videos/block-5.webm"];
+const TRACK_DAYS_CLIPS = ["/videos/for212block.mp4"];
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -44,7 +44,6 @@ export function TrackDaysSection({ onOpenClub }: TrackDaysSectionProps) {
   return (
     <section id="track-days" className="relative w-full bg-black text-white border-b border-white/10 overflow-hidden font-sans">
       <div className="max-w-[1820px] mx-auto border-l border-r border-white/10 relative min-h-[500px] sm:min-h-[560px] lg:min-h-[600px] flex flex-col justify-between overflow-hidden">
-        {/* Background Fullscreen High-Speed Video */}
         <div className="absolute inset-0 z-0 overflow-hidden bg-black pointer-events-none">
           <AmbientVideo
             clips={TRACK_DAYS_CLIPS}
@@ -53,7 +52,6 @@ export function TrackDaysSection({ onOpenClub }: TrackDaysSectionProps) {
             inactiveClassName="opacity-0"
           />
 
-          {/* Deep Left Gradient Overlay: 96% -> 85% on the left, fading to 0% transparent on the right */}
           <div
             className="absolute inset-0 z-1 pointer-events-none"
             style={{
@@ -63,7 +61,6 @@ export function TrackDaysSection({ onOpenClub }: TrackDaysSectionProps) {
           />
         </div>
 
-        {/* Foreground Content */}
         <div className="relative z-10 w-full py-16 sm:py-20 lg:py-24 px-8 sm:px-14 lg:px-20 flex flex-col justify-center flex-1 pointer-events-auto">
           <motion.div
             variants={containerVariants}
@@ -72,7 +69,6 @@ export function TrackDaysSection({ onOpenClub }: TrackDaysSectionProps) {
             viewport={{ once: false, amount: 0.3, margin: "-40px" }}
             className="flex flex-col justify-center my-auto"
           >
-            {/* Title, Description & Compact Button Block */}
             <motion.div variants={itemVariants} className="space-y-5 max-w-3xl">
               <div className="text-xs sm:text-sm uppercase tracking-widest text-[#ea4043] font-bold drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)]">
                 {t.club.bannerBadge}
@@ -84,7 +80,6 @@ export function TrackDaysSection({ onOpenClub }: TrackDaysSectionProps) {
                 {t.club.bannerDesc}
               </p>
 
-              {/* Compact Button directly under description */}
               <div className="pt-2">
                 <button
                   onClick={onOpenClub}

@@ -18,7 +18,7 @@ export function BookingModal({
   initialCarModel,
 }: BookingModalProps) {
   const [selectedTariff, setSelectedTariff] = useState(initialTariffId || "pro-progress");
-  const [car, setCar] = useState(initialCarModel || "BMW M4 Competition");
+  const [car, setCar] = useState(initialCarModel || "BMW M3 (F80)");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [telegram, setTelegram] = useState("");
@@ -44,7 +44,6 @@ export function BookingModal({
 
   return (
     <div {...dialogProps} className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-y-auto no-scrollbar font-sans">
-      {/* Deep Blur Backdrop */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -54,7 +53,6 @@ export function BookingModal({
         className="fixed inset-0 bg-black/85 backdrop-blur-xl"
       />
 
-      {/* Spacious Luxury Modal Container */}
       <motion.div
         initial={{ opacity: 0, scale: 0.96, y: 16 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -66,11 +64,9 @@ export function BookingModal({
         onTouchMove={(e) => e.stopPropagation()}
         className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto no-scrollbar bg-[#08080b] border border-white/15 p-8 sm:p-12 rounded-2xl z-10 my-auto shadow-[0_30px_90px_rgba(0,0,0,0.95),0_0_60px_rgba(234,64,67,0.08)] space-y-8 transform-gpu overscroll-contain"
       >
-        {/* Ambient Motorsport Lighting Effect */}
         <div className="absolute -top-24 -right-24 w-80 h-80 bg-[#ea4043]/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-[#ea4043]/5 rounded-full blur-3xl pointer-events-none" />
 
-        {/* Header with Air & Clear Typography */}
         <div className="relative z-10 flex items-start justify-between gap-6 pb-6 border-b border-white/10">
           <div className="space-y-2">
             <span className="text-xs uppercase tracking-widest text-[#ea4043] font-bold block">
@@ -87,7 +83,6 @@ export function BookingModal({
             </p>
           </div>
 
-          {/* Minimalist Close Button */}
           <button
             onClick={onClose}
             className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/15 text-[#a0a0a8] hover:text-white hover:bg-white/15 hover:border-white/30 cursor-pointer transition-all shrink-0 mt-1"
@@ -99,7 +94,6 @@ export function BookingModal({
 
         {!submitted ? (
           <form onSubmit={handleSubmit} className="relative z-10 space-y-6 text-sm">
-            {/* Car Selection Field */}
             <div>
               <CustomDropdown
                 label={t.bookingModal.carLabel}
@@ -109,7 +103,6 @@ export function BookingModal({
               />
             </div>
 
-            {/* Program Selection Field */}
             <div>
               <CustomDropdown
                 label={t.bookingModal.programLabel}
@@ -119,7 +112,6 @@ export function BookingModal({
               />
             </div>
 
-            {/* Personal Info Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div>
                 <label htmlFor={`${titleId}-name`} className="block text-xs uppercase tracking-wider text-[#8e8e93] font-semibold mb-2">
@@ -156,7 +148,6 @@ export function BookingModal({
               </div>
             </div>
 
-            {/* Telegram / Messenger */}
             <div>
               <label htmlFor={`${titleId}-telegram`} className="block text-xs uppercase tracking-wider text-[#8e8e93] font-semibold mb-2">
                 {t.bookingModal.tgLabel}
@@ -173,7 +164,6 @@ export function BookingModal({
               />
             </div>
 
-            {/* Submit Button & Instructor Notice */}
             <div className="pt-3 space-y-4">
               <button
                 type="submit"

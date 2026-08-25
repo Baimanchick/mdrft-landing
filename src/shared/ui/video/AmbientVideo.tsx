@@ -6,6 +6,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 interface AmbientVideoProps {
   clips: string[];
   isEnabled?: boolean;
+  loop?: boolean;
   className: string;
   activeClassName: string;
   inactiveClassName: string;
@@ -13,13 +14,20 @@ interface AmbientVideoProps {
 
 const IN_VIEW_MARGIN = "800px";
 
-function toMp4(webmPath: string) {
-  return webmPath.replace(/\.webm$/, ".mp4");
+function getSources(clip: string) {
+  if (clip.endsWith(".mp4")) {
+    return [{ src: clip, type: "video/mp4" }];
+  }
+  return [
+    { src: clip, type: "video/webm" },
+    { src: clip.replace(/\.webm$/, ".mp4"), type: "video/mp4" },
+  ];
 }
 
 export function AmbientVideo({
   clips,
   isEnabled = true,
+  loop = true,
   className,
   activeClassName,
   inactiveClassName,
@@ -50,19 +58,21 @@ export function AmbientVideo({
     const active = videoRefs.current[activeIdx];
     if (!active) return;
 
-    if (!shouldPlay) {
+    if (!shouldPlay || (active.ended && !loop)) {
       active.pause();
       return;
     }
 
     active.play().catch(() => {});
 
-    const next = videoRefs.current[(activeIdx + 1) % clips.length];
-    if (next && next !== active && next.preload !== "auto") {
-      next.preload = "auto";
-      next.load();
+    if (activeIdx < clips.length - 1 || loop) {
+      const next = videoRefs.current[(activeIdx + 1) % clips.length];
+      if (next && next !== active && next.preload !== "auto") {
+        next.preload = "auto";
+        next.load();
+      }
     }
-  }, [activeIdx, shouldPlay, clips.length]);
+  }, [activeIdx, shouldPlay, clips.length, loop]);
 
   useEffect(() => {
     const pauseWhenHidden = () => {
@@ -72,7 +82,10 @@ export function AmbientVideo({
 
     const resumeWhenVisible = () => {
       if (document.hidden || !shouldPlay) return;
-      videoRefs.current[activeIdx]?.play().catch(() => {});
+      const active = videoRefs.current[activeIdx];
+      if (active && (!active.ended || loop)) {
+        active.play().catch(() => {});
+      }
     };
 
     const onVisibilityChange = () => {
@@ -82,7 +95,7 @@ export function AmbientVideo({
 
     document.addEventListener("visibilitychange", onVisibilityChange);
     return () => document.removeEventListener("visibilitychange", onVisibilityChange);
-  }, [activeIdx, shouldPlay]);
+  }, [activeIdx, shouldPlay, loop]);
 
   useEffect(() => {
     if (!prefersReducedMotion) return;
@@ -106,6 +119,13 @@ export function AmbientVideo({
 
   const handleEnded = useCallback(
     (idx: number) => {
+      if (idx === clips.length - 1 && !loop) {
+        const video = videoRefs.current[idx];
+        if (video) {
+          video.pause();
+        }
+        return;
+      }
       const nextIdx = (idx + 1) % clips.length;
       const nextVideo = videoRefs.current[nextIdx];
       if (nextVideo) {
@@ -114,7 +134,19 @@ export function AmbientVideo({
       }
       setActiveIdx(nextIdx);
     },
-    [clips.length],
+    [clips.length, loop],
+  );
+
+  const handleTimeUpdate = useCallback(
+    (element: HTMLVideoElement, idx: number) => {
+      if (loop || (isSingleClip ? false : idx < clips.length - 1)) {
+        return;
+      }
+      if (element.duration > 0 && element.currentTime >= element.duration - 0.04) {
+        element.pause();
+      }
+    },
+    [clips.length, isSingleClip, loop],
   );
 
   return (
@@ -127,18 +159,24 @@ export function AmbientVideo({
           }}
           muted
           playsInline
-          loop={isSingleClip}
+          loop={loop && isSingleClip}
           preload={idx === 0 && isInView ? "metadata" : "none"}
-          onEnded={isSingleClip ? undefined : () => handleEnded(idx)}
+          onEnded={() => handleEnded(idx)}
+          onTimeUpdate={(event) => handleTimeUpdate(event.currentTarget, idx)}
           onLoadedMetadata={(event) => {
             if (prefersReducedMotion && event.currentTarget.currentTime === 0) {
               event.currentTarget.currentTime = 0.05;
             }
           }}
+          style={{
+            transform: "translateZ(0)",
+            backfaceVisibility: "hidden",
+          }}
           className={`${className} ${idx === activeIdx ? activeClassName : inactiveClassName}`}
         >
-          <source src={clip} type="video/webm" />
-          <source src={toMp4(clip)} type="video/mp4" />
+          {getSources(clip).map((source) => (
+            <source key={source.src} src={source.src} type={source.type} />
+          ))}
         </video>
       ))}
     </div>

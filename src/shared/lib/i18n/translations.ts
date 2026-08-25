@@ -262,13 +262,7 @@ export const translations = {
       carLabel: "Автомобиль",
       programLabel: "Программа обучения",
       cars: [
-        { id: "BMW M2 Coupé", label: "BMW M2 Coupé (G87)" },
-        { id: "BMW M3 Competition", label: "BMW M3 Competition (G80)" },
-        { id: "BMW M4 Competition", label: "BMW M4 Competition (G82)" },
-        { id: "BMW M5 Competition", label: "BMW M5 Competition (F90)" },
-        { id: "BMW M6 Gran Coupé", label: "BMW M6 Gran Coupé (F13)" },
-        { id: "BMW M8 Competition", label: "BMW M8 Competition (F92)" },
-        { id: "Свой личный BMW M", label: "Свой личный BMW M-серии" },
+        { id: "BMW M3 (F80)", label: "BMW M3 (F80)" },
       ],
       programs: [
         { id: "first-touch", label: "First Touch (1 час) — 30 000 ₽" },
@@ -569,13 +563,7 @@ export const translations = {
       carLabel: "Vehicle",
       programLabel: "Training Program",
       cars: [
-        { id: "BMW M2 Coupé", label: "BMW M2 Coupé (G87)" },
-        { id: "BMW M3 Competition", label: "BMW M3 Competition (G80)" },
-        { id: "BMW M4 Competition", label: "BMW M4 Competition (G82)" },
-        { id: "BMW M5 Competition", label: "BMW M5 Competition (F90)" },
-        { id: "BMW M6 Gran Coupé", label: "BMW M6 Gran Coupé (F13)" },
-        { id: "BMW M8 Competition", label: "BMW M8 Competition (F92)" },
-        { id: "Свой личный BMW M", label: "Personal BMW M-Series" },
+        { id: "BMW M3 (F80)", label: "BMW M3 (F80)" },
       ],
       programs: [
         { id: "first-touch", label: "First Touch (1 Hour) — 30 000 ₽" },
