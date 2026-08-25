@@ -223,7 +223,7 @@ export function AmbientVideo({
               transform: "translateZ(0)",
               backfaceVisibility: "hidden",
             }}
-            className={`${className} transition-opacity duration-700 motion-reduce:transition-none ${
+            className={`${className} ${
               idx === activeIdx && isReady
                 ? activeClassName
                 : inactiveClassName

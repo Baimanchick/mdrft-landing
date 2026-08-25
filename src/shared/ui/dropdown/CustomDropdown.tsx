@@ -32,7 +32,6 @@ export function CustomDropdown({
 
   const selectedOption = options.find((opt) => opt.id === value);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -47,7 +46,6 @@ export function CustomDropdown({
     };
   }, [isOpen]);
 
-  // Handle ESC key to close
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
@@ -63,17 +61,37 @@ export function CustomDropdown({
     };
   }, [isOpen]);
 
-  // Helper to split "Title — Price" into two components
-  const renderOptionContent = (text: string, isSelected: boolean) => {
+  const renderTriggerLabel = (text: string) => {
     if (text.includes(" — ")) {
       const [title, price] = text.split(" — ");
       return (
-        <div className="flex items-center justify-between w-full gap-3">
-          <span className={`font-semibold ${isSelected ? "text-white" : "text-[#e5e5ea]"}`}>
+        <div className="flex items-center justify-between w-full min-w-0 gap-2">
+          <span className="font-semibold text-white truncate text-sm sm:text-base">
+            {title}
+          </span>
+          <span className="text-xs px-2.5 py-1 rounded-md font-bold font-mono shrink-0 whitespace-nowrap bg-white/10 text-white">
+            {price}
+          </span>
+        </div>
+      );
+    }
+    return (
+      <span className="font-semibold text-white truncate text-sm sm:text-base">
+        {text}
+      </span>
+    );
+  };
+
+  const renderOptionItem = (text: string, isSelected: boolean) => {
+    if (text.includes(" — ")) {
+      const [title, price] = text.split(" — ");
+      return (
+        <div className="flex items-center justify-between w-full min-w-0 gap-3">
+          <span className={`font-semibold text-sm sm:text-base ${isSelected ? "text-white" : "text-[#f0f0f5]"}`}>
             {title}
           </span>
           <span
-            className={`text-xs px-2.5 py-0.5 rounded font-bold shrink-0 tracking-wide ${
+            className={`text-xs px-2.5 py-1 rounded-md font-bold font-mono shrink-0 whitespace-nowrap ${
               isSelected
                 ? "bg-black/30 text-white"
                 : "bg-white/10 text-white group-hover:bg-white/20"
@@ -84,7 +102,11 @@ export function CustomDropdown({
         </div>
       );
     }
-    return <span className="font-semibold">{text}</span>;
+    return (
+      <span className={`font-semibold text-sm sm:text-base ${isSelected ? "text-white" : "text-[#f0f0f5]"}`}>
+        {text}
+      </span>
+    );
   };
 
   return (
@@ -92,13 +114,12 @@ export function CustomDropdown({
       {label && (
         <span
           id={labelId}
-          className="block text-xs uppercase tracking-wider text-[#8e8e93] font-semibold mb-2"
+          className="block text-xs sm:text-sm uppercase tracking-wider text-white font-bold mb-2"
         >
           {label}
         </span>
       )}
 
-      {/* Trigger Button */}
       <button
         ref={triggerRef}
         type="button"
@@ -107,29 +128,28 @@ export function CustomDropdown({
         aria-controls={isOpen ? listId : undefined}
         aria-labelledby={label ? `${labelId} ${fieldId}-value` : undefined}
         onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between bg-white/[0.04] hover:bg-white/[0.07] border rounded-lg px-4.5 py-3.5 text-white text-sm text-left transition-all duration-200 cursor-pointer ${
+        className={`w-full h-14 min-h-[56px] flex items-center justify-between bg-white/[0.04] hover:bg-white/[0.07] border rounded-xl px-4 text-white text-left transition-all duration-200 cursor-pointer ${
           isOpen
             ? "border-[#ea4043] bg-white/[0.08] shadow-[0_0_20px_rgba(234,64,67,0.25)]"
             : "border-white/15 hover:border-white/30"
         }`}
       >
-        <div id={`${fieldId}-value`} className="w-full pr-2">
+        <div id={`${fieldId}-value`} className="min-w-0 flex-1 pr-2">
           {selectedOption ? (
-            renderOptionContent(selectedOption.label, false)
+            renderTriggerLabel(selectedOption.label)
           ) : (
-            <span className="text-[#8e8e93]">{placeholder || "Выберите..."}</span>
+            <span className="text-[#8e8e93] text-sm sm:text-base">{placeholder || "Выберите..."}</span>
           )}
         </div>
         <motion.span
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
-          className="text-xs text-[#8e8e93] shrink-0 ml-2"
+          className="text-xs text-[#8e8e93] shrink-0 ml-1.5"
         >
           ▼
         </motion.span>
       </button>
 
-      {/* Custom Animated Popup List */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -143,7 +163,7 @@ export function CustomDropdown({
             data-lenis-prevent="true"
             onWheel={(e) => e.stopPropagation()}
             onTouchMove={(e) => e.stopPropagation()}
-            className="absolute top-full left-0 right-0 mt-2 z-50 bg-[#0d0d12]/98 border border-white/20 rounded-xl shadow-[0_25px_70px_rgba(0,0,0,0.98),0_0_40px_rgba(234,64,67,0.18)] backdrop-blur-2xl p-2 pb-3.5 max-h-[260px] overflow-y-auto no-scrollbar space-y-1 overscroll-contain"
+            className="absolute top-full right-0 min-w-full sm:min-w-[420px] max-w-[min(540px,92vw)] mt-2 z-50 bg-[#0d0d14]/98 border border-white/20 rounded-2xl shadow-[0_25px_80px_rgba(0,0,0,0.98),0_0_40px_rgba(234,64,67,0.2)] backdrop-blur-2xl p-2 max-h-[320px] overflow-y-auto no-scrollbar space-y-1 overscroll-contain"
           >
             {options.map((opt) => {
               const isSelected = opt.id === value;
@@ -158,16 +178,16 @@ export function CustomDropdown({
                     setIsOpen(false);
                     triggerRef.current?.focus();
                   }}
-                  className={`w-full px-3.5 py-3 rounded-lg text-sm text-left flex items-center justify-between cursor-pointer transition-all duration-150 group ${
+                  className={`w-full px-4 py-3.5 rounded-xl text-left flex items-center justify-between cursor-pointer transition-all duration-150 group ${
                     isSelected
                       ? "bg-[#ea4043] text-white shadow-[0_0_20px_rgba(234,64,67,0.5)]"
                       : "text-[#d1d1d6] hover:text-white hover:bg-white/10"
                   }`}
                 >
                   <div className="w-full flex items-center justify-between gap-3">
-                    {renderOptionContent(opt.label, isSelected)}
+                    {renderOptionItem(opt.label, isSelected)}
                     {isSelected && (
-                      <span className="text-white text-xs font-bold shrink-0 ml-1">✓</span>
+                      <span className="text-white text-sm font-bold shrink-0 ml-1.5">✓</span>
                     )}
                   </div>
                 </button>

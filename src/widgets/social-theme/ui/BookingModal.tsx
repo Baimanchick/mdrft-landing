@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useId } from "react";
+import React, { useState, useId, useMemo } from "react";
 import { motion } from "motion/react";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
 import { useModalA11y } from "@/shared/ui/modal";
@@ -17,8 +17,8 @@ export function BookingModal({
   initialTariffId,
   initialCarModel,
 }: BookingModalProps) {
-  const [selectedTariff, setSelectedTariff] = useState(initialTariffId || "pro-progress");
-  const [car, setCar] = useState(initialCarModel || "BMW M3 (F80)");
+  const [selectedTariff, setSelectedTariff] = useState(() => initialTariffId || "pro-progress");
+  const [car, setCar] = useState(() => initialCarModel || "BMW M3 (F80)");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [telegram, setTelegram] = useState("");
@@ -28,13 +28,9 @@ export function BookingModal({
   const titleId = useId();
   const { panelRef, dialogProps } = useModalA11y({ onClose, labelledById: titleId });
 
-  useEffect(() => {
-    if (initialTariffId) setSelectedTariff(initialTariffId);
-  }, [initialTariffId]);
-
-  useEffect(() => {
-    if (initialCarModel) setCar(initialCarModel);
-  }, [initialCarModel]);
+  const currentProgramObj = useMemo(() => {
+    return t.bookingModal.programs.find((p) => p.id === selectedTariff) || t.bookingModal.programs[2];
+  }, [selectedTariff, t.bookingModal.programs]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -43,7 +39,10 @@ export function BookingModal({
   };
 
   return (
-    <div {...dialogProps} className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-8 overflow-y-auto no-scrollbar font-sans">
+    <div
+      {...dialogProps}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 md:p-6 lg:p-8 overflow-y-auto no-scrollbar font-sans"
+    >
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -54,7 +53,7 @@ export function BookingModal({
       />
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.96, y: 16 }}
+        initial={{ opacity: 0, scale: 0.97, y: 12 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
         ref={panelRef}
@@ -62,30 +61,15 @@ export function BookingModal({
         data-lenis-prevent="true"
         onWheel={(e) => e.stopPropagation()}
         onTouchMove={(e) => e.stopPropagation()}
-        className="relative w-full max-w-2xl max-h-[92vh] overflow-y-auto no-scrollbar bg-[#08080b] border border-white/15 p-8 sm:p-12 rounded-2xl z-10 my-auto shadow-[0_30px_90px_rgba(0,0,0,0.95),0_0_60px_rgba(234,64,67,0.08)] space-y-8 transform-gpu overscroll-contain"
+        className="relative w-full max-w-5xl xl:max-w-6xl max-h-[96vh] bg-[#08080c] border border-white/15 p-6 sm:p-8 lg:p-10 xl:p-12 rounded-2xl z-10 my-auto shadow-[0_30px_90px_rgba(0,0,0,0.95),0_0_60px_rgba(234,64,67,0.08)] transform-gpu flex flex-col justify-between overflow-y-auto lg:overflow-visible no-scrollbar"
       >
         <div className="absolute -top-24 -right-24 w-80 h-80 bg-[#ea4043]/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-[#ea4043]/5 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-[#0066b1]/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="relative z-10 flex items-start justify-between gap-6 pb-6 border-b border-white/10">
-          <div className="space-y-2">
-            <span className="text-xs uppercase tracking-widest text-[#ea4043] font-bold block">
-              {isRu ? "// ОНЛАЙН-БРОНИРОВАНИЕ • ADM RACEWAY" : "// ONLINE BOOKING • ADM RACEWAY"}
-            </span>
-            <h3 id={titleId} className="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight text-white">
-              {isRu ? "ЗАПИСЬ НА ТРЕНИРОВКУ" : "BOOK TRAINING"}
-              <span className="text-gradient-red">.</span>
-            </h3>
-            <p className="text-xs sm:text-sm text-[#a0a0a8] font-normal leading-relaxed">
-              {isRu
-                ? "Выберите автомобиль и формат. Шеф-инструктор свяжется с вами для согласования времени."
-                : "Select your car and training format. The chief instructor will contact you shortly."}
-            </p>
-          </div>
-
+        <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-20">
           <button
             onClick={onClose}
-            className="w-10 h-10 rounded-full flex items-center justify-center bg-white/5 border border-white/15 text-[#a0a0a8] hover:text-white hover:bg-white/15 hover:border-white/30 cursor-pointer transition-all shrink-0 mt-1"
+            className="w-11 h-11 rounded-full flex items-center justify-center bg-white/5 border border-white/15 text-[#a0a0a8] hover:text-white hover:bg-white/15 hover:border-white/30 cursor-pointer transition-all"
             aria-label={isRu ? "Закрыть" : "Close"}
           >
             ✕
@@ -93,107 +77,185 @@ export function BookingModal({
         </div>
 
         {!submitted ? (
-          <form onSubmit={handleSubmit} className="relative z-10 space-y-6 text-sm">
-            <div>
-              <CustomDropdown
-                label={t.bookingModal.carLabel}
-                value={car}
-                options={t.bookingModal.cars}
-                onChange={(val) => setCar(val)}
-              />
-            </div>
+          <form onSubmit={handleSubmit} className="relative z-10 w-full">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 items-stretch">
+              <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
+                <div className="space-y-3 pr-4">
+                  <span className="text-xs sm:text-sm uppercase tracking-widest text-[#ea4043] font-bold block">
+                    {isRu ? "// ОНЛАЙН-БРОНИРОВАНИЕ • ADM RACEWAY" : "// ONLINE BOOKING • ADM RACEWAY"}
+                  </span>
+                  <h3
+                    id={titleId}
+                    className="text-3xl sm:text-4xl xl:text-5xl font-bold uppercase tracking-tight text-white leading-tight"
+                  >
+                    {isRu ? "ЗАПИСЬ НА ТРЕНИРОВКУ" : "BOOK TRAINING"}
+                    <span className="text-gradient-red">.</span>
+                  </h3>
+                  <p className="text-sm sm:text-base text-[#a0a0a8] font-normal leading-relaxed">
+                    {isRu
+                      ? "Выберите автомобиль и программу. Шеф-инструктор свяжется с вами для согласования даты и времени заезда."
+                      : "Select your car and training program. The chief instructor will reach out to schedule your session."}
+                  </p>
+                </div>
 
-            <div>
-              <CustomDropdown
-                label={t.bookingModal.programLabel}
-                value={selectedTariff}
-                options={t.bookingModal.programs}
-                onChange={(val) => setSelectedTariff(val)}
-              />
-            </div>
+                <div className="p-5 sm:p-6 rounded-2xl bg-gradient-to-br from-[#1c1c24] via-[#111117] to-[#08080c] border border-white/20 relative overflow-hidden shadow-2xl space-y-4">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-mono uppercase tracking-wider text-[#ea4043] font-bold">
+                      {isRu ? "ВЫБРАННЫЙ СЛОТ" : "SELECTED SLOT"}
+                    </span>
+                    <span className="text-xs font-mono text-[#a0a0a8] border border-white/15 px-2 py-0.5 rounded bg-black/40">
+                      ADM RACEWAY
+                    </span>
+                  </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <div>
-                <label htmlFor={`${titleId}-name`} className="block text-xs uppercase tracking-wider text-[#8e8e93] font-semibold mb-2">
-                  {t.bookingModal.nameLabel}
-                </label>
-                <input
-                  id={`${titleId}-name`}
-                  name="name"
-                  autoComplete="name"
-                  type="text"
-                  required
-                  placeholder={t.bookingModal.namePlaceholder}
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full bg-white/[0.04] hover:bg-white/[0.07] focus:bg-white/[0.08] border border-white/15 focus:border-[#ea4043] rounded-lg px-4.5 py-4 text-white text-sm placeholder:text-[#55555c] focus:outline-none transition-colors"
-                />
+                  <div className="space-y-1">
+                    <div className="text-xs text-[#8e8e93] uppercase font-bold tracking-wider">
+                      {isRu ? "Автомобиль:" : "Car:"}
+                    </div>
+                    <div className="text-lg sm:text-xl font-bold uppercase text-white tracking-tight">
+                      {car}
+                    </div>
+                  </div>
+
+                  <div className="space-y-1 pt-2 border-t border-white/10">
+                    <div className="text-xs text-[#8e8e93] uppercase font-bold tracking-wider">
+                      {isRu ? "Программа:" : "Program:"}
+                    </div>
+                    <div className="text-sm sm:text-base font-medium text-[#d1d1d6] line-clamp-2">
+                      {currentProgramObj?.label || selectedTariff}
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/10 text-xs sm:text-sm text-[#b5b5bd] flex items-center gap-3">
+                  <span className="w-2.5 h-2.5 rounded-full bg-[#ea4043] shrink-0" />
+                  <span>{t.bookingModal.instructorNote}</span>
+                </div>
               </div>
 
-              <div>
-                <label htmlFor={`${titleId}-phone`} className="block text-xs uppercase tracking-wider text-[#8e8e93] font-semibold mb-2">
-                  {t.bookingModal.phoneLabel}
-                </label>
-                <input
-                  id={`${titleId}-phone`}
-                  name="phone"
-                  autoComplete="tel"
-                  type="tel"
-                  required
-                  placeholder={t.bookingModal.phonePlaceholder}
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full bg-white/[0.04] hover:bg-white/[0.07] focus:bg-white/[0.08] border border-white/15 focus:border-[#ea4043] rounded-lg px-4.5 py-4 text-white text-sm placeholder:text-[#55555c] focus:outline-none transition-colors"
-                />
-              </div>
-            </div>
+              <div className="lg:col-span-7 flex flex-col justify-between space-y-5">
+                <div className="space-y-4">
+                  <span className="block text-sm sm:text-base uppercase tracking-wider text-white font-bold">
+                    {isRu ? "1. Параметры тренировки" : "1. Training Parameters"}
+                  </span>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <CustomDropdown
+                      label={t.bookingModal.carLabel}
+                      value={car}
+                      options={t.bookingModal.cars}
+                      onChange={(val) => setCar(val)}
+                    />
 
-            <div>
-              <label htmlFor={`${titleId}-telegram`} className="block text-xs uppercase tracking-wider text-[#8e8e93] font-semibold mb-2">
-                {t.bookingModal.tgLabel}
-              </label>
-              <input
-                id={`${titleId}-telegram`}
-                name="telegram"
-                autoComplete="off"
-                type="text"
-                placeholder={t.bookingModal.tgPlaceholder}
-                value={telegram}
-                onChange={(e) => setTelegram(e.target.value)}
-                className="w-full bg-white/[0.04] hover:bg-white/[0.07] focus:bg-white/[0.08] border border-white/15 focus:border-[#ea4043] rounded-lg px-4.5 py-4 text-white text-sm placeholder:text-[#55555c] focus:outline-none transition-colors"
-              />
-            </div>
+                    <CustomDropdown
+                      label={t.bookingModal.programLabel}
+                      value={selectedTariff}
+                      options={t.bookingModal.programs}
+                      onChange={(val) => setSelectedTariff(val)}
+                    />
+                  </div>
+                </div>
 
-            <div className="pt-3 space-y-4">
-              <button
-                type="submit"
-                className="w-full py-4.5 px-6 bg-[#ea4043] hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.14em] text-xs sm:text-sm rounded-lg transition-all duration-300 shadow-[0_0_35px_rgba(234,64,67,0.35)] cursor-pointer select-none flex items-center justify-center gap-2 group"
-              >
-                <span>{t.bookingModal.submitBtn}</span>
-                <span className="group-hover:translate-x-1 transition-transform">→</span>
-              </button>
+                <div className="space-y-4">
+                  <span className="block text-sm sm:text-base uppercase tracking-wider text-white font-bold">
+                    {isRu ? "2. Контактные данные пилота" : "2. Pilot Contact Details"}
+                  </span>
 
-              <div className="flex items-center justify-center gap-2 text-xs text-[#8e8e93]">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#ea4043] animate-pulse" />
-                <span>{t.bookingModal.instructorNote}</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label
+                        htmlFor={`${titleId}-name`}
+                        className="block text-xs uppercase tracking-wider text-[#a0a0a8] font-bold mb-1.5"
+                      >
+                        {t.bookingModal.nameLabel}
+                      </label>
+                      <input
+                        id={`${titleId}-name`}
+                        name="name"
+                        autoComplete="name"
+                        type="text"
+                        required
+                        placeholder={t.bookingModal.namePlaceholder}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full bg-white/[0.04] hover:bg-white/[0.07] focus:bg-white/[0.08] border border-white/15 focus:border-[#ea4043] rounded-xl px-4.5 py-3.5 text-white text-sm sm:text-base placeholder:text-[#55555c] focus:outline-none transition-colors"
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor={`${titleId}-phone`}
+                        className="block text-xs uppercase tracking-wider text-[#a0a0a8] font-bold mb-1.5"
+                      >
+                        {t.bookingModal.phoneLabel}
+                      </label>
+                      <input
+                        id={`${titleId}-phone`}
+                        name="phone"
+                        autoComplete="tel"
+                        type="tel"
+                        required
+                        placeholder={t.bookingModal.phonePlaceholder}
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="w-full bg-white/[0.04] hover:bg-white/[0.07] focus:bg-white/[0.08] border border-white/15 focus:border-[#ea4043] rounded-xl px-4.5 py-3.5 text-white text-sm sm:text-base placeholder:text-[#55555c] focus:outline-none transition-colors"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label
+                      htmlFor={`${titleId}-telegram`}
+                      className="block text-xs uppercase tracking-wider text-[#a0a0a8] font-bold mb-1.5"
+                    >
+                      {t.bookingModal.tgLabel}
+                    </label>
+                    <input
+                      id={`${titleId}-telegram`}
+                      name="telegram"
+                      autoComplete="off"
+                      type="text"
+                      placeholder={t.bookingModal.tgPlaceholder}
+                      value={telegram}
+                      onChange={(e) => setTelegram(e.target.value)}
+                      className="w-full bg-white/[0.04] hover:bg-white/[0.07] focus:bg-white/[0.08] border border-white/15 focus:border-[#ea4043] rounded-xl px-4.5 py-3.5 text-white text-sm sm:text-base placeholder:text-[#55555c] focus:outline-none transition-colors"
+                    />
+                  </div>
+                </div>
+
+                <div className="pt-2 space-y-2.5">
+                  <button
+                    type="submit"
+                    className="w-full py-4.5 sm:py-5 px-8 bg-[#ea4043] hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.14em] text-sm sm:text-base rounded-xl transition-all duration-300 shadow-[0_0_35px_rgba(234,64,67,0.35)] cursor-pointer select-none flex items-center justify-center gap-2 group"
+                  >
+                    <span>{t.bookingModal.submitBtn}</span>
+                    <span className="group-hover:translate-x-1 transition-transform">→</span>
+                  </button>
+
+                  <p className="text-xs text-[#8e8e93] text-center">
+                    {isRu
+                      ? "После отправки шеф-инструктор свяжется с вами для согласования деталей заезда"
+                      : "The chief instructor will contact you shortly to confirm your booking"}
+                  </p>
+                </div>
               </div>
             </div>
           </form>
         ) : (
-          <div className="relative z-10 py-12 space-y-5 text-center">
-            <div className="w-16 h-16 rounded-full bg-[#ea4043]/15 text-[#ea4043] border border-[#ea4043]/30 flex items-center justify-center mx-auto text-2xl font-bold shadow-[0_0_30px_rgba(234,64,67,0.3)]">
+          <div className="relative z-10 py-16 space-y-6 text-center">
+            <div className="w-20 h-20 rounded-full bg-[#ea4043]/15 text-[#ea4043] border border-[#ea4043]/30 flex items-center justify-center mx-auto text-4xl font-bold shadow-[0_0_30px_rgba(234,64,67,0.3)]">
               ✓
             </div>
-            <h3 className="text-2xl sm:text-3xl font-bold text-white uppercase tracking-tight">
+            <h3 className="text-3xl sm:text-4xl font-bold text-white uppercase tracking-tight">
               {t.bookingModal.successTitle}
             </h3>
-            <p className="text-sm sm:text-base text-[#a0a0a8] max-w-md mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg text-[#a0a0a8] max-w-md mx-auto leading-relaxed">
               {t.bookingModal.successDesc(name, car)}
             </p>
             <div className="pt-4">
               <button
                 onClick={onClose}
-                className="px-8 py-3.5 bg-white/10 hover:bg-white text-white hover:text-black font-bold uppercase tracking-wider text-xs rounded-lg transition-all"
+                className="px-12 py-4.5 bg-white/10 hover:bg-white text-white hover:text-black font-bold uppercase tracking-wider text-sm sm:text-base rounded-xl transition-all cursor-pointer"
               >
                 {t.bookingModal.closeBtn}
               </button>
