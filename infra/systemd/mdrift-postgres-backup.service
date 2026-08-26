@@ -1,8 +1,10 @@
 [Unit]
 Description=Back up m-drift-school PostgreSQL
 Requires=docker.service
-After=docker.service
+Wants=network-online.target
+After=docker.service network-online.target
 
 [Service]
 Type=oneshot
+UMask=0077
 ExecStart=/opt/mdrift/infra/server/backup-postgres.sh

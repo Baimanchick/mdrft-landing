@@ -59,6 +59,8 @@ jobs:
           push: true
           tags: ${{ steps.metadata.outputs.tags }}
           labels: ${{ steps.metadata.outputs.labels }}
+          build-args: |
+            NEXT_PUBLIC_SITE_URL=${{ vars.PRODUCTION_SITE_URL }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           provenance: mode=max
@@ -72,6 +74,16 @@ jobs:
     permissions:
       contents: read
     steps:
+      - name: Validate production URL
+        shell: bash
+        env:
+          PRODUCTION_SITE_URL: ${{ vars.PRODUCTION_SITE_URL }}
+        run: |
+          if [[ ! "$PRODUCTION_SITE_URL" =~ ^https://[a-zA-Z0-9.-]+$ ]]; then
+            printf '%s\n' "PRODUCTION_SITE_URL must be an HTTPS origin without a path" >&2
+            exit 1
+          fi
+
       - name: Configure deployment SSH identity
         shell: bash
         env:
@@ -96,4 +108,4 @@ jobs:
             -o StrictHostKeyChecking=yes \
             -o UserKnownHostsFile="$RUNNER_TEMP/ssh/known_hosts" \
             "$DEPLOY_USER@$DEPLOY_HOST" \
-            "/opt/mdrift/infra/server/deploy.sh '$IMAGE'"
+            "/opt/mdrift/infra/server/deploy.sh $IMAGE"
