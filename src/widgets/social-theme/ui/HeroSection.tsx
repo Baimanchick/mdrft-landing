@@ -1,7 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion } from "motion/react";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
 import { AmbientVideo } from "@/shared/ui/video";
 
@@ -14,34 +12,6 @@ interface HeroSectionProps {
 
 const HERO_VIDEOS = [{ webm: "/videos/for1block.webm" }] as const;
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.12,
-      delayChildren: 0.05,
-    },
-  },
-};
-
-const itemVariants = {
-  hidden: {
-    opacity: 0,
-    filter: "blur(10px)",
-    y: 24,
-  },
-  visible: {
-    opacity: 1,
-    filter: "blur(0px)",
-    y: 0,
-    transition: {
-      duration: 0.75,
-      ease: [0.16, 1, 0.3, 1] as const,
-    },
-  },
-};
-
 export function HeroSection({
   isLoaded = true,
   onOpenBooking,
@@ -50,17 +20,6 @@ export function HeroSection({
 }: HeroSectionProps) {
   const { t, lang } = useLanguage();
   const isRu = lang === "ru";
-  const [isCentered, setIsCentered] = useState(false);
-
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    const centerTimer = setTimeout(() => {
-      setIsCentered(true);
-    }, 5000);
-
-    return () => clearTimeout(centerTimer);
-  }, [isLoaded]);
 
   return (
     <section id="hero" className="relative min-h-[100svh] md:min-h-[100dvh] w-full bg-black text-white overflow-hidden flex flex-col justify-start items-center border-b border-white/10 font-sans">
@@ -82,40 +41,17 @@ export function HeroSection({
       </div>
 
       <div className="relative z-10 max-w-[1820px] w-full mx-auto border-l border-r border-white/10 flex flex-col justify-start items-center flex-1 pt-24 sm:pt-36 md:pt-40 lg:pt-44 pb-10 sm:pb-16 px-5 sm:px-12 pointer-events-auto">
-        <motion.div
-          animate={{
-            y: isCentered ? "clamp(3.5rem, 12svh, 8rem)" : "0rem",
-          }}
-          transition={{
-            duration: 2.2,
-            ease: [0.16, 1, 0.3, 1],
-          }}
-          className="max-w-[1400px] w-full mx-auto flex flex-col items-center text-center space-y-5 sm:space-y-6"
-        >
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="flex flex-col items-center text-center space-y-4 sm:space-y-5"
-          >
-            <motion.h1
-              variants={itemVariants}
-              className="text-[clamp(2.75rem,14vw,4.5rem)] sm:text-7xl md:text-8xl lg:text-[7rem] font-bold tracking-tighter uppercase leading-[0.92] select-none text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]"
-            >
+        <div className="max-w-[1400px] w-full mx-auto flex flex-col items-center text-center space-y-5 sm:space-y-6">
+          <div className="flex flex-col items-center text-center space-y-4 sm:space-y-5">
+            <h1 className="text-[clamp(2.75rem,14vw,4.5rem)] sm:text-7xl md:text-8xl lg:text-[7rem] font-bold tracking-tighter uppercase leading-[0.92] select-none text-white drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)]">
               {t.hero.headline}<span className="text-gradient-red">.</span>
-            </motion.h1>
+            </h1>
 
-            <motion.p
-              variants={itemVariants}
-              className="text-base sm:text-lg lg:text-xl text-[#c8c8cf] max-w-2xl leading-relaxed font-light drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]"
-            >
+            <p className="text-base sm:text-lg lg:text-xl text-[#c8c8cf] max-w-2xl leading-relaxed font-light drop-shadow-[0_2px_8px_rgba(0,0,0,0.95)]">
               {t.hero.subtitle}
-            </motion.p>
+            </p>
 
-            <motion.div
-              variants={itemVariants}
-              className="grid w-full max-w-sm grid-cols-1 items-center justify-center gap-3 pt-4 sm:flex sm:max-w-none sm:flex-wrap sm:gap-4 sm:pt-5 z-20"
-            >
+            <div className="grid w-full max-w-sm grid-cols-1 items-center justify-center gap-3 pt-4 sm:flex sm:max-w-none sm:flex-wrap sm:gap-4 sm:pt-5 z-20">
               <button
                 onClick={onOpenClub}
                 className="w-full sm:w-auto px-5 sm:px-7 py-3.5 sm:py-4 bg-black/60 hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.12em] sm:tracking-[0.14em] text-xs sm:text-[13px] border border-white/25 hover:border-white rounded transition-all duration-300 backdrop-blur-md cursor-pointer select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
@@ -136,12 +72,11 @@ export function HeroSection({
               >
                 {isRu ? "Записаться на тренировку" : "Book Training"}
               </button>
-            </motion.div>
-          </motion.div>
-        </motion.div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
   );
 }
-
 

@@ -2,13 +2,23 @@
 
 import React, { useState, useId, useMemo } from "react";
 import { motion } from "motion/react";
+import {
+  isBookingProgramId,
+  type BookingProgramId,
+} from "@/entities/lead";
+import {
+  LeadConsentField,
+  LeadSubmissionFeedback,
+  LeadSubmissionSuccess,
+  useLeadSubmission,
+} from "@/features/lead-submission";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
 import { useModalA11y } from "@/shared/ui/modal";
 import { CustomDropdown } from "@/shared/ui/dropdown/CustomDropdown";
 
 interface BookingModalProps {
   onClose: () => void;
-  initialTariffId?: string;
+  initialTariffId?: BookingProgramId;
   initialCarModel?: string;
 }
 
@@ -17,25 +27,50 @@ export function BookingModal({
   initialTariffId,
   initialCarModel,
 }: BookingModalProps) {
-  const [selectedTariff, setSelectedTariff] = useState(() => initialTariffId || "pro-progress");
-  const [car, setCar] = useState(() => initialCarModel || "BMW M3 (F80)");
+  const [selectedTariff, setSelectedTariff] = useState<BookingProgramId>(
+    () => initialTariffId ?? "pro-progress",
+  );
+  const [car, setCar] = useState(
+    () => initialCarModel || "BMW M3 Competition (G80 / F80)",
+  );
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [telegram, setTelegram] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [privacyConsent, setPrivacyConsent] = useState(false);
+  const { state, submit, isSubmitting, isSucceeded } = useLeadSubmission();
   const { lang, t } = useLanguage();
   const isRu = lang === "ru";
   const titleId = useId();
-  const { panelRef, dialogProps } = useModalA11y({ onClose, labelledById: titleId });
+  const { panelRef, dialogProps } = useModalA11y({
+    onClose: () => {
+      if (!isSubmitting) onClose();
+    },
+    labelledById: titleId,
+  });
 
   const currentProgramObj = useMemo(() => {
-    return t.bookingModal.programs.find((p) => p.id === selectedTariff) || t.bookingModal.programs[2];
+    return t.bookingModal.programs.find((program) => program.id === selectedTariff);
   }, [selectedTariff, t.bookingModal.programs]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phone) return;
-    setSubmitted(true);
+    if (!privacyConsent || !currentProgramObj) return;
+
+    const normalizedTelegram = telegram.trim();
+    void submit({
+      type: "booking",
+      locale: lang,
+      privacyConsent: true,
+      programId: selectedTariff,
+      carModel: car,
+      name,
+      phone,
+      ...(normalizedTelegram ? { telegram: normalizedTelegram } : {}),
+    });
+  };
+
+  const requestClose = () => {
+    if (!isSubmitting) onClose();
   };
 
   return (
@@ -48,7 +83,7 @@ export function BookingModal({
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
         aria-hidden="true"
-        onClick={onClose}
+        onClick={requestClose}
         className="fixed inset-0 bg-black/85 backdrop-blur-xl"
       />
 
@@ -68,7 +103,8 @@ export function BookingModal({
 
         <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-20">
           <button
-            onClick={onClose}
+            onClick={requestClose}
+            disabled={isSubmitting}
             className="w-11 h-11 rounded-full flex items-center justify-center bg-white/5 border border-white/15 text-[#a0a0a8] hover:text-white hover:bg-white/15 hover:border-white/30 cursor-pointer transition-all"
             aria-label={isRu ? "Закрыть" : "Close"}
           >
@@ -76,8 +112,13 @@ export function BookingModal({
           </button>
         </div>
 
-        {!submitted ? (
-          <form onSubmit={handleSubmit} className="relative z-10 w-full">
+        {!isSucceeded ? (
+          <form
+            onSubmit={handleSubmit}
+            aria-busy={isSubmitting}
+            className="relative z-10 w-full"
+          >
+            <fieldset disabled={isSubmitting} className="contents">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 items-stretch">
               <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
                 <div className="space-y-3 pr-4">
@@ -151,7 +192,9 @@ export function BookingModal({
                       label={t.bookingModal.programLabel}
                       value={selectedTariff}
                       options={t.bookingModal.programs}
-                      onChange={(val) => setSelectedTariff(val)}
+                      onChange={(value) => {
+                        if (isBookingProgramId(value)) setSelectedTariff(value);
+                      }}
                     />
                   </div>
                 </div>
@@ -175,6 +218,7 @@ export function BookingModal({
                         autoComplete="name"
                         type="text"
                         required
+                        maxLength={100}
                         placeholder={t.bookingModal.namePlaceholder}
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -195,6 +239,9 @@ export function BookingModal({
                         autoComplete="tel"
                         type="tel"
                         required
+                        minLength={7}
+                        maxLength={32}
+                        pattern="[+0-9().\s-]+"
                         placeholder={t.bookingModal.phonePlaceholder}
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
@@ -215,6 +262,7 @@ export function BookingModal({
                       name="telegram"
                       autoComplete="off"
                       type="text"
+                      maxLength={100}
                       placeholder={t.bookingModal.tgPlaceholder}
                       value={telegram}
                       onChange={(e) => setTelegram(e.target.value)}
@@ -224,11 +272,20 @@ export function BookingModal({
                 </div>
 
                 <div className="pt-2 space-y-2.5">
+                  <LeadConsentField
+                    id={`${titleId}-privacy-consent`}
+                    checked={privacyConsent}
+                    disabled={isSubmitting}
+                    onChange={setPrivacyConsent}
+                  />
+                  <LeadSubmissionFeedback state={state} />
                   <button
                     type="submit"
                     className="w-full py-4.5 sm:py-5 px-8 bg-[#ea4043] hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.14em] text-sm sm:text-base rounded-xl transition-all duration-300 shadow-[0_0_35px_rgba(234,64,67,0.35)] cursor-pointer select-none flex items-center justify-center gap-2 group"
                   >
-                    <span>{t.bookingModal.submitBtn}</span>
+                    <span>
+                      {isSubmitting ? t.leadSubmission.submitting : t.bookingModal.submitBtn}
+                    </span>
                     <span className="group-hover:translate-x-1 transition-transform">→</span>
                   </button>
 
@@ -240,27 +297,16 @@ export function BookingModal({
                 </div>
               </div>
             </div>
+            </fieldset>
           </form>
         ) : (
-          <div className="relative z-10 py-16 space-y-6 text-center">
-            <div className="w-20 h-20 rounded-full bg-[#ea4043]/15 text-[#ea4043] border border-[#ea4043]/30 flex items-center justify-center mx-auto text-4xl font-bold shadow-[0_0_30px_rgba(234,64,67,0.3)]">
-              ✓
-            </div>
-            <h3 className="text-3xl sm:text-4xl font-bold text-white uppercase tracking-tight">
-              {t.bookingModal.successTitle}
-            </h3>
-            <p className="text-base sm:text-lg text-[#a0a0a8] max-w-md mx-auto leading-relaxed">
-              {t.bookingModal.successDesc(name, car)}
-            </p>
-            <div className="pt-4">
-              <button
-                onClick={onClose}
-                className="px-12 py-4.5 bg-white/10 hover:bg-white text-white hover:text-black font-bold uppercase tracking-wider text-sm sm:text-base rounded-xl transition-all cursor-pointer"
-              >
-                {t.bookingModal.closeBtn}
-              </button>
-            </div>
-          </div>
+          <LeadSubmissionSuccess
+            titleId={titleId}
+            title={t.bookingModal.successTitle}
+            description={t.bookingModal.successDesc(name, car)}
+            closeLabel={t.bookingModal.closeBtn}
+            onClose={onClose}
+          />
         )}
       </motion.div>
     </div>

@@ -2,10 +2,11 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
+import type { BookingProgramId } from "@/entities/lead";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
 
 interface TariffsSectionProps {
-  onOpenBooking: (tariffId?: string) => void;
+  onOpenBooking: (tariffId?: BookingProgramId) => void;
 }
 
 const containerVariants = {
@@ -335,7 +336,7 @@ export function TariffsSection({ onOpenBooking }: TariffsSectionProps) {
                 {t.tariffs.card5.meta}
               </div>
               <button
-                onClick={() => onOpenBooking("adm-raceway")}
+                onClick={() => onOpenBooking("adm-track")}
                 className="btn-card-swiss"
               >
                 <span className="text-left">{t.tariffs.card5.btn}</span>

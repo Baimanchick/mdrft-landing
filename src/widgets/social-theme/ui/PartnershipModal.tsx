@@ -1,7 +1,14 @@
 "use client";
 
-import React, { useState, useId, useMemo } from "react";
+import React, { useState, useId } from "react";
 import { motion } from "motion/react";
+import type { PartnershipDirection } from "@/entities/lead";
+import {
+  LeadConsentField,
+  LeadSubmissionFeedback,
+  LeadSubmissionSuccess,
+  useLeadSubmission,
+} from "@/features/lead-submission";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
 import { useModalA11y } from "@/shared/ui/modal";
 
@@ -10,19 +17,30 @@ interface PartnershipModalProps {
 }
 
 export function PartnershipModal({ onClose }: PartnershipModalProps) {
-  const [selectedOption, setSelectedOption] = useState<string>("invest");
+  const [selectedOption, setSelectedOption] = useState<PartnershipDirection>("invest");
   const [name, setName] = useState("");
   const [company, setCompany] = useState("");
   const [phone, setPhone] = useState("");
   const [contactMethod, setContactMethod] = useState("");
   const [comment, setComment] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [privacyConsent, setPrivacyConsent] = useState(false);
+  const { state, submit, isSubmitting, isSucceeded } = useLeadSubmission();
   const { lang } = useLanguage();
   const isRu = lang === "ru";
   const titleId = useId();
-  const { panelRef, dialogProps } = useModalA11y({ onClose, labelledById: titleId });
+  const { panelRef, dialogProps } = useModalA11y({
+    onClose: () => {
+      if (!isSubmitting) onClose();
+    },
+    labelledById: titleId,
+  });
 
-  const PARTNERSHIP_OPTIONS = [
+  const PARTNERSHIP_OPTIONS: readonly {
+    readonly id: PartnershipDirection;
+    readonly badge: string;
+    readonly title: string;
+    readonly desc: string;
+  }[] = [
     {
       id: "invest",
       badge: "INVEST // SCALE",
@@ -57,14 +75,32 @@ export function PartnershipModal({ onClose }: PartnershipModalProps) {
     },
   ];
 
-  const selectedOptionObj = useMemo(() => {
-    return PARTNERSHIP_OPTIONS.find((o) => o.id === selectedOption) || PARTNERSHIP_OPTIONS[0];
-  }, [selectedOption, PARTNERSHIP_OPTIONS]);
+  const selectedOptionObj =
+    PARTNERSHIP_OPTIONS.find((option) => option.id === selectedOption) ??
+    PARTNERSHIP_OPTIONS[0];
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phone) return;
-    setSubmitted(true);
+    if (!privacyConsent) return;
+
+    const normalizedCompany = company.trim();
+    const normalizedContactMethod = contactMethod.trim();
+    const normalizedComment = comment.trim();
+    void submit({
+      type: "partnership",
+      locale: lang,
+      privacyConsent: true,
+      direction: selectedOption,
+      name,
+      phone,
+      ...(normalizedCompany ? { company: normalizedCompany } : {}),
+      ...(normalizedContactMethod ? { contactMethod: normalizedContactMethod } : {}),
+      ...(normalizedComment ? { comment: normalizedComment } : {}),
+    });
+  };
+
+  const requestClose = () => {
+    if (!isSubmitting) onClose();
   };
 
   return (
@@ -77,7 +113,7 @@ export function PartnershipModal({ onClose }: PartnershipModalProps) {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
         aria-hidden="true"
-        onClick={onClose}
+        onClick={requestClose}
         className="fixed inset-0 bg-black/85 backdrop-blur-xl"
       />
 
@@ -97,7 +133,8 @@ export function PartnershipModal({ onClose }: PartnershipModalProps) {
 
         <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-20">
           <button
-            onClick={onClose}
+            onClick={requestClose}
+            disabled={isSubmitting}
             className="w-11 h-11 rounded-full flex items-center justify-center bg-white/5 border border-white/15 text-[#a0a0a8] hover:text-white hover:bg-white/15 hover:border-white/30 cursor-pointer transition-all"
             aria-label={isRu ? "Закрыть" : "Close"}
           >
@@ -105,8 +142,13 @@ export function PartnershipModal({ onClose }: PartnershipModalProps) {
           </button>
         </div>
 
-        {!submitted ? (
-          <form onSubmit={handleSubmit} className="relative z-10 w-full">
+        {!isSucceeded ? (
+          <form
+            onSubmit={handleSubmit}
+            aria-busy={isSubmitting}
+            className="relative z-10 w-full"
+          >
+            <fieldset disabled={isSubmitting} className="contents">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 items-stretch">
               {/* Left Column (5 of 12): Header & Visual Selected Format Showcase */}
               <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
@@ -254,6 +296,7 @@ export function PartnershipModal({ onClose }: PartnershipModalProps) {
                         autoComplete="name"
                         type="text"
                         required
+                        maxLength={100}
                         placeholder={isRu ? "Константин" : "Konstantin"}
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -273,6 +316,7 @@ export function PartnershipModal({ onClose }: PartnershipModalProps) {
                         name="organization"
                         autoComplete="organization"
                         type="text"
+                        maxLength={150}
                         placeholder={isRu ? "Название бренда" : "Brand or company"}
                         value={company}
                         onChange={(e) => setCompany(e.target.value)}
@@ -295,6 +339,9 @@ export function PartnershipModal({ onClose }: PartnershipModalProps) {
                         autoComplete="tel"
                         type="tel"
                         required
+                        minLength={7}
+                        maxLength={32}
+                        pattern="[+0-9().\s-]+"
                         placeholder="+7 (999) 000-00-00"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
@@ -314,6 +361,7 @@ export function PartnershipModal({ onClose }: PartnershipModalProps) {
                         name="contactMethod"
                         autoComplete="off"
                         type="text"
+                        maxLength={160}
                         placeholder="@username или partner@company.com"
                         value={contactMethod}
                         onChange={(e) => setContactMethod(e.target.value)}
@@ -333,6 +381,7 @@ export function PartnershipModal({ onClose }: PartnershipModalProps) {
                       id={`${titleId}-comment`}
                       name="comment"
                       rows={2}
+                      maxLength={1000}
                       placeholder={
                         isRu
                           ? "Расскажите о вашей идее, формате интеграции или объемах..."
@@ -347,11 +396,26 @@ export function PartnershipModal({ onClose }: PartnershipModalProps) {
 
                 {/* Step 3: CTA Button */}
                 <div className="pt-2 space-y-2">
+                  <LeadConsentField
+                    id={`${titleId}-privacy-consent`}
+                    checked={privacyConsent}
+                    disabled={isSubmitting}
+                    onChange={setPrivacyConsent}
+                  />
+                  <LeadSubmissionFeedback state={state} />
                   <button
                     type="submit"
                     className="w-full py-4.5 sm:py-5 px-8 bg-[#ea4043] hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.14em] text-sm sm:text-base rounded-xl transition-all duration-300 shadow-[0_0_35px_rgba(234,64,67,0.35)] cursor-pointer select-none flex items-center justify-center gap-2 group"
                   >
-                    <span>{isRu ? "Отправить предложение" : "Submit Proposal"}</span>
+                    <span>
+                      {isSubmitting
+                        ? isRu
+                          ? "Отправляем заявку…"
+                          : "Submitting request…"
+                        : isRu
+                          ? "Отправить предложение"
+                          : "Submit Proposal"}
+                    </span>
                     <span className="group-hover:translate-x-1 transition-transform">→</span>
                   </button>
 
@@ -363,29 +427,20 @@ export function PartnershipModal({ onClose }: PartnershipModalProps) {
                 </div>
               </div>
             </div>
+            </fieldset>
           </form>
         ) : (
-          <div className="relative z-10 py-16 space-y-6 text-center">
-            <div className="w-20 h-20 rounded-full bg-[#ea4043]/15 text-[#ea4043] border border-[#ea4043]/30 flex items-center justify-center mx-auto text-4xl font-bold shadow-[0_0_30px_rgba(234,64,67,0.3)]">
-              ✓
-            </div>
-            <h3 className="text-3xl sm:text-4xl font-bold text-white uppercase tracking-tight">
-              {isRu ? "Предложение отправлено" : "Proposal Submitted"}
-            </h3>
-            <p className="text-base sm:text-lg text-[#a0a0a8] max-w-md mx-auto leading-relaxed">
-              {isRu
-                ? `Спасибо, ${name || "партнёр"}. Мы свяжемся с вами в течение 24 часов для обсуждения деталей.`
-                : `Thank you, ${name || "partner"}. We will contact you within 24 hours to discuss details.`}
-            </p>
-            <div className="pt-4">
-              <button
-                onClick={onClose}
-                className="px-12 py-4.5 bg-white/10 hover:bg-white text-white hover:text-black font-bold uppercase tracking-wider text-sm sm:text-base rounded-xl transition-all cursor-pointer"
-              >
-                {isRu ? "Закрыть" : "Close"}
-              </button>
-            </div>
-          </div>
+          <LeadSubmissionSuccess
+            titleId={titleId}
+            title={isRu ? "Предложение отправлено" : "Proposal Submitted"}
+            description={
+              isRu
+                ? `Спасибо, ${name || "партнёр"}. Предложение получено, команда свяжется с вами для обсуждения деталей.`
+                : `Thank you, ${name || "partner"}. Your proposal has been received, and our team will contact you to discuss the details.`
+            }
+            closeLabel={isRu ? "Закрыть" : "Close"}
+            onClose={onClose}
+          />
         )}
       </motion.div>
     </div>

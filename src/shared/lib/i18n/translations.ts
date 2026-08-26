@@ -261,6 +261,23 @@ export const translations = {
       privacy: "ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ",
       terms: "УСЛОВИЯ ОБСЛУЖИВАНИЯ",
     },
+    leadSubmission: {
+      consent:
+        "Я согласен на обработку указанных данных для рассмотрения заявки, обратной связи и передачи заявки в приватную рабочую группу Telegram.",
+      consentRequired: "Подтвердите согласие перед отправкой заявки.",
+      submitting: "Отправляем заявку…",
+      disabled: "Приём заявок пока не подключён. Попробуйте позже.",
+      forbidden: "Не удалось подтвердить адрес формы. Обновите страницу и попробуйте снова.",
+      rateLimited: (seconds?: number) =>
+        seconds
+          ? `Слишком много попыток. Повторите через ${seconds} сек.`
+          : "Слишком много попыток. Повторите позже.",
+      validation: "Проверьте обязательные поля и формат введённых данных.",
+      uncertain:
+        "Не удалось подтвердить результат отправки. Заявка могла быть доставлена — не отправляйте её повторно сразу.",
+      unavailable: "Сервис заявок временно недоступен. Попробуйте позже.",
+      unexpected: "Не удалось отправить заявку. Обновите страницу и попробуйте снова.",
+    },
     bookingModal: {
       title: "// ЗАПИСЬ НА ТРЕНИРОВКУ",
       carLabel: "Автомобиль",
@@ -291,7 +308,7 @@ export const translations = {
       instructorNote: "Шеф-инструктор свяжется с вами в течение 15 минут",
       successTitle: "ЗАЯВКА ПРИНЯТА",
       successDesc: (name: string, car: string) =>
-        `Спасибо, ${name || "Пилот"}! Мы забронировали ${car} на автодроме ADM Raceway и скоро свяжемся с вами.`,
+        `Спасибо, ${name || "Пилот"}! Заявка на тренировку на ${car} отправлена. Мы свяжемся с вами для согласования деталей.`,
       closeBtn: "Закрыть",
     },
     preloader: {
@@ -570,6 +587,23 @@ export const translations = {
       privacy: "PRIVACY POLICY",
       terms: "TERMS OF SERVICE",
     },
+    leadSubmission: {
+      consent:
+        "I consent to the processing of the submitted data to review my request, contact me, and forward the request to a private Telegram operations group.",
+      consentRequired: "Confirm your consent before submitting the request.",
+      submitting: "Submitting your request…",
+      disabled: "Request submission is not connected yet. Please try again later.",
+      forbidden: "The form origin could not be verified. Refresh the page and try again.",
+      rateLimited: (seconds?: number) =>
+        seconds
+          ? `Too many attempts. Try again in ${seconds} seconds.`
+          : "Too many attempts. Please try again later.",
+      validation: "Check the required fields and the format of your details.",
+      uncertain:
+        "We could not confirm the submission result. Your request may have been delivered, so do not submit it again immediately.",
+      unavailable: "Request submission is temporarily unavailable. Please try again later.",
+      unexpected: "The request could not be submitted. Refresh the page and try again.",
+    },
     bookingModal: {
       title: "// BOOK TRAINING SESSION",
       carLabel: "Vehicle",
@@ -600,7 +634,7 @@ export const translations = {
       instructorNote: "Chief instructor will contact you within 15 minutes",
       successTitle: "REQUEST RECEIVED",
       successDesc: (name: string, car: string) =>
-        `Thank you, ${name || "Pilot"}! We have reserved the ${car} at ADM Raceway and will contact you shortly.`,
+        `Thank you, ${name || "Pilot"}! Your training request for the ${car} has been sent. We will contact you to confirm the details.`,
       closeBtn: "Close",
     },
     preloader: {

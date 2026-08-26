@@ -1,0 +1,14 @@
+.git
+.github
+.next
+node_modules
+.env*
+*.log
+coverage
+out
+build
+.DS_Store
+.claude
+.agents
+rules
+infra/README.md

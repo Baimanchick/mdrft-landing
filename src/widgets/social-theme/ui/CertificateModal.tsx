@@ -1,7 +1,14 @@
 "use client";
 
-import React, { useState, useId, useMemo } from "react";
+import React, { useState, useId, useMemo, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import type { CertificateLead } from "@/entities/lead";
+import {
+  LeadConsentField,
+  LeadSubmissionFeedback,
+  LeadSubmissionSuccess,
+  useLeadSubmission,
+} from "@/features/lead-submission";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
 import { useModalA11y } from "@/shared/ui/modal";
 
@@ -11,17 +18,28 @@ interface CertificateModalProps {
 
 type DeliveryType = "digital" | "box";
 
-interface PlanConfig {
-  id: string;
-  titleRu: string;
-  titleEn: string;
-  subtitleRu: string;
-  subtitleEn: string;
-  badgeRu: string;
-  badgeEn: string;
-  price: number;
-  isCustom?: boolean;
-}
+type PresetPlanId = Extract<
+  CertificateLead["plan"],
+  { readonly kind: "preset" }
+>["id"];
+
+type PlanConfigBase = {
+  readonly titleRu: string;
+  readonly titleEn: string;
+  readonly subtitleRu: string;
+  readonly subtitleEn: string;
+  readonly badgeRu: string;
+  readonly badgeEn: string;
+  readonly price: number;
+};
+
+type PlanConfig = PlanConfigBase & ({
+  readonly id: PresetPlanId;
+  readonly isCustom?: false;
+} | {
+  readonly id: "custom";
+  readonly isCustom: true;
+});
 
 const CERTIFICATE_PLANS: readonly PlanConfig[] = [
   {
@@ -84,42 +102,79 @@ function formatRubles(amount: number): string {
 }
 
 export function CertificateModal({ onClose }: CertificateModalProps) {
-  const [selectedPlanId, setSelectedPlanId] = useState("pro-progress");
+  const [selectedPlanId, setSelectedPlanId] = useState<PlanConfig["id"]>("pro-progress");
   const [customAmount, setCustomAmount] = useState<number>(50000);
   const [deliveryType, setDeliveryType] = useState<DeliveryType>("digital");
   const [recipientName, setRecipientName] = useState("");
   const [buyerName, setBuyerName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [privacyConsent, setPrivacyConsent] = useState(false);
+  const [showCustomAmountError, setShowCustomAmountError] = useState(false);
+  const customAmountRef = useRef<HTMLInputElement | null>(null);
+  const { state, submit, isSubmitting, isSucceeded } = useLeadSubmission();
 
   const { lang } = useLanguage();
   const isRu = lang === "ru";
   const titleId = useId();
-  const { panelRef, dialogProps } = useModalA11y({ onClose, labelledById: titleId });
+  const { panelRef, dialogProps } = useModalA11y({
+    onClose: () => {
+      if (!isSubmitting) onClose();
+    },
+    labelledById: titleId,
+  });
 
   const activePlan = useMemo(() => {
     return CERTIFICATE_PLANS.find((p) => p.id === selectedPlanId) ?? CERTIFICATE_PLANS[2];
   }, [selectedPlanId]);
 
+  const customAmountIsValid =
+    Number.isSafeInteger(customAmount) && customAmount >= 30_000;
+
   const activePriceFormatted = useMemo(() => {
     if (activePlan.isCustom) {
-      const validAmount = Number.isFinite(customAmount) && customAmount > 0 ? customAmount : 30000;
-      return formatRubles(validAmount);
+      return customAmountIsValid ? formatRubles(customAmount) : "—";
     }
     return formatRubles(activePlan.price);
-  }, [activePlan, customAmount]);
+  }, [activePlan, customAmount, customAmountIsValid]);
 
   const handleCustomAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const raw = e.target.value.replace(/\D/g, "");
     const parsed = parseInt(raw, 10);
     setCustomAmount(Number.isNaN(parsed) ? 0 : parsed);
+    setShowCustomAmountError(false);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phone) return;
-    setSubmitted(true);
+    if (!privacyConsent) return;
+
+    if (activePlan.isCustom && !customAmountIsValid) {
+      setShowCustomAmountError(true);
+      customAmountRef.current?.focus({ preventScroll: true });
+      return;
+    }
+
+    const normalizedRecipientName = recipientName.trim();
+    const plan = activePlan.isCustom
+      ? { kind: "custom" as const, amount: customAmount }
+      : { kind: "preset" as const, id: activePlan.id };
+
+    void submit({
+      type: "certificate",
+      locale: lang,
+      privacyConsent: true,
+      plan,
+      deliveryType,
+      ...(normalizedRecipientName ? { recipientName: normalizedRecipientName } : {}),
+      buyerName,
+      phone,
+      email,
+    });
+  };
+
+  const requestClose = () => {
+    if (!isSubmitting) onClose();
   };
 
   return (
@@ -132,7 +187,7 @@ export function CertificateModal({ onClose }: CertificateModalProps) {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
         aria-hidden="true"
-        onClick={onClose}
+        onClick={requestClose}
         className="fixed inset-0 bg-black/85 backdrop-blur-xl"
       />
 
@@ -152,7 +207,8 @@ export function CertificateModal({ onClose }: CertificateModalProps) {
 
         <div className="absolute top-5 sm:top-8 right-5 sm:right-8 z-20">
           <button
-            onClick={onClose}
+            onClick={requestClose}
+            disabled={isSubmitting}
             className="w-12 h-12 rounded-full flex items-center justify-center bg-white/5 border border-white/15 text-[#a0a0a8] hover:text-white hover:bg-white/15 hover:border-white/30 cursor-pointer transition-all"
             aria-label={isRu ? "Закрыть" : "Close"}
           >
@@ -160,8 +216,13 @@ export function CertificateModal({ onClose }: CertificateModalProps) {
           </button>
         </div>
 
-        {!submitted ? (
-          <form onSubmit={handleSubmit} className="relative z-10 w-full">
+        {!isSucceeded ? (
+          <form
+            onSubmit={handleSubmit}
+            aria-busy={isSubmitting}
+            className="relative z-10 w-full"
+          >
+            <fieldset disabled={isSubmitting} className="contents">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 items-stretch">
               {/* Left Column (4 of 12): Hero Presentation & Live Voucher Card */}
               <div className="lg:col-span-4 flex flex-col justify-between space-y-6">
@@ -337,9 +398,13 @@ export function CertificateModal({ onClose }: CertificateModalProps) {
                             </label>
                             <div className="relative">
                               <input
+                                ref={customAmountRef}
                                 id={`${titleId}-customAmount`}
                                 type="text"
                                 inputMode="numeric"
+                                required={activePlan.isCustom}
+                                aria-invalid={showCustomAmountError || undefined}
+                                aria-describedby={`${titleId}-customAmount-error`}
                                 value={customAmount ? customAmount.toLocaleString("ru-RU") : ""}
                                 onChange={handleCustomAmountChange}
                                 placeholder="50 000"
@@ -349,6 +414,17 @@ export function CertificateModal({ onClose }: CertificateModalProps) {
                                 ₽
                               </span>
                             </div>
+                            <p
+                              id={`${titleId}-customAmount-error`}
+                              role="alert"
+                              className="mt-1.5 text-xs text-[#ff6b6e]"
+                            >
+                              {showCustomAmountError
+                                ? isRu
+                                  ? "Укажите целую сумму от 30 000 ₽."
+                                  : "Enter a whole amount of at least 30 000 ₽."
+                                : ""}
+                            </p>
                           </div>
 
                           <div className="w-full sm:w-auto flex flex-wrap items-center gap-2">
@@ -456,6 +532,7 @@ export function CertificateModal({ onClose }: CertificateModalProps) {
                         name="recipientName"
                         autoComplete="name"
                         type="text"
+                        maxLength={100}
                         placeholder={isRu ? "Михаил" : "Alex"}
                         value={recipientName}
                         onChange={(e) => setRecipientName(e.target.value)}
@@ -476,6 +553,7 @@ export function CertificateModal({ onClose }: CertificateModalProps) {
                         autoComplete="name"
                         type="text"
                         required
+                        maxLength={100}
                         placeholder={isRu ? "Иван" : "John"}
                         value={buyerName}
                         onChange={(e) => setBuyerName(e.target.value)}
@@ -496,6 +574,9 @@ export function CertificateModal({ onClose }: CertificateModalProps) {
                         autoComplete="tel"
                         type="tel"
                         required
+                        minLength={7}
+                        maxLength={32}
+                        pattern="[+0-9().\s-]+"
                         placeholder="+7 (999) 000-00-00"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
@@ -516,6 +597,7 @@ export function CertificateModal({ onClose }: CertificateModalProps) {
                         autoComplete="email"
                         type="email"
                         required
+                        maxLength={254}
                         placeholder="pilot@example.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
@@ -527,12 +609,23 @@ export function CertificateModal({ onClose }: CertificateModalProps) {
 
                 {/* Step 4: CTA */}
                 <div className="pt-2 space-y-2.5">
+                  <LeadConsentField
+                    id={`${titleId}-privacy-consent`}
+                    checked={privacyConsent}
+                    disabled={isSubmitting}
+                    onChange={setPrivacyConsent}
+                  />
+                  <LeadSubmissionFeedback state={state} />
                   <button
                     type="submit"
                     className="w-full py-5 px-8 bg-[#ea4043] hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.14em] text-sm sm:text-base xl:text-lg rounded-xl transition-all duration-300 shadow-[0_0_35px_rgba(234,64,67,0.35)] cursor-pointer select-none flex items-center justify-center gap-2 group"
                   >
                     <span>
-                      {isRu
+                      {isSubmitting
+                        ? isRu
+                          ? "Отправляем заявку…"
+                          : "Submitting request…"
+                        : isRu
                         ? `Оформить сертификат • ${activePriceFormatted}`
                         : `Order Certificate • ${activePriceFormatted}`}
                     </span>
@@ -547,29 +640,20 @@ export function CertificateModal({ onClose }: CertificateModalProps) {
                 </div>
               </div>
             </div>
+            </fieldset>
           </form>
         ) : (
-          <div className="relative z-10 py-16 space-y-6 text-center">
-            <div className="w-20 h-20 rounded-full bg-[#ea4043]/15 text-[#ea4043] border border-[#ea4043]/30 flex items-center justify-center mx-auto text-4xl font-bold shadow-[0_0_30px_rgba(234,64,67,0.3)]">
-              ✓
-            </div>
-            <h3 className="text-3xl sm:text-4xl xl:text-5xl font-bold text-white uppercase tracking-tight">
-              {isRu ? "Заказ сертификата оформлен" : "Certificate Ordered"}
-            </h3>
-            <p className="text-base sm:text-lg text-[#a0a0a8] max-w-lg mx-auto leading-relaxed">
-              {isRu
-                ? `${buyerName || "Покупатель"}, менеджер свяжется с вами для подтверждения оплаты на сумму ${activePriceFormatted} и отправки сертификата ${recipientName ? `для ${recipientName}` : ""}.`
-                : `${buyerName || "Customer"}, our manager will reach out shortly to finalize payment (${activePriceFormatted}) and delivery.`}
-            </p>
-            <div className="pt-4">
-              <button
-                onClick={onClose}
-                className="px-12 py-4.5 bg-white/10 hover:bg-white text-white hover:text-black font-bold uppercase tracking-wider text-sm sm:text-base rounded-xl transition-all cursor-pointer"
-              >
-                {isRu ? "Закрыть" : "Close"}
-              </button>
-            </div>
-          </div>
+          <LeadSubmissionSuccess
+            titleId={titleId}
+            title={isRu ? "Заявка на сертификат отправлена" : "Certificate Request Sent"}
+            description={
+              isRu
+                ? `${buyerName || "Покупатель"}, заявка на сертификат ${recipientName ? `для ${recipientName} ` : ""}на сумму ${activePriceFormatted} получена. Менеджер свяжется с вами для подтверждения.`
+                : `${buyerName || "Customer"}, your certificate request for ${activePriceFormatted} has been received. A manager will contact you to confirm the details.`
+            }
+            closeLabel={isRu ? "Закрыть" : "Close"}
+            onClose={onClose}
+          />
         )}
       </motion.div>
     </div>

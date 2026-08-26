@@ -1,0 +1,257 @@
+name: mdrift
+
+x-logging: &bounded-logging
+  driver: json-file
+  options:
+    max-size: "5m"
+    max-file: "3"
+
+x-app-database: &app-database
+  PGHOST: postgres
+  PGPORT: "5432"
+  PGDATABASE: ${POSTGRES_DB}
+  PGUSER: ${APP_DATABASE_USER}
+  PGPASSWORD: ${APP_DATABASE_PASSWORD}
+
+x-admin-database: &admin-database
+  PGHOST: postgres
+  PGPORT: "5432"
+  PGDATABASE: ${POSTGRES_DB}
+  PGUSER: ${POSTGRES_ADMIN_USER}
+  PGPASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+
+services:
+  postgres:
+    image: postgres:17.11-alpine3.24@sha256:18cfe3ef5e6815560c98237d6216d1e5119702fb0f3894c8785dd58b8bbe5d73
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD}
+      APP_DATABASE_USER: ${APP_DATABASE_USER}
+      APP_DATABASE_PASSWORD: ${APP_DATABASE_PASSWORD}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    command:
+      - postgres
+      - -c
+      - max_connections=30
+      - -c
+      - shared_buffers=128MB
+      - -c
+      - effective_cache_size=512MB
+      - -c
+      - maintenance_work_mem=32MB
+      - -c
+      - work_mem=4MB
+      - -c
+      - max_wal_size=256MB
+      - -c
+      - min_wal_size=80MB
+      - -c
+      - log_min_duration_statement=1000
+      - -c
+      - log_connections=off
+      - -c
+      - log_disconnections=off
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - database
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 20s
+    shm_size: 128mb
+    mem_limit: 512m
+    cpus: 0.60
+    pids_limit: 100
+    logging: *bounded-logging
+
+  migrate:
+    image: ${APP_IMAGE}
+    profiles: ["tools"]
+    init: true
+    read_only: true
+    restart: "no"
+    command: ["node", "/app/workers/migrate.mjs"]
+    environment:
+      <<: *admin-database
+      DATABASE_POOL_MAX: "1"
+      POSTGRES_APPLICATION_NAME: mdrift-migrate
+      POSTGRES_STATEMENT_TIMEOUT_MS: "60000"
+      MIGRATIONS_DIR: /app/migrations
+      APP_DATABASE_USER: ${APP_DATABASE_USER}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - database
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    mem_limit: 128m
+    cpus: 0.25
+    pids_limit: 40
+    logging: *bounded-logging
+
+  app:
+    image: ${APP_IMAGE}
+    restart: unless-stopped
+    init: true
+    read_only: true
+    environment:
+      <<: *app-database
+      DATABASE_POOL_MAX: "3"
+      POSTGRES_APPLICATION_NAME: mdrift-next
+      POSTGRES_STATEMENT_TIMEOUT_MS: "8000"
+      NODE_OPTIONS: --max-old-space-size=384
+      MALLOC_ARENA_MAX: "2"
+      LEAD_SUBMISSION_ENABLED: ${LEAD_SUBMISSION_ENABLED}
+      LEAD_ALLOWED_ORIGIN: ${LEAD_ALLOWED_ORIGIN}
+      LEAD_CLIENT_IP_SOURCE: reverse-proxy
+      LEAD_PROTECTION_HMAC_SECRET: ${LEAD_PROTECTION_HMAC_SECRET}
+    volumes:
+      - next_cache:/app/.next/cache
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - database
+      - web
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - fetch('http://127.0.0.1:3000/api/health').then(r=>{if(!r.ok)process.exit(1)}).catch(()=>process.exit(1))
+      interval: 20s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    mem_limit: 512m
+    cpus: 0.75
+    pids_limit: 100
+    logging: *bounded-logging
+
+  telegram-worker:
+    image: ${APP_IMAGE}
+    restart: unless-stopped
+    init: true
+    read_only: true
+    command: ["node", "/app/workers/telegram-worker.mjs"]
+    environment:
+      <<: *app-database
+      DATABASE_POOL_MAX: "2"
+      POSTGRES_APPLICATION_NAME: mdrift-telegram-worker
+      POSTGRES_STATEMENT_TIMEOUT_MS: "15000"
+      NODE_OPTIONS: --max-old-space-size=128
+      LEAD_RETENTION_DAYS: ${LEAD_RETENTION_DAYS}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_LEADS_CHAT_ID: ${TELEGRAM_LEADS_CHAT_ID}
+      TELEGRAM_TOPIC_BOOKING_ID: ${TELEGRAM_TOPIC_BOOKING_ID:-}
+      TELEGRAM_TOPIC_CERTIFICATE_ID: ${TELEGRAM_TOPIC_CERTIFICATE_ID:-}
+      TELEGRAM_TOPIC_CLUB_ID: ${TELEGRAM_TOPIC_CLUB_ID:-}
+      TELEGRAM_TOPIC_PARTNERSHIP_ID: ${TELEGRAM_TOPIC_PARTNERSHIP_ID:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - database
+      - web
+    tmpfs:
+      - /tmp:size=16m,mode=1777
+    mem_limit: 192m
+    cpus: 0.30
+    pids_limit: 50
+    logging: *bounded-logging
+
+  nginx:
+    image: nginx:1.28.3-alpine@sha256:a8b39bd9cf0f83869a2162827a0caf6137ddf759d50a171451b335cecc87d236
+    restart: unless-stopped
+    init: true
+    read_only: true
+    environment:
+      DOMAIN: ${DOMAIN}
+      NGINX_ENVSUBST_FILTER: ^DOMAIN$
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infra/nginx/https.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - letsencrypt:/etc/letsencrypt:ro
+      - certbot_webroot:/var/www/certbot:ro
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - web
+    tmpfs:
+      - /var/cache/nginx:size=16m,mode=0755
+      - /var/run:size=1m,mode=0755
+      - /etc/nginx/conf.d:size=1m,mode=0755
+    healthcheck:
+      test: ["CMD", "nginx", "-t"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    mem_limit: 64m
+    cpus: 0.20
+    pids_limit: 40
+    logging: *bounded-logging
+
+  nginx-bootstrap:
+    image: nginx:1.28.3-alpine@sha256:a8b39bd9cf0f83869a2162827a0caf6137ddf759d50a171451b335cecc87d236
+    profiles: ["bootstrap"]
+    init: true
+    read_only: true
+    environment:
+      DOMAIN: ${DOMAIN}
+      NGINX_ENVSUBST_FILTER: ^DOMAIN$
+    ports:
+      - "80:80"
+    volumes:
+      - ./infra/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./infra/nginx/http.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - certbot_webroot:/var/www/certbot:ro
+    depends_on:
+      app:
+        condition: service_healthy
+    networks:
+      - web
+    tmpfs:
+      - /var/cache/nginx:size=16m,mode=0755
+      - /var/run:size=1m,mode=0755
+      - /etc/nginx/conf.d:size=1m,mode=0755
+    mem_limit: 64m
+    cpus: 0.20
+    pids_limit: 40
+    logging: *bounded-logging
+
+  certbot:
+    image: certbot/certbot:v5.7.0@sha256:34ee91d2f43008eb78a007d22f23ed4b2eaa9a454cb27ca2c042b49527a695b4
+    profiles: ["tls"]
+    volumes:
+      - letsencrypt:/etc/letsencrypt
+      - certbot_webroot:/var/www/certbot
+    networks:
+      - web
+    mem_limit: 128m
+    cpus: 0.25
+    pids_limit: 40
+    logging: *bounded-logging
+
+volumes:
+  postgres_data:
+  next_cache:
+  letsencrypt:
+  certbot_webroot:
+
+networks:
+  database:
+    internal: true
+  web:

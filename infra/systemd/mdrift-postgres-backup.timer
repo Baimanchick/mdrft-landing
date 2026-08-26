@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily m-drift-school PostgreSQL backup
+
+[Timer]
+OnCalendar=*-*-* 02:23:00
+RandomizedDelaySec=20m
+Persistent=true
+
+[Install]
+WantedBy=timers.target

@@ -2,6 +2,12 @@
 
 import React, { useState, useId } from "react";
 import { motion } from "motion/react";
+import {
+  LeadConsentField,
+  LeadSubmissionFeedback,
+  LeadSubmissionSuccess,
+  useLeadSubmission,
+} from "@/features/lead-submission";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
 import { useModalA11y } from "@/shared/ui/modal";
 import { CustomDropdown } from "@/shared/ui/dropdown/CustomDropdown";
@@ -15,17 +21,39 @@ export function MClubModal({ onClose }: MClubModalProps) {
   const [phone, setPhone] = useState("");
   const [telegram, setTelegram] = useState("");
   const [carModel, setCarModel] = useState("BMW M4 (G82 / G83 / F82 / F83)");
-  const [submitted, setSubmitted] = useState(false);
+  const [privacyConsent, setPrivacyConsent] = useState(false);
+  const { state, submit, isSubmitting, isSucceeded } = useLeadSubmission();
   const { lang } = useLanguage();
   const isRu = lang === "ru";
   const [city, setCity] = useState(isRu ? "Москва" : "Moscow");
   const titleId = useId();
-  const { panelRef, dialogProps } = useModalA11y({ onClose, labelledById: titleId });
+  const { panelRef, dialogProps } = useModalA11y({
+    onClose: () => {
+      if (!isSubmitting) onClose();
+    },
+    labelledById: titleId,
+  });
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!phone) return;
-    setSubmitted(true);
+    if (!privacyConsent) return;
+
+    const normalizedTelegram = telegram.trim();
+    const normalizedCity = city.trim();
+    void submit({
+      type: "club",
+      locale: lang,
+      privacyConsent: true,
+      carModel,
+      name,
+      phone,
+      ...(normalizedTelegram ? { telegram: normalizedTelegram } : {}),
+      ...(normalizedCity ? { city: normalizedCity } : {}),
+    });
+  };
+
+  const requestClose = () => {
+    if (!isSubmitting) onClose();
   };
 
   const CAR_OPTIONS = [
@@ -48,7 +76,7 @@ export function MClubModal({ onClose }: MClubModalProps) {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3, ease: "easeOut" }}
         aria-hidden="true"
-        onClick={onClose}
+        onClick={requestClose}
         className="fixed inset-0 bg-black/85 backdrop-blur-xl"
       />
 
@@ -68,7 +96,8 @@ export function MClubModal({ onClose }: MClubModalProps) {
 
         <div className="absolute top-4 sm:top-6 right-4 sm:right-6 z-20">
           <button
-            onClick={onClose}
+            onClick={requestClose}
+            disabled={isSubmitting}
             className="w-11 h-11 rounded-full flex items-center justify-center bg-white/5 border border-white/15 text-[#a0a0a8] hover:text-white hover:bg-white/15 hover:border-white/30 cursor-pointer transition-all"
             aria-label={isRu ? "Закрыть" : "Close"}
           >
@@ -76,8 +105,13 @@ export function MClubModal({ onClose }: MClubModalProps) {
           </button>
         </div>
 
-        {!submitted ? (
-          <form onSubmit={handleSubmit} className="relative z-10 w-full">
+        {!isSucceeded ? (
+          <form
+            onSubmit={handleSubmit}
+            aria-busy={isSubmitting}
+            className="relative z-10 w-full"
+          >
+            <fieldset disabled={isSubmitting} className="contents">
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 items-stretch">
               <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
                 <div className="space-y-3 pr-4">
@@ -152,6 +186,7 @@ export function MClubModal({ onClose }: MClubModalProps) {
                         autoComplete="name"
                         type="text"
                         required
+                        maxLength={100}
                         placeholder={isRu ? "Александр" : "Alex"}
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -172,6 +207,9 @@ export function MClubModal({ onClose }: MClubModalProps) {
                         autoComplete="tel"
                         type="tel"
                         required
+                        minLength={7}
+                        maxLength={32}
+                        pattern="[+0-9().\s-]+"
                         placeholder="+7 (999) 000-00-00"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
@@ -193,6 +231,7 @@ export function MClubModal({ onClose }: MClubModalProps) {
                         name="telegram"
                         autoComplete="off"
                         type="text"
+                        maxLength={100}
                         placeholder="@username"
                         value={telegram}
                         onChange={(e) => setTelegram(e.target.value)}
@@ -212,6 +251,7 @@ export function MClubModal({ onClose }: MClubModalProps) {
                         name="city"
                         autoComplete="address-level2"
                         type="text"
+                        maxLength={100}
                         placeholder={isRu ? "Москва" : "Moscow"}
                         value={city}
                         onChange={(e) => setCity(e.target.value)}
@@ -222,11 +262,26 @@ export function MClubModal({ onClose }: MClubModalProps) {
                 </div>
 
                 <div className="pt-2 space-y-2.5">
+                  <LeadConsentField
+                    id={`${titleId}-privacy-consent`}
+                    checked={privacyConsent}
+                    disabled={isSubmitting}
+                    onChange={setPrivacyConsent}
+                  />
+                  <LeadSubmissionFeedback state={state} />
                   <button
                     type="submit"
                     className="w-full py-4.5 sm:py-5 px-8 bg-[#ea4043] hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.14em] text-sm sm:text-base rounded-xl transition-all duration-300 shadow-[0_0_35px_rgba(234,64,67,0.35)] cursor-pointer select-none flex items-center justify-center gap-2 group"
                   >
-                    <span>{isRu ? "Подать заявку в M-Community" : "Apply for M-Community"}</span>
+                    <span>
+                      {isSubmitting
+                        ? isRu
+                          ? "Отправляем заявку…"
+                          : "Submitting request…"
+                        : isRu
+                          ? "Подать заявку в M-Community"
+                          : "Apply for M-Community"}
+                    </span>
                     <span className="group-hover:translate-x-1 transition-transform">→</span>
                   </button>
 
@@ -238,29 +293,20 @@ export function MClubModal({ onClose }: MClubModalProps) {
                 </div>
               </div>
             </div>
+            </fieldset>
           </form>
         ) : (
-          <div className="relative z-10 py-16 space-y-6 text-center">
-            <div className="w-20 h-20 rounded-full bg-[#ea4043]/15 text-[#ea4043] border border-[#ea4043]/30 flex items-center justify-center mx-auto text-4xl font-bold shadow-[0_0_30px_rgba(234,64,67,0.3)]">
-              ✓
-            </div>
-            <h3 className="text-3xl sm:text-4xl font-bold text-white uppercase tracking-tight">
-              {isRu ? "Заявка в клуб отправлена" : "Application Received"}
-            </h3>
-            <p className="text-base sm:text-lg text-[#a0a0a8] max-w-md mx-auto leading-relaxed">
-              {isRu
-                ? `${name || "Пилот"}, администратор свяжется с вами по указанному номеру для добавления в закрытый чат.`
-                : `${name || "Driver"}, our team will contact you shortly to confirm your membership.`}
-            </p>
-            <div className="pt-4">
-              <button
-                onClick={onClose}
-                className="px-12 py-4.5 bg-white/10 hover:bg-white text-white hover:text-black font-bold uppercase tracking-wider text-sm sm:text-base rounded-xl transition-all cursor-pointer"
-              >
-                {isRu ? "Закрыть" : "Close"}
-              </button>
-            </div>
-          </div>
+          <LeadSubmissionSuccess
+            titleId={titleId}
+            title={isRu ? "Заявка в клуб отправлена" : "Application Received"}
+            description={
+              isRu
+                ? `${name || "Пилот"}, заявка получена. Администратор свяжется с вами по указанному номеру.`
+                : `${name || "Driver"}, your application has been received. Our team will contact you using the details provided.`
+            }
+            closeLabel={isRu ? "Закрыть" : "Close"}
+            onClose={onClose}
+          />
         )}
       </motion.div>
     </div>

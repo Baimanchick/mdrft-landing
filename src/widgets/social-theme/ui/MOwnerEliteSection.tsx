@@ -3,10 +3,11 @@
 import Image from "next/image";
 import { useState } from "react";
 import { motion } from "motion/react";
+import type { BookingProgramId } from "@/entities/lead";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
 
 interface MOwnerEliteSectionProps {
-  onOpenBooking: (tariffId?: string) => void;
+  onOpenBooking: (tariffId?: BookingProgramId) => void;
 }
 
 const containerVariants = {

@@ -1,0 +1,8 @@
+[Unit]
+Description=Back up m-drift-school PostgreSQL
+Requires=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/opt/mdrift/infra/server/backup-postgres.sh

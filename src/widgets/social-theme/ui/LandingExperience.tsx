@@ -3,6 +3,7 @@
 import { MotionConfig } from "motion/react";
 import dynamic from "next/dynamic";
 import { useState } from "react";
+import type { BookingProgramId } from "@/entities/lead";
 import { APP_SHELL_ID } from "@/shared/ui/modal";
 import { SmoothScrollProvider } from "@/shared/ui/smooth-scroll";
 import { AboutSection } from "@/widgets/social-theme/ui/AboutSection";
@@ -46,10 +47,10 @@ export function LandingExperience() {
   const [isClubOpen, setIsClubOpen] = useState(false);
   const [isPartnershipOpen, setIsPartnershipOpen] = useState(false);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [selectedTariffId, setSelectedTariffId] = useState<string>();
+  const [selectedTariffId, setSelectedTariffId] = useState<BookingProgramId>();
   const [selectedCarModel, setSelectedCarModel] = useState<string>();
 
-  const openBooking = (tariffId?: string, carModel?: string) => {
+  const openBooking = (tariffId?: BookingProgramId, carModel?: string) => {
     setSelectedTariffId(tariffId);
     setSelectedCarModel(carModel);
     setIsBookingOpen(true);
