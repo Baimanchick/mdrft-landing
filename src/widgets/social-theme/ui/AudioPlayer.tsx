@@ -82,7 +82,7 @@ const BAR_WEIGHTS = [
   0.84, 0.66, 0.93, 0.76, 0.58, 0.86, 0.69, 0.81, 0.54, 0.78, 0.62, 0.71,
 ];
 
-export function AudioPlayer() {
+export function AudioPlayer({ isRevealed = true }: { isRevealed?: boolean } = {}) {
   const { lang } = useLanguage();
   const isRu = lang === "ru";
 
@@ -90,20 +90,15 @@ export function AudioPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIdx, setCurrentTrackIdx] = useState(0);
   const [currentTimeSec, setCurrentTimeSec] = useState(0);
-  const [volume, setVolume] = useState(0.2);
+  const [volume, setVolume] = useState(0.25);
 
   const isPlayingRef = useRef(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const analyserRef = useRef<AnalyserNode | null>(null);
-  const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
   const animFrameRef = useRef<number | null>(null);
   const currentPeaksRef = useRef<number[]>(Array(NUM_BARS).fill(12));
   const barRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const miniBarRefs = useRef<(HTMLSpanElement | null)[]>([]);
-  const frequencyDataRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
-  const isFirstMountRef = useRef(true);
 
   const track = TRACKS[currentTrackIdx];
 
@@ -129,76 +124,6 @@ export function AudioPlayer() {
     };
   }, [isExpanded]);
 
-  // Connect Web Audio API Analyser
-  const setupAudioContext = useCallback(() => {
-    if (!audioRef.current) return;
-    if (!audioCtxRef.current) {
-      const AudioContextClass =
-        window.AudioContext ||
-        (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
-      const ctx = new AudioContextClass();
-      audioCtxRef.current = ctx;
-
-      const analyser = ctx.createAnalyser();
-      analyser.fftSize = 128;
-      analyser.smoothingTimeConstant = 0.1;
-      analyserRef.current = analyser;
-
-      if (!sourceNodeRef.current) {
-        try {
-          const source = ctx.createMediaElementSource(audioRef.current);
-          source.connect(analyser);
-          analyser.connect(ctx.destination);
-          sourceNodeRef.current = source;
-        } catch {
-          // Source already connected
-        }
-      }
-    }
-
-    if (audioCtxRef.current && audioCtxRef.current.state === "suspended") {
-      audioCtxRef.current.resume().catch(() => {});
-    }
-  }, []);
-
-  // Autoplay on site load (20% volume) with interaction fallback for browser autoplay policy
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
-    audio.volume = 0.2;
-
-    const startPlayback = async () => {
-      setupAudioContext();
-      try {
-        await audio.play();
-        setIsPlaying(true);
-        isPlayingRef.current = true;
-      } catch {
-        const handleFirstInteraction = async () => {
-          setupAudioContext();
-          try {
-            await audio.play();
-            setIsPlaying(true);
-            isPlayingRef.current = true;
-          } catch {
-            // Ignored
-          }
-          window.removeEventListener("pointerdown", handleFirstInteraction);
-          window.removeEventListener("keydown", handleFirstInteraction);
-          window.removeEventListener("scroll", handleFirstInteraction);
-          window.removeEventListener("touchstart", handleFirstInteraction);
-        };
-
-        window.addEventListener("pointerdown", handleFirstInteraction, { once: true });
-        window.addEventListener("keydown", handleFirstInteraction, { once: true });
-        window.addEventListener("scroll", handleFirstInteraction, { once: true });
-        window.addEventListener("touchstart", handleFirstInteraction, { once: true });
-      }
-    };
-
-    startPlayback();
-  }, [setupAudioContext]);
-
   const paintBars = (heights: number[]) => {
     for (let i = 0; i < heights.length; i += 1) {
       const bar = barRefs.current[i];
@@ -220,6 +145,7 @@ export function AudioPlayer() {
     });
   };
 
+  // Spectrum animation
   useEffect(() => {
     if (!isPlaying) {
       currentPeaksRef.current = Array(NUM_BARS).fill(IDLE_BAR_HEIGHT);
@@ -230,45 +156,24 @@ export function AudioPlayer() {
 
     let t = 0;
     const renderSpectrum = () => {
-      t += 0.2;
+      t += 0.038;
       const prevHeights = currentPeaksRef.current;
-      const analyser = analyserRef.current;
-      if (analyser && frequencyDataRef.current?.length !== analyser.frequencyBinCount) {
-        frequencyDataRef.current = new Uint8Array(analyser.frequencyBinCount);
-      }
-      const dataArray = analyser ? frequencyDataRef.current : null;
-
-      if (analyser && dataArray) {
-        analyser.getByteFrequencyData(dataArray);
-      }
 
       const nextHeights = prevHeights.map((prevH, i) => {
-        let targetH = 12;
+        // Fluid harmonic wave oscillation
+        const wave1 = Math.sin(t * 1.6 + i * 0.28) * 0.5 + 0.5;
+        const wave2 = Math.sin(t * 1.05 - i * 0.18 + 1.2) * 0.5 + 0.5;
+        const wave3 = Math.cos(t * 0.65 + i * 0.12) * 0.5 + 0.5;
+        const rhythm = Math.pow(Math.sin(t * 1.9) * 0.5 + 0.5, 3) * 0.28;
 
-        if (dataArray) {
-          const binIdx = Math.min(
-            dataArray.length - 1,
-            Math.floor((i / NUM_BARS) * (dataArray.length * 0.75))
-          );
-          const rawEnergy = (dataArray[binIdx] || 0) / 255;
-          const bassBoost = (dataArray[1] || 0) / 255;
+        const combined = (wave1 * 0.45 + wave2 * 0.35 + wave3 * 0.2) + rhythm * (i < 8 ? 0.5 : 0.2);
+        const targetH = 14 + combined * BAR_WEIGHTS[i] * 68;
 
-          const weight = BAR_WEIGHTS[i];
-          const dynamicSpike = rawEnergy * 0.7 + (i < 8 ? bassBoost * 0.35 : (dataArray[i] || 0) / 510);
-          targetH = Math.round(12 + dynamicSpike * weight * 86);
-        } else {
-          const wave = Math.sin(t * 3.5 + i * 0.75) * 0.5 + 0.5;
-          targetH = Math.round(12 + wave * BAR_WEIGHTS[i] * 82);
-        }
+        // Smooth Exponential Moving Average / LERP
+        const lerpFactor = targetH > prevH ? 0.12 : 0.07;
+        const newH = prevH + (targetH - prevH) * lerpFactor;
 
-        let newH: number;
-        if (targetH > prevH) {
-          newH = targetH;
-        } else {
-          newH = Math.max(12, prevH - 8);
-        }
-
-        return Math.max(10, Math.min(96, newH));
+        return Math.max(10, Math.min(92, newH));
       });
 
       currentPeaksRef.current = nextHeights;
@@ -284,77 +189,95 @@ export function AudioPlayer() {
     };
   }, [isPlaying]);
 
-  useEffect(() => {
-    return () => {
-      sourceNodeRef.current?.disconnect();
-      analyserRef.current?.disconnect();
-      audioCtxRef.current?.close().catch(() => {});
-      sourceNodeRef.current = null;
-      analyserRef.current = null;
-      audioCtxRef.current = null;
-    };
-  }, []);
-
-  // Track switching effect: triggers reliable instant playback
+  // Handle track source loading & playback transitions
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
-    if (isFirstMountRef.current) {
-      isFirstMountRef.current = false;
-      return;
-    }
 
     audio.src = TRACKS[currentTrackIdx].src;
     audio.currentTime = 0;
     setCurrentTimeSec(0);
 
     if (isPlayingRef.current) {
-      setupAudioContext();
-      audio
-        .play()
-        .then(() => {
-          setIsPlaying(true);
-        })
-        .catch(() => {
-          setIsPlaying(false);
-          isPlayingRef.current = false;
+      const p = audio.play();
+      if (p !== undefined) {
+        p.catch(() => {
+          // Play was interrupted or blocked
         });
+      }
     }
-  }, [currentTrackIdx, setupAudioContext]);
-
-  const nextTrack = useCallback(() => {
-    const nextIdx = (currentTrackIdx + 1) % TRACKS.length;
-    setCurrentTrackIdx(nextIdx);
   }, [currentTrackIdx]);
 
+  // Autoplay on initial load with interaction fallback
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+    audio.volume = volume;
+
+    const startPlayback = async () => {
+      try {
+        await audio.play();
+        setIsPlaying(true);
+        isPlayingRef.current = true;
+      } catch {
+        const handleFirstInteraction = async () => {
+          try {
+            await audio.play();
+            setIsPlaying(true);
+            isPlayingRef.current = true;
+          } catch {}
+          window.removeEventListener("pointerdown", handleFirstInteraction);
+          window.removeEventListener("keydown", handleFirstInteraction);
+          window.removeEventListener("touchstart", handleFirstInteraction);
+        };
+
+        window.addEventListener("pointerdown", handleFirstInteraction, { once: true });
+        window.addEventListener("keydown", handleFirstInteraction, { once: true });
+        window.addEventListener("touchstart", handleFirstInteraction, { once: true });
+      }
+    };
+
+    startPlayback();
+  }, []);
+
+  const selectTrack = useCallback((idx: number, startPlaying = true) => {
+    if (startPlaying) {
+      setIsPlaying(true);
+      isPlayingRef.current = true;
+    }
+    setCurrentTrackIdx(idx);
+  }, []);
+
+  const nextTrack = useCallback(() => {
+    selectTrack((currentTrackIdx + 1) % TRACKS.length, true);
+  }, [currentTrackIdx, selectTrack]);
+
   const prevTrack = useCallback(() => {
-    if (audioRef.current && audioRef.current.currentTime > 3) {
-      audioRef.current.currentTime = 0;
+    const audio = audioRef.current;
+    if (audio && audio.currentTime > 3) {
+      audio.currentTime = 0;
       setCurrentTimeSec(0);
       return;
     }
-    const prevIdx = (currentTrackIdx - 1 + TRACKS.length) % TRACKS.length;
-    setCurrentTrackIdx(prevIdx);
-  }, [currentTrackIdx]);
+    selectTrack((currentTrackIdx - 1 + TRACKS.length) % TRACKS.length, true);
+  }, [currentTrackIdx, selectTrack]);
 
   const togglePlayback = async () => {
     const audio = audioRef.current;
     if (!audio) return;
-
-    setupAudioContext();
 
     if (isPlaying) {
       audio.pause();
       setIsPlaying(false);
       isPlayingRef.current = false;
     } else {
+      setIsPlaying(true);
+      isPlayingRef.current = true;
       try {
         await audio.play();
-        setIsPlaying(true);
-        isPlayingRef.current = true;
       } catch {
-        // Autoplay policy
+        setIsPlaying(false);
+        isPlayingRef.current = false;
       }
     }
   };
@@ -377,7 +300,6 @@ export function AudioPlayer() {
         <div ref={containerRef} className="relative pointer-events-auto font-sans flex items-end justify-end">
           <audio
             ref={audioRef}
-            src={track.src}
             preload="auto"
             onTimeUpdate={(e) => setCurrentTimeSec(e.currentTarget.currentTime)}
             onEnded={nextTrack}
@@ -386,25 +308,37 @@ export function AudioPlayer() {
               isPlayingRef.current = true;
             }}
             onPause={() => {
-              if (audioRef.current?.ended) return;
+              if (isPlayingRef.current && !audioRef.current?.ended) {
+                // If paused unexpectedly, don't desync unless ended
+                return;
+              }
               setIsPlaying(false);
               isPlayingRef.current = false;
             }}
           />
 
-          {/* Floating Trigger Capsule with Flowing Animated Gradient Border */}
+          {/* Floating Trigger Capsule */}
           <motion.div
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            className={`relative rounded-full p-[1.5px] overflow-hidden transition-all duration-300 shadow-[0_20px_45px_rgba(0,0,0,0.9)] ${
-              isExpanded ? "opacity-0 pointer-events-none scale-75" : "opacity-100"
+            initial={{ opacity: 0, y: 30, filter: "blur(8px)" }}
+            animate={
+              isRevealed && !isExpanded
+                ? { opacity: 1, y: 0, filter: "blur(0px)", scale: 1 }
+                : isExpanded
+                  ? { opacity: 0, scale: 0.9, y: 0 }
+                  : { opacity: 0, y: 30, filter: "blur(8px)", scale: 1 }
+            }
+            transition={{ duration: 0.8, delay: 0.95, ease: [0.16, 1, 0.3, 1] }}
+            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.97 }}
+            className={`relative rounded-full p-[1.5px] overflow-hidden transition-all duration-300 shadow-[0_12px_36px_rgba(0,0,0,0.85)] ${
+              isExpanded ? "pointer-events-none" : ""
             }`}
           >
             {/* Animated Flowing Gradient Background Layer (Red -> Dark Blue -> Light Blue -> Red) */}
             {isPlaying ? (
               <motion.div
                 animate={{ rotate: 360 }}
-                transition={{ duration: 3.5, repeat: Infinity, ease: "linear" }}
+                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
                 className="absolute -inset-[150%] bg-[conic-gradient(from_0deg,#ea4043_0%,#1044a8_35%,#0099ff_65%,#ea4043_100%)] pointer-events-none transform-gpu will-change-transform"
               />
             ) : (
@@ -413,56 +347,61 @@ export function AudioPlayer() {
 
             {/* Ambient subtle glow when playing */}
             {isPlaying && (
-              <div className="absolute inset-0 bg-gradient-to-r from-[#ea4043]/40 via-[#1044a8]/30 to-[#0099ff]/40 blur-sm rounded-full pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#ea4043]/30 via-[#1044a8]/25 to-[#0099ff]/30 blur-md rounded-full pointer-events-none" />
             )}
 
             {/* Inner Pill Button */}
             <button
               type="button"
               onClick={() => setIsExpanded(!isExpanded)}
-              className="relative h-[68px] sm:h-[72px] pl-6 sm:pl-7 pr-4.5 sm:pr-5 rounded-full flex items-center gap-5 sm:gap-6 cursor-pointer bg-[#08080c] text-white select-none"
+              className="group relative h-12 sm:h-13 pl-4 sm:pl-5 pr-2.5 sm:pr-3 rounded-full flex items-center gap-3.5 sm:gap-4 cursor-pointer bg-[#0a0a0e] hover:bg-[#121218] text-white select-none transition-colors duration-200"
               aria-label="Open Audio Player"
             >
-              {/* Left: Secondary Track Status & Title */}
-              <div className="text-left min-w-0 flex flex-col justify-center py-1">
-                <span className="text-xs font-semibold tracking-wider text-[#a0a0a8] uppercase leading-none mb-1.5">
-                  {isRu ? "Сейчас играет..." : "Now Playing..."}
-                </span>
-                <span className="text-base sm:text-lg font-black uppercase tracking-tight text-white truncate max-w-[150px] sm:max-w-[240px] leading-tight">
+              {/* Left: Track Status & Title */}
+              <div className="text-left min-w-0 flex flex-col justify-center">
+                <div className="flex items-center gap-1.5 leading-none mb-1">
+                  <span className={`w-1.5 h-1.5 rounded-full ${isPlaying ? "bg-[#ea4043] animate-pulse" : "bg-white/40"}`} />
+                  <span className={`text-[10px] font-mono font-semibold tracking-wider uppercase ${isPlaying ? "text-white/80" : "text-white/50"}`}>
+                    {isPlaying
+                      ? isRu
+                        ? "СЕЙЧАС ИГРАЕТ"
+                        : "NOW PLAYING"
+                      : isRu
+                        ? "ВКЛЮЧИТЬ МУЗЫКУ"
+                        : "PLAY MUSIC"}
+                  </span>
+                </div>
+                <span className="text-xs sm:text-sm font-extrabold uppercase tracking-tight text-white truncate max-w-[130px] sm:max-w-[190px] leading-tight group-hover:text-[#ea4043] transition-colors">
                   {track.title}
                 </span>
               </div>
 
               {/* Right: Equalizer Icon Circle */}
-              <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-white/[0.06] border border-white/15 flex items-center justify-center shrink-0">
-                <div className="flex items-end justify-center gap-1.5 h-6 w-6">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/[0.06] border border-white/10 group-hover:border-white/20 flex items-center justify-center shrink-0 transition-colors">
+                <div className="flex items-end justify-center gap-[3px] h-4 w-4">
                   <span
                     ref={(element) => {
                       miniBarRefs.current[0] = element;
                     }}
                     style={{ height: "35%" }}
-                    className="w-1.5 bg-[#0099ff] rounded-full transition-none"
+                    className="w-1 bg-[#0099ff] rounded-full transition-none"
                   />
                   <span
                     ref={(element) => {
                       miniBarRefs.current[1] = element;
                     }}
                     style={{ height: "65%" }}
-                    className="w-1.5 bg-[#1044a8] rounded-full transition-none"
+                    className="w-1 bg-[#1044a8] rounded-full transition-none"
                   />
                   <span
                     ref={(element) => {
                       miniBarRefs.current[2] = element;
                     }}
                     style={{ height: "30%" }}
-                    className="w-1.5 bg-[#ea4043] rounded-full transition-none"
+                    className="w-1 bg-[#ea4043] rounded-full transition-none"
                   />
                 </div>
               </div>
-
-              {isPlaying && (
-                <span className="absolute -top-0.5 -right-0.5 w-3 h-3 rounded-full bg-[#ea4043] border border-black animate-ping" />
-              )}
             </button>
           </motion.div>
 

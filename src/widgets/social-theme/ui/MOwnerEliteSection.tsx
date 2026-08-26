@@ -139,7 +139,7 @@ export function MOwnerEliteSection({ onOpenBooking }: MOwnerEliteSectionProps) {
                 ПОДХОДИТ ДЛЯ ВЛАДЕЛЬЦЕВ МОДЕЛЕЙ:
               </div>
               <div className="flex flex-wrap gap-2">
-                {["BMW M2", "BMW M3", "BMW M4", "BMW M5", "BMW M6", "BMW M8", "X5M // X6M"].map((car, idx) => (
+                {["BMW M2", "BMW M3", "BMW M4", "BMW M5", "BMW M6", "BMW M8"].map((car, idx) => (
                   <span
                     key={idx}
                     className="px-3 py-1.5 bg-white/5 border border-white/10 text-white text-xs font-semibold uppercase tracking-wider rounded"
