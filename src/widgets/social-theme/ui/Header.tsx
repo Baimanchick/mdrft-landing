@@ -1,12 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
 import type { Language } from "@/shared/lib/i18n/types";
 
 type HeaderProps = {
   onOpenBooking: () => void;
+  isRevealed?: boolean;
 };
 
 type LanguageSwitcherProps = {
@@ -60,7 +62,7 @@ function LanguageSwitcher({
   );
 }
 
-export function Header({ onOpenBooking }: HeaderProps) {
+export function Header({ onOpenBooking, isRevealed = true }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
@@ -106,14 +108,26 @@ export function Header({ onOpenBooking }: HeaderProps) {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 border-b transition-[padding,background-color,border-color,box-shadow] duration-300 ${
+      className={`fixed inset-x-0 top-0 z-50 border-b transition-[padding,background-color,border-color,box-shadow] duration-700 ${
         scrolled || menuOpen
-          ? "border-white/10 bg-black/90 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.7)] backdrop-blur-xl sm:py-3.5"
-          : "border-transparent bg-gradient-to-b from-black/85 via-black/45 to-transparent py-4 sm:py-5"
+          ? "border-white/15 bg-black/90 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.7)] backdrop-blur-xl sm:py-3.5"
+          : isRevealed
+            ? "border-white/10 bg-gradient-to-b from-black/85 via-black/45 to-transparent py-4 sm:py-5 backdrop-blur-[2px]"
+            : "border-transparent bg-transparent py-4 sm:py-5 pointer-events-none"
       }`}
     >
       <div className="relative mx-auto grid w-full max-w-[1920px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 sm:gap-5 sm:px-6 lg:px-10 xl:px-12">
-        <a href="#hero" className="group relative z-10 flex shrink-0 items-center">
+        <motion.a
+          href="#hero"
+          initial={{ opacity: 0, y: -20, filter: "blur(8px)" }}
+          animate={
+            isRevealed
+              ? { opacity: 1, y: 0, filter: "blur(0px)" }
+              : { opacity: 0, y: -20, filter: "blur(8px)" }
+          }
+          transition={{ duration: 0.8, delay: 0.05, ease: [0.16, 1, 0.3, 1] }}
+          className="group relative z-10 flex shrink-0 items-center"
+        >
           <Image
             src="/images/logo.webp"
             alt="M Drift School"
@@ -121,9 +135,19 @@ export function Header({ onOpenBooking }: HeaderProps) {
             height={172}
             className="h-[18px] w-auto object-contain transition-transform duration-200 group-hover:scale-[1.03] sm:h-[22px] lg:h-[26px]"
           />
-        </a>
+        </motion.a>
 
-        <nav aria-label={t.header.navLabel} className="hidden min-[112rem]:block">
+        <motion.nav
+          aria-label={t.header.navLabel}
+          initial={{ opacity: 0, y: -15 }}
+          animate={
+            isRevealed
+              ? { opacity: 1, y: 0 }
+              : { opacity: 0, y: -15 }
+          }
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+          className="hidden min-[112rem]:block"
+        >
           <ul className="flex items-center justify-center gap-5 min-[120rem]:gap-7">
             {NAV_ITEMS.map((item) => (
               <li key={item.href}>
@@ -136,9 +160,18 @@ export function Header({ onOpenBooking }: HeaderProps) {
               </li>
             ))}
           </ul>
-        </nav>
+        </motion.nav>
 
-        <div className="col-start-3 flex shrink-0 items-center justify-end gap-2 sm:gap-3">
+        <motion.div
+          initial={{ opacity: 0, y: -15, filter: "blur(6px)" }}
+          animate={
+            isRevealed
+              ? { opacity: 1, y: 0, filter: "blur(0px)" }
+              : { opacity: 0, y: -15, filter: "blur(6px)" }
+          }
+          transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
+          className="col-start-3 flex shrink-0 items-center justify-end gap-2 sm:gap-3"
+        >
           <div className="hidden sm:block">
             <LanguageSwitcher
               activeLanguage={lang}
@@ -180,7 +213,7 @@ export function Header({ onOpenBooking }: HeaderProps) {
               )}
             </svg>
           </button>
-        </div>
+        </motion.div>
       </div>
 
       {menuOpen ? (

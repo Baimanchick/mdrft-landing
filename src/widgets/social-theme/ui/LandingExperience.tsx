@@ -2,7 +2,7 @@
 
 import { MotionConfig } from "motion/react";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { BookingProgramId } from "@/entities/lead";
 import { APP_SHELL_ID } from "@/shared/ui/modal";
 import { SmoothScrollProvider } from "@/shared/ui/smooth-scroll";
@@ -16,7 +16,6 @@ import { HeroSection } from "@/widgets/social-theme/ui/HeroSection";
 import { MClubSection } from "@/widgets/social-theme/ui/MClubSection";
 import { MOwnerEliteSection } from "@/widgets/social-theme/ui/MOwnerEliteSection";
 import { ServicesSection } from "@/widgets/social-theme/ui/ServicesSection";
-import { SpeedometerPreloader } from "@/widgets/speedometer-preloader";
 import { TariffsSection } from "@/widgets/social-theme/ui/TariffsSection";
 import { TrackDaysSection } from "@/widgets/social-theme/ui/TrackDaysSection";
 import { VideoPlaceholderBlock } from "@/widgets/social-theme/ui/VideoPlaceholderBlock";
@@ -46,9 +45,37 @@ export function LandingExperience() {
   const [isCertificateOpen, setIsCertificateOpen] = useState(false);
   const [isClubOpen, setIsClubOpen] = useState(false);
   const [isPartnershipOpen, setIsPartnershipOpen] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isUiRevealed, setIsUiRevealed] = useState(false);
   const [selectedTariffId, setSelectedTariffId] = useState<BookingProgramId>();
   const [selectedCarModel, setSelectedCarModel] = useState<string>();
+
+  const triggerUiReveal = useCallback(() => {
+    setIsUiRevealed(true);
+  }, []);
+
+  useEffect(() => {
+    // Reveal UI at 4.2s (towards the end of first 7s video clip) as fallback
+    const timer = setTimeout(() => {
+      setIsUiRevealed(true);
+    }, 4200);
+
+    const handleUserInteraction = () => {
+      if (window.scrollY > 20) {
+        setIsUiRevealed(true);
+      }
+    };
+
+    window.addEventListener("scroll", handleUserInteraction, { passive: true, once: true });
+    window.addEventListener("touchstart", handleUserInteraction, { passive: true, once: true });
+    window.addEventListener("keydown", handleUserInteraction, { passive: true, once: true });
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", handleUserInteraction);
+      window.removeEventListener("touchstart", handleUserInteraction);
+      window.removeEventListener("keydown", handleUserInteraction);
+    };
+  }, []);
 
   const openBooking = (tariffId?: BookingProgramId, carModel?: string) => {
     setSelectedTariffId(tariffId);
@@ -65,15 +92,18 @@ export function LandingExperience() {
   return (
     <MotionConfig reducedMotion="user">
       <SmoothScrollProvider>
-        <SpeedometerPreloader onComplete={() => setIsLoaded(true)} />
         <div
           id={APP_SHELL_ID}
           className="relative min-h-screen bg-black text-white selection:bg-[#ea4043] selection:text-white"
         >
-          <Header onOpenBooking={() => openBooking("pro-progress")} />
+          <Header
+            isRevealed={isUiRevealed}
+            onOpenBooking={() => openBooking("pro-progress")}
+          />
           <main id="main-content" tabIndex={-1}>
             <HeroSection
-              isLoaded={isLoaded}
+              isRevealed={isUiRevealed}
+              onFirstClipNearEnd={triggerUiReveal}
               onOpenBooking={(carModel) => openBooking("pro-progress", carModel)}
               onOpenCertificate={() => setIsCertificateOpen(true)}
               onOpenClub={() => setIsClubOpen(true)}
@@ -101,7 +131,7 @@ export function LandingExperience() {
             />
           </main>
           <Footer />
-          <AudioPlayer />
+          <AudioPlayer isRevealed={isUiRevealed} />
         </div>
         {isBookingOpen ? (
           <BookingModal
