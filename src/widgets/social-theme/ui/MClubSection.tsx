@@ -92,57 +92,63 @@ export function MClubSection() {
           </motion.div>
         </motion.div>
 
-        {/* Asymmetrical Collage Row 1 (Span 8 + Span 4) */}
+        {/* Collage Row 1 */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.15, margin: "-50px" }}
-          className="grid grid-cols-1 lg:grid-cols-12 border-b border-white/10"
+          className="grid grid-cols-1 lg:grid-cols-12 border-b border-white/10 gap-3 sm:gap-0 p-3 sm:p-0"
         >
-          {/* Card 01: Private Community (Span 7) */}
+          {/* Card 01: Private Community */}
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-7 p-5 sm:p-10 lg:p-16 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between min-h-[320px] sm:min-h-[390px] lg:min-h-[440px] bg-[#050508] hover:bg-white/[0.02] transition-colors group"
+            className="lg:col-span-7 p-5 sm:p-10 lg:p-16 border border-white/10 sm:border-0 sm:border-b lg:border-b-0 lg:border-r border-white/10 rounded-2xl sm:rounded-none flex flex-col justify-between min-h-[260px] sm:min-h-[390px] lg:min-h-[440px] bg-white/[0.02] sm:bg-[#050508] hover:bg-white/[0.04] transition-colors group"
           >
             <div className="flex items-center justify-between">
-              <div className="text-3xl font-bold text-white">01<span className="text-gradient-red">.</span></div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">01<span className="text-[#ea4043]">.</span></div>
+              <span className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider text-[#ea4043] bg-[#ea4043]/10 px-2.5 py-1 rounded-full border border-[#ea4043]/20">
+                CLOSED ACCESS
+              </span>
             </div>
 
-            <div className="my-8 space-y-4 max-w-xl">
-              <h3 className="text-3xl sm:text-4xl font-bold uppercase tracking-tight text-white whitespace-normal xl:whitespace-nowrap">
+            <div className="my-5 sm:my-8 space-y-2.5 sm:space-y-4 max-w-xl">
+              <h3 className="text-xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight text-white leading-snug">
                 {t.club.c1Title}
               </h3>
-              <p className="text-base sm:text-lg text-[#a0a0a8] leading-relaxed">
+              <p className="text-xs sm:text-base lg:text-lg text-[#a0a0a8] leading-relaxed font-light">
                 {t.club.c1Desc}
               </p>
             </div>
 
-            <div className="pt-4 border-t border-white/10 flex items-center justify-between text-sm text-[#8e8e93] font-medium tracking-wider">
+            <div className="pt-3.5 sm:pt-4 border-t border-white/10 flex items-center justify-between text-xs sm:text-sm text-[#8e8e93] font-medium tracking-wider">
               <span>{t.club.c1MetaLeft}</span>
               <span>{t.club.c1MetaRight}</span>
             </div>
           </motion.div>
 
-          {/* Card 02: Hardware Advisory (Span 5) */}
+          {/* Card 02: Hardware Advisory */}
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-5 p-5 sm:p-10 lg:p-14 flex flex-col justify-between min-h-[320px] sm:min-h-[390px] lg:min-h-[440px] bg-black hover:bg-white/[0.02] transition-colors group"
+            className="lg:col-span-5 p-5 sm:p-10 lg:p-14 border border-white/10 sm:border-0 rounded-2xl sm:rounded-none flex flex-col justify-between min-h-[260px] sm:min-h-[390px] lg:min-h-[440px] bg-white/[0.02] sm:bg-black hover:bg-white/[0.04] transition-colors group"
           >
             <div className="flex items-center justify-between">
-              <div className="text-3xl font-bold text-white">02<span className="text-gradient-red">.</span></div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">02<span className="text-[#ea4043]">.</span></div>
+              <span className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider text-white/70 bg-white/10 px-2.5 py-1 rounded-full border border-white/15">
+                BMW M TUNING
+              </span>
             </div>
 
-            <div className="my-8 space-y-4">
-              <h3 className="text-3xl sm:text-4xl font-bold uppercase tracking-tight text-white whitespace-normal lg:whitespace-nowrap">
+            <div className="my-5 sm:my-8 space-y-2.5 sm:space-y-4">
+              <h3 className="text-xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight text-white leading-snug">
                 {t.club.c2Title}
               </h3>
-              <p className="text-base sm:text-lg text-[#a0a0a8] leading-relaxed">
+              <p className="text-xs sm:text-base lg:text-lg text-[#a0a0a8] leading-relaxed font-light">
                 {t.club.c2Desc}
               </p>
             </div>
 
-            <div className="pt-4 border-t border-white/10 text-sm text-[#8e8e93] font-medium tracking-wider">
+            <div className="pt-3.5 sm:pt-4 border-t border-white/10 text-xs sm:text-sm text-[#8e8e93] font-medium tracking-wider">
               {t.club.c2Meta}
             </div>
           </motion.div>

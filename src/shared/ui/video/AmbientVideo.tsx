@@ -11,7 +11,7 @@ export type AmbientVideoClip = {
 
 interface AmbientVideoProps {
   clips: readonly AmbientVideoClip[];
-  poster: string;
+  poster?: string;
   posterClassName?: string;
   posterPreload?: boolean;
   posterSizes?: string;
@@ -98,15 +98,15 @@ export function AmbientVideo({
       ([entry]) => {
         if (
           entry.isIntersecting &&
-          isEnabled &&
-          !prefersReducedMotion &&
-          canLoadAmbientVideo()
+          (!isMobile || canLoadAmbientVideo())
         ) {
           setSourcesEnabled(true);
+          sourceObserver.disconnect();
         }
       },
-      { rootMargin: isMobile ? "200px" : "600px" },
+      { rootMargin: "200px" },
     );
+
     playbackObserver.observe(container);
     sourceObserver.observe(container);
 
@@ -114,7 +114,7 @@ export function AmbientVideo({
       playbackObserver.disconnect();
       sourceObserver.disconnect();
     };
-  }, [isEnabled, prefersReducedMotion]);
+  }, []);
 
   // Initial source loading when sources become enabled
   useEffect(() => {
@@ -273,14 +273,16 @@ export function AmbientVideo({
       ref={containerRef}
       className="absolute inset-0 h-full w-full overflow-hidden bg-black"
     >
-      <Image
-        src={poster}
-        alt=""
-        fill
-        preload={posterPreload}
-        sizes={posterSizes}
-        className={`pointer-events-none select-none ${posterClassName}`}
-      />
+      {poster && (
+        <Image
+          src={poster}
+          alt=""
+          fill
+          preload={posterPreload}
+          sizes={posterSizes}
+          className={`pointer-events-none select-none ${posterClassName}`}
+        />
+      )}
 
       {/* Player A */}
       <video

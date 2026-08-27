@@ -91,6 +91,14 @@ export function AudioPlayer({ isRevealed = true }: { isRevealed?: boolean } = {}
   const [currentTrackIdx, setCurrentTrackIdx] = useState(0);
   const [currentTimeSec, setCurrentTimeSec] = useState(0);
   const [volume, setVolume] = useState(0.25);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener("resize", checkMobile, { passive: true });
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   const isPlayingRef = useRef(false);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -295,9 +303,9 @@ export function AudioPlayer({ isRevealed = true }: { isRevealed?: boolean } = {}
   };
 
   return (
-    <div className="fixed [bottom:max(1rem,env(safe-area-inset-bottom))] sm:bottom-6 inset-x-0 z-40 pointer-events-none">
-      <div className="max-w-[1820px] mx-auto px-4 sm:px-6 2xl:px-0 flex justify-end">
-        <div ref={containerRef} className="relative pointer-events-auto font-sans flex items-end justify-end">
+    <div className="fixed [bottom:max(5.1rem,calc(env(safe-area-inset-bottom)+4.6rem))] md:bottom-6 inset-x-0 z-40 pointer-events-none">
+      <div className="max-w-[1820px] mx-auto px-4 sm:px-6 2xl:px-0 flex justify-center md:justify-end">
+        <div ref={containerRef} className="relative pointer-events-auto font-sans flex items-end justify-center md:justify-end">
           <audio
             ref={audioRef}
             preload="auto"
@@ -409,13 +417,31 @@ export function AudioPlayer({ isRevealed = true }: { isRevealed?: boolean } = {}
           <AnimatePresence>
             {isExpanded && (
               <motion.div
-                initial={{ opacity: 0, scale: 0.9, y: 10, originX: 1, originY: 1 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 10 }}
-                transition={{ duration: 0.18, ease: "easeOut" }}
+                initial={{
+                  opacity: 0,
+                  scale: 0.9,
+                  y: 12,
+                  originX: isMobile ? 0.5 : 1,
+                  originY: 1,
+                }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                  y: 0,
+                  originX: isMobile ? 0.5 : 1,
+                  originY: 1,
+                }}
+                exit={{
+                  opacity: 0,
+                  scale: 0.9,
+                  y: 12,
+                  originX: isMobile ? 0.5 : 1,
+                  originY: 1,
+                }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                 data-lenis-prevent="true"
                 onWheel={(e) => e.stopPropagation()}
-                className="absolute bottom-0 right-0 w-[min(340px,calc(100vw-2rem))] sm:w-[370px] bg-[#09090c]/98 border border-white/15 rounded-2xl p-6 shadow-[0_30px_70px_rgba(0,0,0,0.98)] backdrop-blur-2xl text-white space-y-5 select-none"
+                className="absolute bottom-0 left-1/2 -translate-x-1/2 md:left-auto md:translate-x-0 md:right-0 w-[min(340px,calc(100vw-2rem))] sm:w-[370px] bg-[#09090c]/98 border border-white/15 rounded-2xl p-6 shadow-[0_30px_70px_rgba(0,0,0,0.98)] backdrop-blur-2xl text-white space-y-5 select-none"
               >
                 {/* Header with Track Index */}
                 <div className="flex items-center justify-between px-1">

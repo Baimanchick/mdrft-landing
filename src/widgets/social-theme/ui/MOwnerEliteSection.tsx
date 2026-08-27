@@ -195,34 +195,34 @@ export function MOwnerEliteSection({ onOpenBooking }: MOwnerEliteSectionProps) {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.15, margin: "-50px" }}
-          className="p-5 sm:p-10 lg:p-20 border-b border-white/10 bg-[#07070a] space-y-6 sm:space-y-8"
+          className="p-4 sm:p-10 lg:p-20 border-b border-white/10 bg-[#07070a] space-y-4 sm:space-y-8"
         >
           {/* Header & Tabs */}
-          <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 sm:gap-4">
               <div>
-                <span className="text-xs uppercase tracking-widest text-[#ea4043] font-bold block mb-1">
+                <span className="text-[10px] sm:text-xs uppercase tracking-widest text-[#ea4043] font-bold block mb-1">
                   {"// M-OWNER ELITE PROGRAM — ПРОГРАММА МОДУЛЕЙ:"}
                 </span>
-                <h3 className="text-2xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight text-white">
+                <h3 className="text-xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight text-white leading-snug">
                   Что входит в курс «M-Owner Elite»
                 </h3>
               </div>
-              <div className="text-xs text-[#8e8e93] uppercase tracking-wider font-semibold">
+              <div className="text-[11px] sm:text-xs text-[#8e8e93] uppercase tracking-wider font-semibold">
                 4 СПЕЦИАЛИЗИРОВАННЫХ БЛОКА
               </div>
             </div>
 
-            {/* 4 Clean Tabs matching brand font */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+            {/* 4 iOS-style Segmented Tabs */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-white/[0.03] p-1.5 rounded-2xl border border-white/10">
               {flagshipModules.map((mod, i) => (
                 <button
                   key={i}
                   onClick={() => setActiveModuleTab(i)}
-                  className={`min-h-11 p-3 sm:p-4.5 text-center text-[11px] sm:text-sm uppercase tracking-wider font-bold transition-all duration-300 rounded cursor-pointer ${
+                  className={`min-h-11 p-2.5 sm:p-4 text-center text-[11px] sm:text-sm uppercase tracking-wider font-bold transition-all duration-200 rounded-xl cursor-pointer active:scale-95 ${
                     activeModuleTab === i
-                      ? "bg-white text-black shadow-[0_0_25px_rgba(255,255,255,0.15)] border border-white"
-                      : "bg-white/[0.04] text-[#8e8e93] hover:text-white border border-white/10 hover:bg-white/10"
+                      ? "bg-white text-black shadow-[0_4px_16px_rgba(0,0,0,0.5)] border border-white"
+                      : "bg-transparent text-[#8e8e93] hover:text-white border border-transparent hover:bg-white/10"
                   }`}
                 >
                   <span>{mod.tab}</span>
@@ -232,28 +232,28 @@ export function MOwnerEliteSection({ onOpenBooking }: MOwnerEliteSectionProps) {
           </div>
 
           {/* Active Module Details & Full Points Grid */}
-          <div className="p-5 sm:p-10 bg-black/60 border border-white/10 rounded-lg space-y-6">
+          <div className="p-4 sm:p-10 bg-black/70 border border-white/10 rounded-2xl space-y-4 sm:space-y-6">
             <div>
-              <h4 className="text-xl sm:text-2xl font-bold uppercase tracking-tight text-white mb-2">
+              <h4 className="text-lg sm:text-2xl font-bold uppercase tracking-tight text-white mb-1.5">
                 {flagshipModules[activeModuleTab].title}
               </h4>
-              <p className="text-sm sm:text-base text-[#a0a0a8] leading-relaxed max-w-3xl">
+              <p className="text-xs sm:text-base text-[#a0a0a8] leading-relaxed max-w-3xl font-light">
                 {flagshipModules[activeModuleTab].intro}
               </p>
             </div>
 
             {/* Sub-points Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-4 border-t border-white/10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-4 pt-3 sm:pt-4 border-t border-white/10">
               {flagshipModules[activeModuleTab].points.map((p, idx) => (
                 <div
                   key={idx}
-                  className="p-4 sm:p-5 bg-white/[0.02] hover:bg-white/[0.05] border border-white/10 rounded-md transition-colors"
+                  className="p-3.5 sm:p-5 bg-white/[0.03] hover:bg-white/[0.06] border border-white/10 rounded-xl transition-colors"
                 >
-                  <div className="text-white font-bold text-xs sm:text-sm uppercase tracking-wider mb-2 flex items-center gap-2.5">
-                    <span className="w-2 h-2 rounded-full bg-[#ea4043] shrink-0" />
+                  <div className="text-white font-bold text-xs sm:text-sm uppercase tracking-wider mb-1.5 flex items-center gap-2">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#ea4043] shrink-0" />
                     <span>{p.label}</span>
                   </div>
-                  <p className="text-xs sm:text-sm text-[#a0a0a8] leading-relaxed">
+                  <p className="text-xs sm:text-sm text-[#a0a0a8] leading-relaxed font-light">
                     {p.text}
                   </p>
                 </div>
@@ -262,21 +262,21 @@ export function MOwnerEliteSection({ onOpenBooking }: MOwnerEliteSectionProps) {
           </div>
         </motion.div>
 
-        {/* Row 3: Telemetry Metrics & Booking Strip (Swiss Architectural Grid) */}
+        {/* Row 3: Telemetry Metrics & Booking Strip */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.25, margin: "-40px" }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 bg-black border-t border-white/10"
+          className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-12 bg-black border-t border-white/10"
         >
           {/* Column 01: Duration */}
-          <div className="lg:col-span-3 p-5 sm:p-10 lg:p-12 border-b sm:border-b-0 border-r border-white/10 flex flex-col justify-between">
-            <div className="text-xs text-[#8e8e93] uppercase tracking-widest font-bold mb-4">
+          <div className="p-5 sm:p-8 lg:p-12 border-b md:border-b-0 md:border-r border-white/10 flex flex-col justify-between lg:col-span-3">
+            <div className="text-[11px] sm:text-xs text-[#8e8e93] uppercase tracking-widest font-bold mb-2 sm:mb-4 font-mono">
               {"// 01. ДЛИТЕЛЬНОСТЬ"}
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-bold text-white tracking-tight">10+ ЧАСОВ</div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-mono">10+ ЧАСОВ</div>
               <div className="text-xs text-[#8e8e93] uppercase tracking-wider font-semibold mt-1">
                 ИНДИВИДУАЛЬНОЙ ПРАКТИКИ
               </div>
@@ -284,13 +284,13 @@ export function MOwnerEliteSection({ onOpenBooking }: MOwnerEliteSectionProps) {
           </div>
 
           {/* Column 02: Skill & Emotions */}
-          <div className="lg:col-span-3 p-5 sm:p-10 lg:p-12 border-b sm:border-b-0 lg:border-r border-white/10 flex flex-col justify-between">
-            <div className="text-xs text-[#8e8e93] uppercase tracking-widest font-bold mb-4">
+          <div className="p-5 sm:p-8 lg:p-12 border-b md:border-b-0 lg:border-r border-white/10 flex flex-col justify-between lg:col-span-3">
+            <div className="text-[11px] sm:text-xs text-[#8e8e93] uppercase tracking-widest font-bold mb-2 sm:mb-4 font-mono">
               {"// 02. РЕЗУЛЬТАТИВНОСТЬ"}
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
-                5 / 5 <span className="text-[#ea4043] font-normal text-base sm:text-lg">PRO LEVEL</span>
+              <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-mono">
+                5 / 5 <span className="text-[#ea4043] font-bold text-sm sm:text-base">PRO LEVEL</span>
               </div>
               <div className="text-xs text-[#8e8e93] uppercase tracking-wider font-semibold mt-1">
                 МАКСИМАЛЬНЫЙ НАВЫК И ЭМОЦИИ
@@ -299,12 +299,12 @@ export function MOwnerEliteSection({ onOpenBooking }: MOwnerEliteSectionProps) {
           </div>
 
           {/* Column 03: Price */}
-          <div className="lg:col-span-3 p-5 sm:p-10 lg:p-12 border-b sm:border-b-0 border-r border-white/10 flex flex-col justify-between">
-            <div className="text-xs text-[#8e8e93] uppercase tracking-widest font-bold mb-4">
+          <div className="p-5 sm:p-8 lg:p-12 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between lg:col-span-3">
+            <div className="text-[11px] sm:text-xs text-[#8e8e93] uppercase tracking-widest font-bold mb-2 sm:mb-4 font-mono">
               {"// 03. СТОИМОСТЬ"}
             </div>
             <div>
-              <div className="text-2xl sm:text-3xl font-bold text-white tracking-tight">
+              <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-mono">
                 {t.tariffs.flagship.price}
               </div>
               <div className="text-xs text-[#8e8e93] uppercase tracking-wider font-semibold mt-1">
@@ -314,10 +314,10 @@ export function MOwnerEliteSection({ onOpenBooking }: MOwnerEliteSectionProps) {
           </div>
 
           {/* Column 04: Action Button */}
-          <div className="lg:col-span-3 p-5 sm:p-10 lg:p-12 flex flex-col justify-center bg-[#07070a]">
+          <div className="p-5 sm:p-8 lg:p-12 flex flex-col justify-center bg-[#07070a] md:col-span-3 lg:col-span-3">
             <button
               onClick={() => onOpenBooking("m-owner-elite")}
-              className="w-full py-4.5 px-6 bg-white hover:bg-[#ea4043] text-black hover:text-white font-bold uppercase tracking-[0.14em] text-xs rounded transition-all duration-300 shadow-[0_4px_25px_rgba(0,0,0,0.5)] cursor-pointer select-none flex items-center justify-between group"
+              className="w-full min-h-[52px] py-4 px-6 bg-white hover:bg-[#ea4043] active:scale-[0.98] text-black hover:text-white font-bold uppercase tracking-[0.14em] text-xs rounded-xl lg:rounded transition-all duration-300 shadow-[0_4px_25px_rgba(0,0,0,0.5)] cursor-pointer select-none flex items-center justify-between group"
             >
               <span>{t.tariffs.flagship.btn}</span>
               <span className="group-hover:translate-x-1 transition-transform">→</span>

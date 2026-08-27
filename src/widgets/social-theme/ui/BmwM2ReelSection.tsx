@@ -75,33 +75,37 @@ export function BmwM2ReelSection({
             </p>
           </div>
 
-          <div className="grid w-full max-w-sm grid-cols-1 items-center justify-center gap-3 pt-1 sm:flex sm:max-w-none sm:flex-wrap sm:gap-4">
-            <button
-              onClick={onOpenPartnership}
-              className="w-full sm:w-auto px-5 sm:px-7 py-3.5 sm:py-4 bg-black/60 hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.12em] sm:tracking-[0.14em] text-xs sm:text-[13px] border border-white/25 hover:border-white rounded transition-all duration-300 backdrop-blur-md cursor-pointer select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
-            >
-              {isRu ? "Партнёрам" : "Partners"}
-            </button>
-
-            <button
-              onClick={onOpenClub}
-              className="w-full sm:w-auto px-5 sm:px-7 py-3.5 sm:py-4 bg-black/60 hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.12em] sm:tracking-[0.14em] text-xs sm:text-[13px] border border-white/25 hover:border-white rounded transition-all duration-300 backdrop-blur-md cursor-pointer select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
-            >
-              {isRu ? "М-Комьюнити" : "M-Community"}
-            </button>
-
-            <button
-              onClick={onOpenCertificate}
-              className="w-full sm:w-auto px-5 sm:px-7 py-3.5 sm:py-4 bg-black/60 hover:bg-white text-white hover:text-black font-bold uppercase tracking-[0.12em] sm:tracking-[0.14em] text-xs sm:text-[13px] border border-white/25 hover:border-white rounded transition-all duration-300 backdrop-blur-md cursor-pointer select-none shadow-[0_4px_20px_rgba(0,0,0,0.5)]"
-            >
-              {isRu ? "Купить сертификат" : "Gift Certificate"}
-            </button>
-
+          <div className="w-full max-w-md pt-2 sm:pt-4 z-20 flex flex-col sm:flex-row sm:flex-wrap items-center justify-center gap-2.5 sm:gap-4">
+            {/* Primary Action */}
             <button
               onClick={() => onOpenBooking && onOpenBooking()}
-              className="w-full sm:w-auto px-5 sm:px-8 py-3.5 sm:py-4 bg-[#ea4043] hover:bg-[#ff2a55] text-white font-bold uppercase tracking-[0.12em] sm:tracking-[0.14em] text-xs sm:text-[13px] border border-[#ea4043] hover:border-[#ff2a55] rounded transition-all duration-300 shadow-[0_0_30px_rgba(234,64,67,0.4)] hover:shadow-[0_0_45px_rgba(234,64,67,0.65)] cursor-pointer select-none"
+              className="w-full sm:w-auto order-1 sm:order-4 px-6 sm:px-8 py-4 sm:py-4 bg-[#ea4043] hover:bg-[#ff2a55] active:scale-[0.98] text-white font-bold uppercase tracking-[0.12em] sm:tracking-[0.14em] text-xs sm:text-[13px] border border-[#ea4043] hover:border-[#ff2a55] rounded-xl sm:rounded transition-all duration-200 shadow-[0_0_30px_rgba(234,64,67,0.45)] hover:shadow-[0_0_45px_rgba(234,64,67,0.7)] cursor-pointer select-none"
             >
               {isRu ? "Записаться на тренировку" : "Book Training"}
+            </button>
+
+            {/* Secondary App Chips on Mobile */}
+            <div className="grid grid-cols-2 gap-2 w-full sm:w-auto sm:flex sm:gap-4 order-2">
+              <button
+                onClick={onOpenClub}
+                className="w-full sm:w-auto px-3 sm:px-7 py-3 sm:py-4 bg-black/70 hover:bg-white active:scale-[0.97] text-white hover:text-black font-bold uppercase tracking-[0.1em] sm:tracking-[0.14em] text-[11px] sm:text-[13px] border border-white/25 hover:border-white rounded-xl sm:rounded transition-all duration-200 backdrop-blur-xl cursor-pointer select-none"
+              >
+                {isRu ? "М-Комьюнити" : "M-Community"}
+              </button>
+
+              <button
+                onClick={onOpenCertificate}
+                className="w-full sm:w-auto px-3 sm:px-7 py-3 sm:py-4 bg-black/70 hover:bg-white active:scale-[0.97] text-white hover:text-black font-bold uppercase tracking-[0.1em] sm:tracking-[0.14em] text-[11px] sm:text-[13px] border border-white/25 hover:border-white rounded-xl sm:rounded transition-all duration-200 backdrop-blur-xl cursor-pointer select-none"
+              >
+                {isRu ? "Сертификат" : "Certificate"}
+              </button>
+            </div>
+
+            <button
+              onClick={onOpenPartnership}
+              className="w-full sm:w-auto order-3 sm:order-1 px-4 sm:px-7 py-2.5 sm:py-4 bg-white/[0.04] sm:bg-black/70 hover:bg-white active:scale-[0.97] text-[#a0a0a8] hover:text-black font-bold uppercase tracking-[0.1em] sm:tracking-[0.14em] text-[11px] sm:text-[13px] border border-white/10 hover:border-white rounded-xl sm:rounded transition-all duration-200 backdrop-blur-xl cursor-pointer select-none"
+            >
+              {isRu ? "Партнёрам" : "Partners"}
             </button>
           </div>
         </motion.div>

@@ -96,112 +96,124 @@ export function ServicesSection({ onOpenBooking }: ServicesSectionProps) {
           </motion.div>
         </motion.div>
 
-        {/* Asymmetrical Diagonal Art Grid Row 1 (5 + 7) */}
+        {/* Art Grid Row 1 (5 + 7) */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.15, margin: "-50px" }}
-          className="grid grid-cols-1 lg:grid-cols-12 border-b border-white/10"
+          className="grid grid-cols-1 lg:grid-cols-12 border-b border-white/10 gap-3 sm:gap-0 p-3 sm:p-0"
         >
-          {/* Pillar 01 (Span 5 - Widened) */}
+          {/* Pillar 01 */}
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-5 p-5 sm:p-10 lg:p-14 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between min-h-[320px] sm:min-h-[380px] lg:min-h-[420px] hover:bg-white/[0.02] transition-colors group"
+            className="lg:col-span-5 p-5 sm:p-10 lg:p-14 border border-white/10 sm:border-0 sm:border-b lg:border-b-0 lg:border-r border-white/10 rounded-2xl sm:rounded-none flex flex-col justify-between min-h-[260px] sm:min-h-[380px] lg:min-h-[420px] bg-white/[0.02] sm:bg-transparent hover:bg-white/[0.04] transition-colors group"
           >
             <div className="flex items-center justify-between">
-              <div className="text-3xl font-bold text-white">01<span className="text-gradient-red">.</span></div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">01<span className="text-[#ea4043]">.</span></div>
+              <span className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider text-[#ea4043] bg-[#ea4043]/10 px-2.5 py-1 rounded-full border border-[#ea4043]/20">
+                100% PRACTICE
+              </span>
             </div>
 
-            <div className="my-8 space-y-4">
-              <h3 className="text-3xl sm:text-4xl font-bold uppercase tracking-tight text-white">
+            <div className="my-5 sm:my-8 space-y-2.5 sm:space-y-4">
+              <h3 className="text-xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight text-white leading-snug">
                 {t.services.p1Title}
               </h3>
-              <p className="text-base sm:text-lg text-[#a0a0a8] leading-relaxed">
+              <p className="text-xs sm:text-base lg:text-lg text-[#a0a0a8] leading-relaxed font-light">
                 {t.services.p1Desc}
               </p>
             </div>
 
-            <div className="pt-4 border-t border-white/10 text-sm text-white/70 font-medium tracking-wider">
+            <div className="pt-3.5 sm:pt-4 border-t border-white/10 text-xs sm:text-sm text-white/70 font-medium tracking-wider">
               {t.services.p1Detail}
             </div>
           </motion.div>
 
-          {/* Pillar 02: Architectural Card (Span 7) */}
+          {/* Pillar 02: Architectural Card */}
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-7 p-5 sm:p-10 lg:p-16 flex flex-col justify-between min-h-[320px] sm:min-h-[380px] lg:min-h-[420px] bg-[#050508] hover:bg-white/[0.02] transition-colors group"
+            className="lg:col-span-7 p-5 sm:p-10 lg:p-16 border border-white/10 sm:border-0 rounded-2xl sm:rounded-none flex flex-col justify-between min-h-[260px] sm:min-h-[380px] lg:min-h-[420px] bg-white/[0.02] sm:bg-[#050508] hover:bg-white/[0.04] transition-colors group"
           >
             <div className="flex items-center justify-between">
-              <div className="text-3xl font-bold text-white">02<span className="text-gradient-red">.</span></div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">02<span className="text-[#ea4043]">.</span></div>
+              <span className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider text-[#0099ff] bg-[#0099ff]/10 px-2.5 py-1 rounded-full border border-[#0099ff]/20">
+                BMW M FLEET
+              </span>
             </div>
 
-            <div className="my-8 space-y-4 max-w-xl">
-              <h3 className="text-3xl sm:text-4xl font-bold uppercase tracking-tight text-white">
+            <div className="my-5 sm:my-8 space-y-2.5 sm:space-y-4 max-w-xl">
+              <h3 className="text-xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight text-white leading-snug">
                 {t.services.p2Title}
               </h3>
-              <p className="text-base sm:text-lg text-[#a0a0a8] leading-relaxed">
+              <p className="text-xs sm:text-base lg:text-lg text-[#a0a0a8] leading-relaxed font-light">
                 {t.services.p2Desc}
               </p>
             </div>
 
-            <div className="pt-4 border-t border-white/10 flex items-center justify-between text-sm text-[#8e8e93] font-medium tracking-wider">
+            <div className="pt-3.5 sm:pt-4 border-t border-white/10 flex items-center justify-between text-xs sm:text-sm text-[#8e8e93] font-medium tracking-wider">
               <span>{t.services.p2Detail}</span>
               <span>→</span>
             </div>
           </motion.div>
         </motion.div>
 
-        {/* Second Row of Asymmetry (7 + 5) */}
+        {/* Second Row of Cards (7 + 5) */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: false, amount: 0.15, margin: "-50px" }}
-          className="grid grid-cols-1 lg:grid-cols-12"
+          className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-0 p-3 sm:p-0"
         >
-          {/* Pillar 03: Wide Format (Span 7) */}
+          {/* Pillar 03 */}
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-7 p-5 sm:p-10 lg:p-16 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between min-h-[320px] sm:min-h-[380px] lg:min-h-[420px] hover:bg-white/[0.02] transition-colors group"
+            className="lg:col-span-7 p-5 sm:p-10 lg:p-16 border border-white/10 sm:border-0 sm:border-b lg:border-b-0 lg:border-r border-white/10 rounded-2xl sm:rounded-none flex flex-col justify-between min-h-[260px] sm:min-h-[380px] lg:min-h-[420px] bg-white/[0.02] sm:bg-transparent hover:bg-white/[0.04] transition-colors group"
           >
             <div className="flex items-center justify-between">
-              <div className="text-3xl font-bold text-white">03<span className="text-gradient-red">.</span></div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">03<span className="text-[#ea4043]">.</span></div>
+              <span className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider text-white/70 bg-white/10 px-2.5 py-1 rounded-full border border-white/15">
+                TELEMETRY
+              </span>
             </div>
 
-            <div className="my-8 space-y-4">
-              <h3 className="text-2xl sm:text-3xl lg:text-[2.1rem] xl:text-[2.35rem] font-bold uppercase tracking-tight text-white whitespace-normal lg:whitespace-nowrap">
+            <div className="my-5 sm:my-8 space-y-2.5 sm:space-y-4">
+              <h3 className="text-xl sm:text-3xl lg:text-[2.1rem] xl:text-[2.35rem] font-bold uppercase tracking-tight text-white leading-snug">
                 {t.services.p3Title}
               </h3>
-              <p className="text-base sm:text-lg text-[#a0a0a8] leading-relaxed max-w-2xl">
+              <p className="text-xs sm:text-base lg:text-lg text-[#a0a0a8] leading-relaxed max-w-2xl font-light">
                 {t.services.p3Desc}
               </p>
             </div>
 
-            <div className="pt-4 border-t border-white/10 text-sm text-[#8e8e93] font-medium tracking-wider">
+            <div className="pt-3.5 sm:pt-4 border-t border-white/10 text-xs sm:text-sm text-[#8e8e93] font-medium tracking-wider">
               {t.services.p3Detail}
             </div>
           </motion.div>
 
-          {/* Pillar 04: Format (Span 5) */}
+          {/* Pillar 04 */}
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-5 p-5 sm:p-10 lg:p-14 flex flex-col justify-between min-h-[320px] sm:min-h-[380px] lg:min-h-[420px] bg-black"
+            className="lg:col-span-5 p-5 sm:p-10 lg:p-14 border border-white/10 sm:border-0 rounded-2xl sm:rounded-none flex flex-col justify-between min-h-[260px] sm:min-h-[380px] lg:min-h-[420px] bg-white/[0.02] sm:bg-black"
           >
             <div className="flex items-center justify-between">
-              <div className="text-3xl font-bold text-white">04<span className="text-gradient-red">.</span></div>
+              <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono">04<span className="text-[#ea4043]">.</span></div>
+              <span className="text-[10px] sm:text-xs font-mono font-bold uppercase tracking-wider text-[#ea4043] bg-[#ea4043]/10 px-2.5 py-1 rounded-full border border-[#ea4043]/20">
+                PRO COACHING
+              </span>
             </div>
 
-            <div className="my-8 space-y-4">
-              <h3 className="text-3xl sm:text-4xl font-bold uppercase tracking-tight text-white">
+            <div className="my-5 sm:my-8 space-y-2.5 sm:space-y-4">
+              <h3 className="text-xl sm:text-3xl lg:text-4xl font-bold uppercase tracking-tight text-white leading-snug">
                 {t.services.p4Title}
               </h3>
-              <p className="text-base sm:text-lg text-[#a0a0a8] leading-relaxed">
+              <p className="text-xs sm:text-base lg:text-lg text-[#a0a0a8] leading-relaxed font-light">
                 {t.services.p4Desc}
               </p>
             </div>
 
-            <div className="pt-4 border-t border-white/10">
+            <div className="pt-3.5 sm:pt-4 border-t border-white/10">
               <button
                 onClick={onOpenBooking}
                 className="btn-card-swiss"

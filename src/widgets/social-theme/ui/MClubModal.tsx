@@ -69,7 +69,7 @@ export function MClubModal({ onClose }: MClubModalProps) {
   return (
     <div
       {...dialogProps}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 md:p-6 lg:p-8 overflow-y-auto no-scrollbar font-sans"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-5 md:p-6 lg:p-8 overflow-y-auto no-scrollbar font-sans"
     >
       <motion.div
         initial={{ opacity: 0 }}
@@ -81,16 +81,19 @@ export function MClubModal({ onClose }: MClubModalProps) {
       />
 
       <motion.div
-        initial={{ opacity: 0, scale: 0.97, y: 12 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
+        initial={{ opacity: 0, y: 30, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
         transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
         ref={panelRef}
         tabIndex={-1}
         data-lenis-prevent="true"
         onWheel={(e) => e.stopPropagation()}
         onTouchMove={(e) => e.stopPropagation()}
-        className="relative w-full max-w-5xl xl:max-w-6xl max-h-[96vh] bg-[#08080c] border border-white/15 p-6 sm:p-8 lg:p-10 xl:p-12 rounded-2xl z-10 my-auto shadow-[0_30px_90px_rgba(0,0,0,0.95),0_0_60px_rgba(234,64,67,0.08)] transform-gpu flex flex-col justify-between overflow-y-auto lg:overflow-visible no-scrollbar"
+        className="relative w-full max-w-5xl xl:max-w-6xl max-h-[92vh] sm:max-h-[96vh] bg-[#08080c] border-t sm:border border-white/15 p-5 sm:p-8 lg:p-10 xl:p-12 rounded-t-3xl sm:rounded-2xl z-10 shadow-[0_30px_90px_rgba(0,0,0,0.95),0_0_60px_rgba(234,64,67,0.08)] transform-gpu flex flex-col justify-between overflow-y-auto lg:overflow-visible no-scrollbar pb-[max(1.5rem,env(safe-area-inset-bottom))]"
       >
+        {/* iOS style drag handle indicator */}
+        <div className="w-10 h-1.5 rounded-full bg-white/20 mx-auto mb-3 sm:hidden shrink-0" />
+
         <div className="absolute -top-24 -right-24 w-80 h-80 bg-[#ea4043]/10 rounded-full blur-3xl pointer-events-none" />
         <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-[#ea4043]/5 rounded-full blur-3xl pointer-events-none" />
 

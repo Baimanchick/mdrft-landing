@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useLanguage } from "@/shared/lib/i18n/LanguageContext";
 import type { Language } from "@/shared/lib/i18n/types";
 
@@ -26,8 +26,6 @@ const NAV_ITEMS = [
   { href: "#flagship", label: "flagship" },
 ] as const;
 
-const WIDE_NAV_QUERY = "(min-width: 112rem)";
-
 function LanguageSwitcher({
   activeLanguage,
   label,
@@ -37,7 +35,7 @@ function LanguageSwitcher({
     <div
       role="group"
       aria-label={label}
-      className="inline-flex h-10 items-center rounded-md border border-white/15 bg-white/[0.05] p-[3px] text-xs uppercase tracking-wider backdrop-blur-md lg:h-11"
+      className="inline-flex h-8 sm:h-10 items-center rounded-lg sm:rounded-xl border border-white/15 bg-white/[0.06] p-[2px] sm:p-[3px] text-xs uppercase tracking-wider backdrop-blur-xl lg:h-11"
     >
       {(["ru", "en"] as const).map((language) => {
         const isActive = activeLanguage === language;
@@ -48,9 +46,9 @@ function LanguageSwitcher({
             type="button"
             onClick={() => onChange(language)}
             aria-pressed={isActive}
-            className={`flex h-full min-w-10 cursor-pointer items-center justify-center rounded-[4px] border px-2.5 text-xs font-bold tracking-wider transition-colors duration-200 lg:min-w-11 ${
+            className={`flex h-full min-w-8 sm:min-w-10 cursor-pointer items-center justify-center rounded-md sm:rounded-lg border px-2 sm:px-2.5 text-[11px] sm:text-xs font-bold tracking-wider transition-all duration-200 lg:min-w-11 ${
               isActive
-                ? "border-white/20 bg-white/15 text-white"
+                ? "border-white/20 bg-white/20 text-white shadow-[0_2px_8px_rgba(0,0,0,0.5)]"
                 : "border-transparent text-[#8e8e93] hover:text-white"
             }`}
           >
@@ -64,12 +62,10 @@ function LanguageSwitcher({
 
 export function Header({ onOpenBooking, isRevealed = true }: HeaderProps) {
   const [scrolled, setScrolled] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const { lang, setLanguage, t } = useLanguage();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 30);
+    const handleScroll = () => setScrolled(window.scrollY > 20);
 
     handleScroll();
     window.addEventListener("scroll", handleScroll, { passive: true });
@@ -77,46 +73,18 @@ export function Header({ onOpenBooking, isRevealed = true }: HeaderProps) {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  useEffect(() => {
-    if (!menuOpen) return;
-
-    const wideNavigation = window.matchMedia(WIDE_NAV_QUERY);
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setMenuOpen(false);
-        menuButtonRef.current?.focus();
-      }
-    };
-    const handleBreakpointChange = (event: MediaQueryListEvent) => {
-      if (event.matches) setMenuOpen(false);
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-    wideNavigation.addEventListener("change", handleBreakpointChange);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-      wideNavigation.removeEventListener("change", handleBreakpointChange);
-    };
-  }, [menuOpen]);
-
-  const handleBooking = () => {
-    setMenuOpen(false);
-    onOpenBooking();
-  };
-
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 border-b transition-[padding,background-color,border-color,box-shadow] duration-700 ${
-        scrolled || menuOpen
-          ? "border-white/15 bg-black/90 py-3 shadow-[0_10px_30px_rgba(0,0,0,0.7)] backdrop-blur-xl sm:py-3.5"
+      className={`fixed inset-x-0 top-0 z-50 transition-[padding,background-color,border-color,box-shadow] duration-500 ${
+        scrolled
+          ? "border-b border-white/15 bg-black/92 pt-[max(0.9rem,calc(env(safe-area-inset-top)+0.5rem))] pb-3 sm:py-4 shadow-[0_12px_36px_rgba(0,0,0,0.85)] backdrop-blur-2xl"
           : isRevealed
-            ? "border-white/10 bg-gradient-to-b from-black/85 via-black/45 to-transparent py-4 sm:py-5 backdrop-blur-[2px]"
-            : "border-transparent bg-transparent py-4 sm:py-5 pointer-events-none"
+            ? "border-b border-white/10 bg-gradient-to-b from-black/95 via-black/60 to-transparent pt-[max(1.25rem,calc(env(safe-area-inset-top)+0.75rem))] pb-4 sm:py-6 backdrop-blur-[3px]"
+            : "border-b border-transparent bg-transparent pt-[max(1.25rem,calc(env(safe-area-inset-top)+0.75rem))] pb-4 sm:py-6 pointer-events-none"
       }`}
     >
-      <div className="relative mx-auto grid w-full max-w-[1920px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 sm:gap-5 sm:px-6 lg:px-10 xl:px-12">
+      <div className="relative mx-auto flex w-full max-w-[1920px] items-center justify-between gap-3 px-4 sm:gap-5 sm:px-6 lg:px-10 xl:px-12 min-h-[40px]">
+        {/* Left: Official BMW M Drift School Logo */}
         <motion.a
           href="#hero"
           initial={{ opacity: 0, y: -20, filter: "blur(8px)" }}
@@ -133,10 +101,11 @@ export function Header({ onOpenBooking, isRevealed = true }: HeaderProps) {
             alt="M Drift School"
             width={1540}
             height={172}
-            className="h-[18px] w-auto object-contain transition-transform duration-200 group-hover:scale-[1.03] sm:h-[22px] lg:h-[26px]"
+            className="h-[26px] sm:h-[30px] lg:h-[34px] w-auto object-contain transition-transform duration-200 group-hover:scale-[1.03]"
           />
         </motion.a>
 
+        {/* Center: Desktop Navigation */}
         <motion.nav
           aria-label={t.header.navLabel}
           initial={{ opacity: 0, y: -15 }}
@@ -146,14 +115,14 @@ export function Header({ onOpenBooking, isRevealed = true }: HeaderProps) {
               : { opacity: 0, y: -15 }
           }
           transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="hidden min-[112rem]:block"
+          className="hidden xl:block"
         >
-          <ul className="flex items-center justify-center gap-5 min-[120rem]:gap-7">
+          <ul className="flex items-center justify-center gap-6 xl:gap-8">
             {NAV_ITEMS.map((item) => (
               <li key={item.href}>
                 <a
                   href={item.href}
-                  className="whitespace-nowrap text-[11px] font-bold uppercase tracking-[0.08em] text-[#8e8e93] transition-colors duration-200 hover:text-white"
+                  className="whitespace-nowrap text-xs font-bold uppercase tracking-[0.08em] text-[#8e8e93] transition-colors duration-200 hover:text-white"
                 >
                   {t.header.nav[item.label]}
                 </a>
@@ -162,6 +131,7 @@ export function Header({ onOpenBooking, isRevealed = true }: HeaderProps) {
           </ul>
         </motion.nav>
 
+        {/* Right: Language Switcher + Desktop Booking Button */}
         <motion.div
           initial={{ opacity: 0, y: -15, filter: "blur(6px)" }}
           animate={
@@ -170,96 +140,25 @@ export function Header({ onOpenBooking, isRevealed = true }: HeaderProps) {
               : { opacity: 0, y: -15, filter: "blur(6px)" }
           }
           transition={{ duration: 0.8, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
-          className="col-start-3 flex shrink-0 items-center justify-end gap-2 sm:gap-3"
+          className="flex shrink-0 items-center justify-end gap-2.5 sm:gap-3.5"
         >
-          <div className="hidden sm:block">
-            <LanguageSwitcher
-              activeLanguage={lang}
-              label={t.header.languageLabel}
-              onChange={setLanguage}
-            />
-          </div>
+          <LanguageSwitcher
+            activeLanguage={lang}
+            label={t.header.languageLabel}
+            onChange={setLanguage}
+          />
 
-          <button
-            ref={menuButtonRef}
-            type="button"
-            onClick={handleBooking}
-            className="btn-swiss-primary hidden h-10 whitespace-nowrap px-4 text-xs lg:inline-flex lg:h-11 lg:px-5"
-          >
-            <span>{t.header.bookBtn}</span>
-          </button>
-
-          <button
-            type="button"
-            aria-expanded={menuOpen}
-            aria-controls="primary-navigation-menu"
-            aria-label={menuOpen ? t.header.menuClose : t.header.menuOpen}
-            onClick={() => setMenuOpen((isOpen) => !isOpen)}
-            className="flex size-10 cursor-pointer items-center justify-center rounded-md border border-white/15 bg-white/[0.05] text-white transition-colors duration-200 hover:border-white/35 hover:bg-white/10 lg:size-11 min-[112rem]:hidden"
-          >
-            <svg
-              aria-hidden="true"
-              viewBox="0 0 24 24"
-              className="size-5"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.7"
-              strokeLinecap="square"
+          <div className="hidden xl:block">
+            <button
+              type="button"
+              onClick={onOpenBooking}
+              className="btn-swiss-primary h-10 lg:h-11 whitespace-nowrap px-5 text-xs cursor-pointer active:scale-95"
             >
-              {menuOpen ? (
-                <path d="M6 6 18 18M18 6 6 18" />
-              ) : (
-                <path d="M4 7h16M4 12h16M4 17h16" />
-              )}
-            </svg>
-          </button>
+              <span>{t.header.bookBtn}</span>
+            </button>
+          </div>
         </motion.div>
       </div>
-
-      {menuOpen ? (
-        <div
-          id="primary-navigation-menu"
-          className="absolute inset-x-0 top-full max-h-[calc(100svh-4rem)] overflow-y-auto border-b border-white/10 bg-black/95 shadow-[0_24px_60px_rgba(0,0,0,0.65)] backdrop-blur-xl min-[112rem]:hidden"
-        >
-          <div className="mx-auto w-full max-w-[1920px] px-4 py-4 sm:px-6 sm:py-5 lg:px-10 xl:px-12">
-            <nav aria-label={t.header.navLabel}>
-              <ul className="grid gap-px overflow-hidden rounded-md border border-white/10 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
-                {NAV_ITEMS.map((item) => (
-                  <li key={item.href} className="bg-[#08090b]">
-                    <a
-                      href={item.href}
-                      onClick={() => setMenuOpen(false)}
-                      className="flex min-h-14 items-center justify-between px-4 text-xs font-bold uppercase tracking-[0.08em] text-[#b4b4ba] transition-colors duration-200 hover:bg-white/[0.04] hover:text-white sm:px-5"
-                    >
-                      <span>{t.header.nav[item.label]}</span>
-                      <span aria-hidden="true" className="text-[#ea4043]">
-                        ↗
-                      </span>
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-
-            <div className="mt-3 flex items-stretch gap-2 lg:hidden">
-              <div className="sm:hidden">
-                <LanguageSwitcher
-                  activeLanguage={lang}
-                  label={t.header.languageLabel}
-                  onChange={setLanguage}
-                />
-              </div>
-              <button
-                type="button"
-                onClick={handleBooking}
-                className="btn-swiss-primary min-h-10 flex-1 px-4 text-xs"
-              >
-                <span>{t.header.bookBtn}</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
     </header>
   );
 }

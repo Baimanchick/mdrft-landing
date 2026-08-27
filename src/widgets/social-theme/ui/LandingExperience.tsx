@@ -19,6 +19,7 @@ import { ServicesSection } from "@/widgets/social-theme/ui/ServicesSection";
 import { TariffsSection } from "@/widgets/social-theme/ui/TariffsSection";
 import { TrackDaysSection } from "@/widgets/social-theme/ui/TrackDaysSection";
 import { VideoPlaceholderBlock } from "@/widgets/social-theme/ui/VideoPlaceholderBlock";
+import { MobileTabBar } from "@/widgets/social-theme/ui/MobileTabBar";
 
 const BookingModal = dynamic(
   () => import("@/widgets/social-theme/ui/BookingModal").then((module) => module.BookingModal),
@@ -132,6 +133,7 @@ export function LandingExperience() {
           </main>
           <Footer />
           <AudioPlayer isRevealed={isUiRevealed} />
+          <MobileTabBar isRevealed={isUiRevealed} />
         </div>
         {isBookingOpen ? (
           <BookingModal

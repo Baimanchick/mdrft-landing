@@ -101,13 +101,35 @@ export function AboutSection() {
           viewport={{ once: false, amount: 0.15, margin: "-50px" }}
           className="grid grid-cols-1 lg:grid-cols-12 min-h-[580px]"
         >
-          {/* Left Column: Giant Scale Metrics (Span 7) */}
+          {/* Left Column: Scale Metrics */}
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-7 p-5 sm:p-10 lg:p-16 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between bg-black relative"
+            className="lg:col-span-7 p-4 sm:p-10 lg:p-16 border-b lg:border-b-0 lg:border-r border-white/10 flex flex-col justify-between bg-black relative"
           >
-            {/* Giant Stacked Typographic Scale with Uniform Sizing */}
-            <div className="font-bold tracking-tighter leading-none select-none flex flex-col justify-between flex-1 gap-2">
+            {/* Mobile: 2x2 App Stat Widgets / Desktop: Giant Stacked Rows */}
+            <div className="grid grid-cols-2 gap-2.5 sm:hidden">
+              {t.about.scaleItems.map((item, idx) => (
+                <div
+                  key={idx}
+                  className={`p-4 rounded-xl border ${
+                    idx === 1
+                      ? "border-white/25 bg-white/[0.06] shadow-[0_0_20px_rgba(255,255,255,0.05)]"
+                      : "border-white/10 bg-white/[0.02]"
+                  } flex flex-col justify-between min-h-[115px]`}
+                >
+                  <div className="text-3xl font-extrabold tracking-tight text-white flex items-baseline">
+                    <span>{item.num.replace(".", "")}</span>
+                    {item.num.includes(".") && <span className="text-[#ea4043]">.</span>}
+                  </div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#9898a0] leading-tight">
+                    {item.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop: Giant Stacked Typographic Scale */}
+            <div className="hidden sm:flex font-bold tracking-tighter leading-none select-none flex-col justify-between flex-1 gap-2">
               {/* Row 1: 00 */}
               <div className="flex items-baseline justify-between gap-4 py-2 sm:py-3 border-b border-white/5 group hover:border-white/20 transition-colors">
                 <span className="text-[clamp(2.75rem,15vw,6rem)] text-[#2a2a32] group-hover:text-white transition-colors">
@@ -151,19 +173,19 @@ export function AboutSection() {
             </div>
           </motion.div>
 
-          {/* Right Column: CORE RULES Manifesto (Span 5) */}
+          {/* Right Column: CORE RULES Manifesto */}
           <motion.div
             variants={itemVariants}
-            className="lg:col-span-5 p-5 sm:p-10 lg:p-16 flex flex-col justify-between bg-black relative"
+            className="lg:col-span-5 p-4 sm:p-10 lg:p-16 flex flex-col justify-between bg-black relative"
           >
-            {/* 3 Structured Manifesto Cards stretching to match full height of the left column */}
-            <div className="flex flex-col justify-between gap-4 sm:gap-5 h-full flex-1">
+            {/* Manifesto Cards */}
+            <div className="flex flex-col justify-between gap-3 sm:gap-5 h-full flex-1">
               {t.about.rules.map((rule, idx) => (
                 <div
                   key={idx}
-                  className="flex-1 p-5 sm:p-6 lg:p-7 bg-white/[0.02] border border-white/10 hover:border-[#ea4043]/40 rounded transition-colors group flex flex-col justify-center"
+                  className="flex-1 p-4 sm:p-6 lg:p-7 bg-white/[0.03] border border-white/10 hover:border-[#ea4043]/40 rounded-xl transition-colors group flex flex-col justify-center"
                 >
-                  <h3 className="text-white font-bold text-base sm:text-lg uppercase tracking-tight mb-2 group-hover:text-white transition-colors">
+                  <h3 className="text-white font-bold text-sm sm:text-lg uppercase tracking-tight mb-1.5 group-hover:text-white transition-colors">
                     {rule.title}
                   </h3>
                   <p className="text-xs sm:text-sm text-[#a0a0a8] leading-relaxed font-light">
