@@ -1,4 +1,4 @@
-FROM node:24.19.0-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df AS dependencies
+FROM node:26.9.0-slim@sha256:3a771f83944bb763050c23c0225c260638c4b7899e7a72485ef75e5e570499e5 AS dependencies
 
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
@@ -8,7 +8,7 @@ RUN corepack enable
 COPY package.json yarn.lock .yarnrc.yml ./
 RUN yarn install --immutable
 
-FROM node:24.19.0-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df AS builder
+FROM node:26.9.0-slim@sha256:3a771f83944bb763050c23c0225c260638c4b7899e7a72485ef75e5e570499e5 AS builder
 
 WORKDIR /app
 ARG NEXT_PUBLIC_SITE_URL
@@ -21,7 +21,7 @@ COPY --from=dependencies /app/node_modules ./node_modules
 COPY . .
 RUN yarn build && yarn build:workers
 
-FROM node:24.19.0-slim@sha256:a9f5f7c91a432850b2a8a7797adf5eadb6c733ceed61167806cee7ea7fbc29df AS runner
+FROM node:26.9.0-slim@sha256:3a771f83944bb763050c23c0225c260638c4b7899e7a72485ef75e5e570499e5 AS runner
 
 WORKDIR /app
 
